@@ -2,32 +2,15 @@
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import heroWatercolor from '../assets/home/hero-watercolor-veins.png';
-import boogerSelfPortrait from '../assets/home/booger-self-portrait.webp';
-import tripleApple from '../assets/home/triple-apple-watercolor.webp';
-import figureDrawingAlfred from '../assets/work/drawing/figure-drawing-alfred.webp';
-import landscapeAbstract from '../assets/home/landscape-abstract.webp';
 
-const heroWork = [
-  {
-    src: boogerSelfPortrait,
-    alt: 'Self-portrait of a dark-haired figure surrounded by insects',
-  },
-  {
-    src: tripleApple,
-    alt: 'Reclining figure among three red apples and broken objects',
-  },
-  {
-    src: figureDrawingAlfred,
-    alt: 'Standing figure holding a long length of fabric',
-  },
-];
+const heroPlaceholders = ['01', '02', '03'];
 ---
 
 <!--
   THESIS: Abby's work emerges from a translucent anatomical watercolor field, refusing a generic portfolio grid.
   OWN-WORLD: Warm paper, coral wash, wet red, dried oxblood, geometric type, and image-led transitions.
-  STORY: Visitors meet Abby, understand her disciplines, preview three works, then enter the selected-work reveal.
-  FIRST VIEWPORT: Minimal navigation floats above a monumental left-anchored name; three real artworks gather low.
+  STORY: Visitors meet Abby, understand her disciplines, preview three future works, then enter the selected-work reveal.
+  FIRST VIEWPORT: Minimal navigation floats above a monumental left-anchored name; three artwork placeholders gather low.
   FORM: User-pinned “The Meninges” direction from the separate sleepy project; no generated seed.
 -->
 <Base immersive>
@@ -52,10 +35,11 @@ const heroWork = [
       </a>
     </div>
 
-    <ul class="hero__work-previews" aria-label="Selected art previews">
-      {heroWork.map((item) => (
-        <li>
-          <Image src={item.src} alt={item.alt} loading="eager" />
+    <ul class="hero__work-previews" aria-label="Artwork placeholders">
+      {heroPlaceholders.map((ordinal) => (
+        <li class="art-card">
+          <span class="art-card__index">{ordinal}</span>
+          <span class="art-card__label">Artwork</span>
         </li>
       ))}
     </ul>
@@ -66,13 +50,12 @@ const heroWork = [
       <p class="eyebrow">01 / Recent</p>
       <h2 id="work-title">Selected work</h2>
     </div>
-    <a class="work-tease__panel" href="/work/" aria-label="View selected work">
-      <Image
-        src={landscapeAbstract}
-        alt="Four-panel blue and yellow abstract landscape study"
-        loading="lazy"
-      />
-      <span>Enter the work →</span>
+    <a
+      class="work-tease__panel"
+      href="/work/"
+      aria-label="View work; case study forthcoming"
+    >
+      <span>Case study / forthcoming</span>
     </a>
   </section>
 </Base>
@@ -163,21 +146,29 @@ const heroWork = [
     list-style: none;
   }
 
-  .hero__work-previews li {
+  .art-card {
+    display: flex;
     aspect-ratio: 1.14 / 1;
     min-width: 0;
-    overflow: hidden;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: var(--space-sm);
     border: var(--border-thin) solid var(--color-border);
     border-radius: var(--radius-sm);
+    color: var(--color-text-secondary);
     background: var(--color-paper-overlay);
     box-shadow: var(--shadow-art);
   }
 
-  .hero__work-previews img {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+  .art-card__index,
+  .art-card__label {
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+  }
+
+  .art-card__label {
+    align-self: flex-end;
   }
 
   .work-tease {
@@ -202,37 +193,14 @@ const heroWork = [
   }
 
   .work-tease__panel {
-    position: relative;
     display: grid;
     min-height: min(60vw, 28rem);
-    overflow: hidden;
     place-items: end start;
     border: var(--border-thin) solid var(--color-border-on-dark);
     color: var(--color-text-on-dark);
   }
 
-  .work-tease__panel img {
-    position: absolute;
-    z-index: 0;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    opacity: 0.78;
-    transition: transform var(--duration-standard) var(--ease-out);
-  }
-
-  .work-tease__panel::after {
-    position: absolute;
-    z-index: 1;
-    inset: 0;
-    content: "";
-    background: var(--color-dark-overlay-soft);
-  }
-
   .work-tease__panel span {
-    position: relative;
-    z-index: 2;
     padding: var(--space-lg);
     font-size: var(--text-xs);
     letter-spacing: var(--tracking-label);
@@ -242,11 +210,6 @@ const heroWork = [
   .work-tease__panel:hover,
   .work-tease__panel:focus-visible {
     color: var(--color-text-on-dark);
-  }
-
-  .work-tease__panel:hover img,
-  .work-tease__panel:focus-visible img {
-    transform: scale(1.02);
   }
 
   @media (min-width: 48rem) {
@@ -272,8 +235,7 @@ const heroWork = [
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .scroll-cue > span,
-    .work-tease__panel img {
+    .scroll-cue > span {
       transition: none;
     }
   }
