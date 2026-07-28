@@ -1,35 +1,92 @@
 ---
-import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
-import abbyPortrait from '../assets/about/abby-cromwell-portrait.webp';
 ---
 
-<Base title="About — Abby Cromwell">
-  <Image
-    src={abbyPortrait}
-    alt="Abby Cromwell wearing a dark suit and hat while holding a white disc over her face"
-    loading="eager"
-  />
-  <p class="bio">I am Abby Cromwell from California. I love art, all things Japanese, and my dog Yuki.</p>
-  <p>
-    <a href="https://docs.google.com/document/d/1kTXfgbIZkrj786EC5Tr3nq8RbgaTDvpwrt6qRgbXYmw/edit?usp=sharing">
-      View my resume
-    </a>
-  </p>
+<Base
+  title="About — Abby Cromwell"
+  description="About Abby Cromwell."
+  activePage="about"
+  atmospheric
+>
+  <div class="about-page">
+    <section class="about" aria-labelledby="about-title">
+      <p class="eyebrow">About</p>
+      <h1 id="about-title">Abby Cromwell</h1>
+      <div class="about__copy">
+        <p>
+          Abby is an illustrator, character designer, and storyteller interested in
+          entertainment worlds and game design.
+        </p>
+        <p>
+          This is a deliberately quiet space in the portfolio: a pause from the work,
+          with room for a longer bio when it is ready.
+        </p>
+      </div>
+      <div class="about__contact">
+        <div>
+          <p class="eyebrow">Contact</p>
+          <a href="mailto:abbycromwell@ucla.edu">abbycromwell@ucla.edu</a>
+        </div>
+        <div>
+          <p class="eyebrow">Availability</p>
+          <p>Not currently available</p>
+        </div>
+      </div>
+    </section>
+  </div>
 </Base>
 
 <style>
-  .bio {
-    max-width: calc(var(--max-width-page) / 2);
-    line-height: var(--leading-loose);
-    margin-top: var(--space-lg);
+  .about-page {
+    min-height: calc(100vh - var(--space-2xl));
+    overflow: hidden;
   }
 
-  img {
-    display: block;
-    width: 100%;
-    max-width: calc(var(--max-width-page) / 2);
-    height: auto;
-    border-radius: var(--radius-sm);
+  .about {
+    max-width: var(--max-width-wide);
+    margin-inline: auto;
+    padding: var(--space-page-top) var(--space-edge) var(--space-section);
+  }
+
+  h1 {
+    margin-bottom: var(--space-xl);
+    font-size: var(--text-page-title);
+    line-height: var(--leading-display);
+    letter-spacing: var(--tracking-display);
+    text-transform: uppercase;
+  }
+
+  .about__copy,
+  .about__contact {
+    display: grid;
+    gap: var(--space-xl);
+    color: var(--color-text-secondary);
+  }
+
+  .about__copy {
+    max-width: var(--max-width-copy);
+    font-size: var(--text-xl);
+    line-height: var(--leading-tight);
+  }
+
+  .about__copy p,
+  .about__contact p {
+    margin-bottom: 0;
+  }
+
+  .about__contact {
+    max-width: var(--max-width-copy);
+    margin-top: var(--space-section);
+  }
+
+  .about__contact a {
+    border-bottom: var(--border-thin) solid currentColor;
+  }
+
+  @media (min-width: 48rem) {
+    .about__copy,
+    .about__contact {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
   }
 </style>

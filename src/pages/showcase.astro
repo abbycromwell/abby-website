@@ -2,16 +2,18 @@
 import Base from '../layouts/Base.astro';
 
 const colors = [
-  ['--color-bg', 'Background', 'page background'],
-  ['--color-bg-subtle', 'Background subtle', 'cards, panels'],
-  ['--color-text', 'Text', 'headings, body'],
-  ['--color-text-secondary', 'Text secondary', 'supporting copy'],
-  ['--color-border', 'Border', 'dividers, outlines'],
-  ['--color-accent', 'Accent', 'links, highlights'],
-  ['--color-accent-hover', 'Accent hover', 'hover states'],
+  ['--color-bg', 'Meninges Paper', 'light fields'],
+  ['--color-bg-subtle', 'Diluted Coral Paper', 'warm secondary fields'],
+  ['--color-bg-dark', 'Deep Brown-Red', 'immersive gallery fields'],
+  ['--color-text', 'Deep Brown-Red', 'headings and body'],
+  ['--color-text-secondary', 'Dried Oxblood', 'supporting copy'],
+  ['--color-border', 'Watercolor Edge', 'dividers and outlines'],
+  ['--color-accent', 'Wet Red', 'links and concentrated emphasis'],
+  ['--color-accent-hover', 'Concentrated Red', 'hover states'],
+  ['--color-coral', 'Diluted Coral', 'warm secondary emphasis'],
 ];
 
-const sizes = ['--text-sm', '--text-base', '--text-lg', '--text-xl', '--text-2xl', '--text-3xl'];
+const sizes = ['--text-xs', '--text-sm', '--text-base', '--text-lg', '--text-xl', '--text-2xl', '--text-3xl', '--text-hero'];
 
 const spaces = ['--space-2xs', '--space-xs', '--space-sm', '--space-md', '--space-lg', '--space-xl', '--space-2xl'];
 
@@ -138,6 +140,9 @@ const navSections = [
     grid-template-columns: 160px minmax(0, 1fr);
     gap: var(--space-xl);
     align-items: start;
+    max-width: var(--max-width-wide);
+    margin-inline: auto;
+    padding: var(--space-xl) var(--space-edge) var(--space-2xl);
   }
 
   .ds-nav {

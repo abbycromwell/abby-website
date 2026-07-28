@@ -1,13 +1,13 @@
 ---
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
+import heroWatercolor from '../assets/home/hero-watercolor-veins.png';
 import boogerSelfPortrait from '../assets/home/booger-self-portrait.webp';
 import tripleApple from '../assets/home/triple-apple-watercolor.webp';
 import figureDrawingAlfred from '../assets/work/drawing/figure-drawing-alfred.webp';
 import landscapeAbstract from '../assets/home/landscape-abstract.webp';
-import watercolorCockroach from '../assets/home/watercolor-cockroach.webp';
 
-const selectedWork = [
+const heroWork = [
   {
     src: boogerSelfPortrait,
     alt: 'Self-portrait of a dark-haired figure surrounded by insects',
@@ -20,44 +20,261 @@ const selectedWork = [
     src: figureDrawingAlfred,
     alt: 'Standing figure holding a long length of fabric',
   },
-  {
-    src: landscapeAbstract,
-    alt: 'Four-panel blue and yellow abstract landscape study',
-  },
-  {
-    src: watercolorCockroach,
-    alt: 'Purple-haired figure leaning away from oversized cockroaches',
-  },
 ];
 ---
 
-<Base>
-  <ul class="home-gallery">
-    {selectedWork.map((item, index) => (
-      <li>
-        <Image
-          src={item.src}
-          alt={item.alt}
-          loading={index === 0 ? 'eager' : 'lazy'}
-        />
-      </li>
-    ))}
-  </ul>
+<!--
+  THESIS: Abby's work emerges from a translucent anatomical watercolor field, refusing a generic portfolio grid.
+  OWN-WORLD: Warm paper, coral wash, wet red, dried oxblood, geometric type, and image-led transitions.
+  STORY: Visitors meet Abby, understand her disciplines, preview three works, then enter the selected-work reveal.
+  FIRST VIEWPORT: Minimal navigation floats above a monumental left-anchored name; three real artworks gather low.
+  FORM: User-pinned “The Meninges” direction from the separate sleepy project; no generated seed.
+-->
+<Base immersive>
+  <section class="hero" aria-labelledby="hero-title">
+    <Image
+      class="hero__watercolor"
+      src={heroWatercolor}
+      alt="Pale coral watercolor wash branching across a warm paper field"
+      loading="eager"
+      widths={[768, 1152, 1536]}
+      sizes="100vw"
+    />
+
+    <div class="hero__content">
+      <h1 id="hero-title">Abby<br />Cromwell</h1>
+      <p class="hero__discipline">
+        Illustrative art <span>·</span> Character design <span>·</span> Storytelling
+      </p>
+      <a class="scroll-cue" href="#work">
+        Scroll to explore
+        <span aria-hidden="true">↓</span>
+      </a>
+    </div>
+
+    <ul class="hero__work-previews" aria-label="Selected art previews">
+      {heroWork.map((item) => (
+        <li>
+          <Image src={item.src} alt={item.alt} loading="eager" />
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="work-tease" id="work" aria-labelledby="work-title">
+    <div>
+      <p class="eyebrow">01 / Recent</p>
+      <h2 id="work-title">Selected work</h2>
+    </div>
+    <a class="work-tease__panel" href="/work/" aria-label="View selected work">
+      <Image
+        src={landscapeAbstract}
+        alt="Four-panel blue and yellow abstract landscape study"
+        loading="lazy"
+      />
+      <span>Enter the work →</span>
+    </a>
+  </section>
 </Base>
 
 <style>
-  .home-gallery {
-    list-style: none;
-    display: grid;
-    gap: var(--space-xl);
-    margin: 0;
-    padding: 0;
+  .hero {
+    position: relative;
+    isolation: isolate;
+    min-height: var(--hero-min-height);
+    overflow: hidden;
+    padding: var(--space-hero-top) var(--space-edge) var(--space-hero-bottom);
+    background: var(--color-bg);
   }
 
-  .home-gallery img {
+  .hero__watercolor {
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .hero__content {
+    width: 100%;
+    max-width: var(--max-width-wide);
+    margin-inline: auto;
+  }
+
+  h1 {
+    max-width: 10ch;
+    margin-bottom: var(--space-lg);
+    font-size: var(--text-hero);
+    font-weight: var(--weight-normal);
+    line-height: var(--leading-display);
+    letter-spacing: var(--tracking-display);
+    text-transform: uppercase;
+  }
+
+  .hero__discipline {
+    max-width: var(--max-width-prose);
+    margin-bottom: var(--space-xl);
+    color: var(--color-text-secondary);
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-label);
+    line-height: var(--leading-loose);
+    text-transform: uppercase;
+  }
+
+  .hero__discipline span {
+    color: var(--color-accent);
+  }
+
+  .scroll-cue {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    color: var(--color-accent);
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+  }
+
+  .scroll-cue > span {
+    display: inline-grid;
+    width: var(--space-lg);
+    height: var(--space-lg);
+    place-items: center;
+    border: var(--border-thin) solid currentColor;
+    border-radius: var(--radius-round);
+    transition: transform var(--duration-standard) var(--ease-out);
+  }
+
+  .scroll-cue:hover > span,
+  .scroll-cue:focus-visible > span {
+    transform: translateY(var(--space-2xs));
+  }
+
+  .hero__work-previews {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-xs);
+    width: 100%;
+    max-width: var(--max-width-page);
+    margin: var(--space-xl) auto 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .hero__work-previews li {
+    aspect-ratio: 1.14 / 1;
+    min-width: 0;
+    overflow: hidden;
+    border: var(--border-thin) solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background: var(--color-paper-overlay);
+    box-shadow: var(--shadow-art);
+  }
+
+  .hero__work-previews img {
     display: block;
     width: 100%;
-    height: auto;
-    border-radius: var(--radius-sm);
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .work-tease {
+    display: grid;
+    gap: var(--space-xl);
+    align-items: end;
+    padding: var(--space-section) var(--space-edge);
+    color: var(--color-text-on-dark);
+    background: var(--color-bg-dark);
+  }
+
+  .work-tease .eyebrow {
+    color: var(--color-coral);
+  }
+
+  h2 {
+    margin-bottom: 0;
+    font-size: var(--text-section-title);
+    line-height: var(--leading-display);
+    letter-spacing: var(--tracking-display);
+    text-transform: uppercase;
+  }
+
+  .work-tease__panel {
+    position: relative;
+    display: grid;
+    min-height: min(60vw, 28rem);
+    overflow: hidden;
+    place-items: end start;
+    border: var(--border-thin) solid var(--color-border-on-dark);
+    color: var(--color-text-on-dark);
+  }
+
+  .work-tease__panel img {
+    position: absolute;
+    z-index: 0;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.78;
+    transition: transform var(--duration-standard) var(--ease-out);
+  }
+
+  .work-tease__panel::after {
+    position: absolute;
+    z-index: 1;
+    inset: 0;
+    content: "";
+    background: var(--color-dark-overlay-soft);
+  }
+
+  .work-tease__panel span {
+    position: relative;
+    z-index: 2;
+    padding: var(--space-lg);
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+  }
+
+  .work-tease__panel:hover,
+  .work-tease__panel:focus-visible {
+    color: var(--color-text-on-dark);
+  }
+
+  .work-tease__panel:hover img,
+  .work-tease__panel:focus-visible img {
+    transform: scale(1.02);
+  }
+
+  @media (min-width: 48rem) {
+    .hero {
+      display: grid;
+      align-items: center;
+    }
+
+    .hero__work-previews {
+      position: absolute;
+      z-index: 1;
+      right: var(--space-edge);
+      bottom: var(--space-hero-bottom);
+      grid-template-columns: repeat(3, minmax(8rem, 13.5rem));
+      width: auto;
+      max-width: none;
+      margin: 0;
+    }
+
+    .work-tease {
+      grid-template-columns: minmax(12rem, 0.52fr) minmax(0, 1.48fr);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .scroll-cue > span,
+    .work-tease__panel img {
+      transition: none;
+    }
   }
 </style>
