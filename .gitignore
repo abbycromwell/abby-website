@@ -4,3 +4,5 @@ dist/
 .DS_Store
 .vercel
 design/inspiration/
+.pnpm-store/
+.claude/settings.local.json
