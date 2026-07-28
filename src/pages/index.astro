@@ -2,8 +2,25 @@
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import heroWatercolor from '../assets/home/hero-watercolor-veins.png';
+import recentProjectPanel from '../assets/home/recent-project-panel.png';
+import previewRef1 from '../assets/home/preview-ref-1.png';
+import previewRef2 from '../assets/home/preview-ref-2.png';
+import previewRef3 from '../assets/home/preview-ref-3.png';
 
-const heroPlaceholders = ['01', '02', '03'];
+const heroPreviews = [
+  {
+    src: previewRef1,
+    alt: 'Atmospheric watercolor figure tangled in branching pale forms',
+  },
+  {
+    src: previewRef2,
+    alt: 'Atmospheric watercolor portrait of a cloaked bird-like figure',
+  },
+  {
+    src: previewRef3,
+    alt: 'Atmospheric watercolor figure reaching toward a pale sun',
+  },
+];
 ---
 
 <!--
@@ -25,7 +42,7 @@ const heroPlaceholders = ['01', '02', '03'];
     />
 
     <div class="hero__content">
-      <h1 id="hero-title">Abby<br />Cromwell</h1>
+      <h1 id="hero-title">Abby<br /><span class="h1__second">Cromwell</span></h1>
       <p class="hero__discipline">
         Illustrative art <span>·</span> Character design <span>·</span> Storytelling
       </p>
@@ -35,38 +52,42 @@ const heroPlaceholders = ['01', '02', '03'];
       </a>
     </div>
 
-    <ul class="hero__work-previews" aria-label="Artwork placeholders">
-      {heroPlaceholders.map((ordinal) => (
+    <ul class="hero__work-previews" aria-label="Selected artwork previews">
+      {heroPreviews.map(({ src, alt }) => (
         <li class="art-card">
-          <span class="art-card__index">{ordinal}</span>
-          <span class="art-card__label">Artwork</span>
+          <Image
+            src={src}
+            alt={alt}
+            loading="eager"
+            widths={[320, 480, 640]}
+            sizes="(min-width: 48rem) 14rem, 33vw"
+          />
         </li>
       ))}
     </ul>
   </section>
 
   <section class="work-tease" id="work" aria-labelledby="work-title">
-    <div>
-      <p class="eyebrow">01 / Recent</p>
-      <h2 id="work-title">Selected work</h2>
-    </div>
-    <a
-      class="work-tease__panel"
-      href="/work/"
-      aria-label="View work; case study forthcoming"
-    >
-      <span>Case study / forthcoming</span>
+    <h2 class="work-tease__label" id="work-title">Selected work</h2>
+    <a class="work-tease__panel" href="/work/" aria-label="Recent project">
+      <Image
+        src={recentProjectPanel}
+        alt="Vivid coral and deep red watercolor veins with a dark pooled region at the right"
+        loading="lazy"
+        widths={[774]}
+        sizes="(min-width: 48rem) 66vw, 100vw"
+      />
+      <span>Recent project</span>
     </a>
   </section>
 </Base>
 
-<style>
+<style define:vars={{ heroWash: `url(${heroWatercolor.src})` }}>
   .hero {
     position: relative;
     isolation: isolate;
-    min-height: var(--hero-min-height);
     overflow: hidden;
-    padding: var(--space-hero-top) var(--space-edge) var(--space-hero-bottom);
+    padding: var(--space-hero-top) var(--space-edge) var(--space-lg);
     background: var(--color-bg);
   }
 
@@ -82,57 +103,52 @@ const heroPlaceholders = ['01', '02', '03'];
 
   .hero__content {
     width: 100%;
-    max-width: var(--max-width-wide);
-    margin-inline: auto;
   }
 
   h1 {
     max-width: 10ch;
-    margin-bottom: var(--space-lg);
-    font-size: var(--text-hero);
-    font-weight: var(--weight-normal);
-    line-height: var(--leading-display);
-    letter-spacing: var(--tracking-display);
+    margin-bottom: var(--space-xs);
+    color: var(--color-hero-name);
+    font-size: var(--text-display);
+    font-weight: var(--weight-light);
+    line-height: var(--leading-hero);
+    letter-spacing: var(--tracking-label);
     text-transform: uppercase;
+  }
+
+  /* optical: pull C flush with the A apex and the label axis below */
+  .h1__second {
+    margin-left: -0.07em;
   }
 
   .hero__discipline {
     max-width: var(--max-width-prose);
     margin-bottom: var(--space-xl);
+    margin-left: var(--space-2xs);
     color: var(--color-text-secondary);
-    font-size: var(--text-xs);
+    font-size: var(--text-sm);
     letter-spacing: var(--tracking-label);
-    line-height: var(--leading-loose);
+    line-height: var(--leading-normal);
     text-transform: uppercase;
   }
 
   .hero__discipline span {
-    color: var(--color-accent);
+    color: var(--color-hero-name);
   }
 
   .scroll-cue {
     display: inline-flex;
     align-items: center;
     gap: var(--space-xs);
-    color: var(--color-accent);
+    margin-left: var(--space-2xs);
+    color: var(--color-hero-name);
     font-size: var(--text-xs);
     letter-spacing: var(--tracking-label);
     text-transform: uppercase;
   }
 
   .scroll-cue > span {
-    display: inline-grid;
-    width: var(--space-lg);
-    height: var(--space-lg);
-    place-items: center;
-    border: var(--border-thin) solid currentColor;
-    border-radius: var(--radius-round);
-    transition: transform var(--duration-standard) var(--ease-out);
-  }
-
-  .scroll-cue:hover > span,
-  .scroll-cue:focus-visible > span {
-    transform: translateY(var(--space-2xs));
+    font-size: 0.9em;
   }
 
   .hero__work-previews {
@@ -140,102 +156,105 @@ const heroPlaceholders = ['01', '02', '03'];
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: var(--space-xs);
     width: 100%;
-    max-width: var(--max-width-page);
-    margin: var(--space-xl) auto 0;
+    margin: var(--space-lg) auto 0;
     padding: 0;
     list-style: none;
   }
 
   .art-card {
-    display: flex;
-    aspect-ratio: 1.14 / 1;
+    aspect-ratio: 3 / 2;
     min-width: 0;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: var(--space-sm);
-    border: var(--border-thin) solid var(--color-border);
-    border-radius: var(--radius-sm);
-    color: var(--color-text-secondary);
-    background: var(--color-paper-overlay);
-    box-shadow: var(--shadow-art);
+    overflow: hidden;
+    border: var(--border-thin) solid var(--color-bg);
   }
 
-  .art-card__index,
-  .art-card__label {
-    font-size: var(--text-xs);
-    letter-spacing: var(--tracking-label);
-    text-transform: uppercase;
-  }
-
-  .art-card__label {
-    align-self: flex-end;
+  .art-card img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 
   .work-tease {
     display: grid;
     gap: var(--space-xl);
-    align-items: end;
-    padding: var(--space-section) var(--space-edge);
-    color: var(--color-text-on-dark);
-    background: var(--color-bg-dark);
+    align-items: start;
+    padding: var(--space-md) var(--space-edge) var(--space-lg);
+    color: var(--color-text);
+    background: var(--color-bg);
   }
 
-  .work-tease .eyebrow {
-    color: var(--color-coral);
-  }
-
-  h2 {
-    margin-bottom: 0;
-    font-size: var(--text-section-title);
-    line-height: var(--leading-display);
-    letter-spacing: var(--tracking-display);
-    text-transform: uppercase;
-  }
-
-  .work-tease__panel {
-    display: grid;
-    min-height: min(60vw, 28rem);
-    place-items: end start;
-    border: var(--border-thin) solid var(--color-border-on-dark);
-    color: var(--color-text-on-dark);
-  }
-
-  .work-tease__panel span {
-    padding: var(--space-lg);
+  .work-tease__label {
+    margin: 0;
+    padding: var(--space-md) var(--space-md) var(--space-md) 0;
+    color: var(--color-hero-name);
+    font-family: var(--font-sans);
     font-size: var(--text-xs);
     letter-spacing: var(--tracking-label);
     text-transform: uppercase;
+    background: var(--color-bg);
   }
 
-  .work-tease__panel:hover,
-  .work-tease__panel:focus-visible {
-    color: var(--color-text-on-dark);
+  .work-tease__panel {
+    position: relative;
+    height: clamp(8rem, 16vw, 10.5rem);
+    margin-top: var(--space-md);
+    overflow: hidden;
+  }
+
+  .work-tease__panel img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: right center;
+    transition: transform var(--duration-standard) var(--ease-out);
+  }
+
+  .work-tease__panel span {
+    position: absolute;
+    top: var(--space-md);
+    left: var(--space-md);
+    color: var(--color-hero-name);
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .work-tease__panel:hover img,
+  .work-tease__panel:focus-visible img {
+    transform: scale(1.02);
   }
 
   @media (min-width: 48rem) {
-    .hero {
-      display: grid;
-      align-items: center;
+    /* oversize and pull left/up so the red wash reaches behind the preview row */
+    .hero__watercolor {
+      top: -10%;
+      left: -15%;
+      width: 115%;
+      height: 110%;
     }
 
     .hero__work-previews {
-      position: absolute;
-      z-index: 1;
-      right: var(--space-edge);
-      bottom: var(--space-hero-bottom);
-      grid-template-columns: repeat(3, minmax(8rem, 13.5rem));
+      grid-template-columns: repeat(3, minmax(10rem, 20rem));
       width: auto;
-      max-width: none;
-      margin: 0;
+      margin: var(--space-lg) 0 0;
     }
 
     .work-tease {
-      grid-template-columns: minmax(12rem, 0.52fr) minmax(0, 1.48fr);
+      grid-template-columns: minmax(11rem, 0.24fr) minmax(0, 1fr);
+    }
+
+    .work-tease__panel {
+      width: auto;
+      margin-right: 0;
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .scroll-cue > span {
+    .work-tease__panel img {
       transition: none;
     }
   }

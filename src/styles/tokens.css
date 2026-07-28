@@ -1,53 +1,50 @@
 /*
   Design tokens — the single source of truth.
-  The palette follows watercolor as it dilutes, pools, dries, and darkens.
+  The palette is three watercolor families — paper, coral, red — as the wash
+  dilutes, pools, dries, and darkens. Overlay washes derive from their parents.
 */
 :root {
-  /* color */
+  /* color: paper family */
   --color-bg: #f6f0e7; /* Meninges Paper */
-  --color-bg-subtle: #ecd1bd; /* Diluted Coral Paper */
-  --color-bg-dark: #241210; /* Deep Brown-Red */
-  --color-text: #241210;
-  --color-text-secondary: #5a201d; /* Dried Oxblood */
-  --color-text-on-dark: #f6f0e7;
-  --color-border: #c9a995;
-  --color-border-on-dark: rgb(246 240 231 / 26%);
+  --color-text-on-dark: var(--color-bg);
+  --color-paper-overlay: rgb(from var(--color-bg) r g b / 84%); /* Paper Wash */
+
+  /* color: coral family */
+  --color-border: #c9a995; /* Watercolor Edge */
+
+  /* color: red family, light to dark */
   --color-accent: #a93631; /* Wet Red */
-  --color-accent-hover: #7d2926;
-  --color-coral: #d9855b; /* Diluted Coral */
-  --color-paper-overlay: rgb(246 240 231 / 84%);
-  --color-dark-overlay: rgb(36 18 16 / 72%);
-  --color-dark-overlay-soft: rgb(36 18 16 / 32%);
+  --color-text-secondary: #5a201d; /* Dried Oxblood */
+  --color-hero-name: #570000; /* Name Red — sampled from the approved homepage reference */
+  --color-bg-dark: #241210; /* Deep Brown-Red */
+  --color-text: var(--color-bg-dark);
+  --color-dark-overlay: rgb(from var(--color-bg-dark) r g b / 72%); /* Pooled Dark */
+  --color-dark-overlay-soft: rgb(from var(--color-bg-dark) r g b / 32%); /* Pooled Dark Soft */
 
   /* typography */
-  --font-display: "Futura PT", Futura, "Century Gothic", "Avenir Next", Arial, sans-serif;
-  --font-body: "Futura PT", Futura, "Century Gothic", "Avenir Next", Arial, sans-serif;
+  --font-sans: "Jost", Futura, "Century Gothic", sans-serif;
 
-  --text-xs: 0.6875rem;
+  --text-xs: 0.75rem;
   --text-sm: 0.875rem;
   --text-base: 1rem;
   --text-lg: 1.25rem;
   --text-xl: 1.5rem;
-  --text-2xl: 2rem;
-  --text-3xl: 2.75rem;
-  --text-hero: clamp(4rem, 10vw, 6rem);
-  --text-page-title: clamp(4rem, 9vw, 6rem);
-  --text-section-title: clamp(2.5rem, 5vw, 5rem);
+  --text-display: clamp(4rem, 9vw, 6rem);
   --text-art-title: clamp(1.5rem, 4vw, 4rem);
 
+  --weight-light: 300;
   --weight-normal: 400;
   --weight-medium: 500;
 
   --leading-display: 0.82;
+  --leading-hero: 1.05;
   --leading-tight: 1.2;
   --leading-normal: 1.5;
-  --leading-loose: 1.75;
 
   --tracking-display: -0.04em;
   --tracking-label: 0.14em;
 
   /* spacing */
-  --space-3xs: 2px;
   --space-2xs: 4px;
   --space-xs: 8px;
   --space-sm: 12px;
@@ -55,28 +52,18 @@
   --space-lg: 24px;
   --space-xl: 48px;
   --space-2xl: 96px;
-  --space-edge: clamp(1rem, 3vw, 3.5rem);
+  --space-edge: clamp(1rem, 3vw, 2.5rem);
   --space-section: clamp(4rem, 9vw, 9rem);
-  --space-hero-top: clamp(9rem, 22vh, 13rem);
-  --space-hero-bottom: clamp(2rem, 6vh, 5rem);
+  --space-hero-top: clamp(5.5rem, 14vh, 8rem);
   --space-page-top: clamp(6rem, 12vw, 12rem);
-  --space-nav-gap: clamp(1rem, 2.8vw, 3.25rem);
 
-  /* radius */
-  --radius-round: 50%;
-  --radius-sm: 4px;
-  --radius-md: 8px;
-
-  /* borders and depth */
+  /* borders */
   --border-thin: 1px;
-  --shadow-art: 0 16px 36px rgb(36 18 16 / 14%);
 
   /* layout */
-  --max-width-page: 1100px;
   --max-width-wide: 1440px;
   --max-width-copy: 72ch;
   --max-width-prose: 38rem;
-  --hero-min-height: min(61rem, 100svh);
 
   /* motion */
   --duration-fast: 150ms;

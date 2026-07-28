@@ -1,0 +1,170 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-07-28T15:45:00Z",
+  "title": "Design System: Abby Cromwell Portfolio",
+  "extensions": {
+    "colorMeta": {
+      "paper": {
+        "role": "neutral",
+        "displayName": "Meninges Paper",
+        "canonical": "oklch(95.7% 0.014 78.3)",
+        "tonalRamp": ["oklch(15.0% 0.014 78.3)", "oklch(26.4% 0.014 78.3)", "oklch(37.9% 0.014 78.3)", "oklch(49.3% 0.014 78.3)", "oklch(60.7% 0.014 78.3)", "oklch(72.1% 0.014 78.3)", "oklch(83.6% 0.014 78.3)", "oklch(95.0% 0.014 78.3)"]
+      },
+      "deep-brown-red": {
+        "role": "neutral",
+        "displayName": "Deep Brown-Red",
+        "canonical": "oklch(20.7% 0.031 26.8)",
+        "tonalRamp": ["oklch(15.0% 0.031 26.8)", "oklch(26.4% 0.031 26.8)", "oklch(37.9% 0.031 26.8)", "oklch(49.3% 0.031 26.8)", "oklch(60.7% 0.031 26.8)", "oklch(72.1% 0.031 26.8)", "oklch(83.6% 0.031 26.8)", "oklch(95.0% 0.031 26.8)"]
+      },
+      "dried-oxblood": {
+        "role": "secondary",
+        "displayName": "Dried Oxblood",
+        "canonical": "oklch(33.1% 0.086 25.9)",
+        "tonalRamp": ["oklch(15.0% 0.086 25.9)", "oklch(26.4% 0.086 25.9)", "oklch(37.9% 0.086 25.9)", "oklch(49.3% 0.086 25.9)", "oklch(60.7% 0.086 25.9)", "oklch(72.1% 0.086 25.9)", "oklch(83.6% 0.086 25.9)", "oklch(95.0% 0.086 25.9)"]
+      },
+      "name-red": {
+        "role": "primary",
+        "displayName": "Name Red",
+        "canonical": "oklch(28.7% 0.118 29.2)",
+        "tonalRamp": ["oklch(15.0% 0.118 29.2)", "oklch(26.4% 0.118 29.2)", "oklch(37.9% 0.118 29.2)", "oklch(49.3% 0.118 29.2)", "oklch(60.7% 0.118 29.2)", "oklch(72.1% 0.118 29.2)", "oklch(83.6% 0.118 29.2)", "oklch(95.0% 0.118 29.2)"]
+      },
+      "wet-red": {
+        "role": "primary",
+        "displayName": "Wet Red",
+        "canonical": "oklch(50.1% 0.152 26.6)",
+        "tonalRamp": ["oklch(15.0% 0.152 26.6)", "oklch(26.4% 0.152 26.6)", "oklch(37.9% 0.152 26.6)", "oklch(49.3% 0.152 26.6)", "oklch(60.7% 0.152 26.6)", "oklch(72.1% 0.152 26.6)", "oklch(83.6% 0.152 26.6)", "oklch(95.0% 0.152 26.6)"]
+      },
+      "watercolor-edge": {
+        "role": "neutral",
+        "displayName": "Watercolor Edge",
+        "canonical": "oklch(75.8% 0.047 53.8)",
+        "tonalRamp": ["oklch(15.0% 0.047 53.8)", "oklch(26.4% 0.047 53.8)", "oklch(37.9% 0.047 53.8)", "oklch(49.3% 0.047 53.8)", "oklch(60.7% 0.047 53.8)", "oklch(72.1% 0.047 53.8)", "oklch(83.6% 0.047 53.8)", "oklch(95.0% 0.047 53.8)"]
+      },
+      "paper-wash": {
+        "role": "overlay",
+        "displayName": "Paper Wash",
+        "canonical": "rgb(246 240 231 / 84%)",
+        "tonalRamp": ["rgb(246 240 231 / 10%)", "rgb(246 240 231 / 21%)", "rgb(246 240 231 / 33%)", "rgb(246 240 231 / 44%)", "rgb(246 240 231 / 56%)", "rgb(246 240 231 / 67%)", "rgb(246 240 231 / 79%)", "rgb(246 240 231 / 90%)"],
+        "note": "Derived: --color-bg at 84% via relative color syntax."
+      },
+      "pooled-dark": {
+        "role": "overlay",
+        "displayName": "Pooled Dark",
+        "canonical": "rgb(36 18 16 / 72%)",
+        "tonalRamp": ["rgb(36 18 16 / 10%)", "rgb(36 18 16 / 21%)", "rgb(36 18 16 / 33%)", "rgb(36 18 16 / 44%)", "rgb(36 18 16 / 56%)", "rgb(36 18 16 / 67%)", "rgb(36 18 16 / 79%)", "rgb(36 18 16 / 90%)"],
+        "note": "Derived: --color-bg-dark at 72% via relative color syntax."
+      },
+      "pooled-dark-soft": {
+        "role": "overlay",
+        "displayName": "Pooled Dark Soft",
+        "canonical": "rgb(36 18 16 / 32%)",
+        "tonalRamp": ["rgb(36 18 16 / 10%)", "rgb(36 18 16 / 21%)", "rgb(36 18 16 / 33%)", "rgb(36 18 16 / 44%)", "rgb(36 18 16 / 56%)", "rgb(36 18 16 / 67%)", "rgb(36 18 16 / 79%)", "rgb(36 18 16 / 90%)"],
+        "note": "Derived: --color-bg-dark at 32% via relative color syntax."
+      }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "The hero name only. Light 300, wide-tracked, uppercase." },
+      "headline": { "displayName": "Headline", "purpose": "Interior page titles; compressed poster stacks at line-height 0.82, uppercase." },
+      "title": { "displayName": "Title", "purpose": "Artwork titles inside work cards, uppercase." },
+      "body": { "displayName": "Body", "purpose": "Default copy at 1rem/1.5; ledes step to 1.25rem." },
+      "label": { "displayName": "Label", "purpose": "Navigation, kickers, card metadata, scroll cue. 0.75rem, 0.14em tracking, uppercase; nav name at Medium 500." }
+    },
+    "shadows": [],
+    "motion": [
+      { "name": "duration-fast", "value": "150ms", "purpose": "Link and label color fades." },
+      { "name": "duration-standard", "value": "240ms", "purpose": "Image zooms and overlay wash fades." },
+      { "name": "ease-out", "value": "cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "The only easing; exponential ease-out for every transition." }
+    ],
+    "breakpoints": [
+      { "name": "md", "value": "48rem" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Site Navigation",
+      "kind": "nav",
+      "refersTo": "nav-link",
+      "description": "Name plus Work/About links in small tracked uppercase; hover, focus, and the current page shift to Wet Red.",
+      "html": "<nav class=\"ds-site-nav\" aria-label=\"Main\"><a class=\"ds-nav-name\" href=\"#\">Abby Cromwell</a><ul class=\"ds-nav-links\"><li><a href=\"#\" aria-current=\"page\">Work</a></li><li><a href=\"#\">About</a></li></ul></nav>",
+      "css": ".ds-site-nav { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; font-family: var(--font-sans, Jost, sans-serif); font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-text, #241210); background: var(--color-bg, #F6F0E7); padding: 16px; } .ds-site-nav a { color: inherit; text-decoration: none; transition: color 150ms cubic-bezier(0.16, 1, 0.3, 1); } .ds-site-nav a:hover { color: var(--color-accent, #A93631); } .ds-site-nav a:focus-visible { color: var(--color-accent, #A93631); outline: 1px solid currentColor; outline-offset: 4px; } .ds-nav-name { font-weight: 500; } .ds-nav-links { display: flex; gap: 12px 24px; list-style: none; margin: 0; padding: 0; } .ds-nav-links [aria-current=\"page\"] { color: var(--color-accent, #A93631); }"
+    },
+    {
+      "name": "Kicker Label",
+      "kind": "custom",
+      "refersTo": "kicker",
+      "description": "Wet Red uppercase label that opens interior page intros and detail columns.",
+      "html": "<p class=\"ds-kicker\">Selected work</p>",
+      "css": ".ds-kicker { margin: 0; color: var(--color-accent, #A93631); font-family: var(--font-sans, Jost, sans-serif); font-size: 0.75rem; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; }"
+    },
+    {
+      "name": "Scroll Cue",
+      "kind": "custom",
+      "refersTo": "scroll-cue",
+      "description": "Name Red uppercase anchor link with a downward arrow, pointing at the selected-work section.",
+      "html": "<a class=\"ds-scroll-cue\" href=\"#\">Scroll to explore <span aria-hidden=\"true\">↓</span></a>",
+      "css": ".ds-scroll-cue { display: inline-flex; align-items: center; gap: 8px; color: var(--color-hero-name, #570000); font-family: var(--font-sans, Jost, sans-serif); font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase; text-decoration: none; transition: color 150ms cubic-bezier(0.16, 1, 0.3, 1); } .ds-scroll-cue:hover, .ds-scroll-cue:focus-visible { color: var(--color-accent, #A93631); } .ds-scroll-cue > span { font-size: 0.9em; }"
+    },
+    {
+      "name": "Artwork Preview Card",
+      "kind": "card",
+      "refersTo": "art-card",
+      "description": "3:2 homepage preview tile with a 1px paper hairline; production fills it with Abby's artwork, edge to edge.",
+      "html": "<div class=\"ds-art-card\"><div class=\"ds-art-card-fill\"></div></div>",
+      "css": ".ds-art-card { aspect-ratio: 3 / 2; width: 14rem; overflow: hidden; border: 1px solid var(--color-bg, #F6F0E7); background: #ECD1BD; } .ds-art-card-fill { width: 100%; height: 100%; background: radial-gradient(120% 90% at 70% 20%, #D9855B, transparent 60%), radial-gradient(90% 110% at 20% 85%, var(--color-accent, #A93631), transparent 55%), #ECD1BD; }"
+    },
+    {
+      "name": "Work Tease Panel",
+      "kind": "custom",
+      "refersTo": "work-tease-panel",
+      "description": "Short full-width homepage panel linking to Work: artwork anchored right, Name Red label pinned top-left, 2% zoom on hover.",
+      "html": "<a class=\"ds-tease\" href=\"#\"><span class=\"ds-tease-art\"></span><span class=\"ds-tease-label\">Recent project</span></a>",
+      "css": ".ds-tease { position: relative; display: block; height: 8rem; overflow: hidden; text-decoration: none; } .ds-tease-art { position: absolute; inset: 0; background: radial-gradient(80% 140% at 85% 50%, var(--color-bg-dark, #241210), transparent 65%), radial-gradient(110% 100% at 55% 30%, var(--color-accent, #A93631), #D9855B); transition: transform 240ms cubic-bezier(0.16, 1, 0.3, 1); } .ds-tease-label { position: absolute; top: 16px; left: 16px; color: var(--color-hero-name, #570000); font-family: var(--font-sans, Jost, sans-serif); font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase; white-space: nowrap; } .ds-tease:hover .ds-tease-art, .ds-tease:focus-visible .ds-tease-art { transform: scale(1.02); }"
+    },
+    {
+      "name": "Work Card",
+      "kind": "card",
+      "refersTo": "work-card",
+      "description": "Full-bleed gallery card: artwork under a Pooled Dark wash with paper text; hover thins the wash and zooms the art 2%. Production layers a real image behind the wash.",
+      "html": "<a class=\"ds-work-card\" href=\"#\"><span class=\"ds-work-card-eyebrow\">01 / Case study</span><strong>Project forthcoming</strong><small>Open case study →</small></a>",
+      "css": ".ds-work-card { position: relative; isolation: isolate; display: flex; flex-direction: column; justify-content: space-between; aspect-ratio: 1.13 / 1; width: 16rem; padding: 24px; overflow: hidden; color: var(--color-text-on-dark, #F6F0E7); background: radial-gradient(120% 100% at 30% 30%, var(--color-accent, #A93631), var(--color-bg-dark, #241210) 70%); text-decoration: none; font-family: var(--font-sans, Jost, sans-serif); } .ds-work-card::after { content: \"\"; position: absolute; z-index: -1; inset: 0; background: var(--color-dark-overlay, rgb(36 18 16 / 72%)); transition: background 240ms cubic-bezier(0.16, 1, 0.3, 1); } .ds-work-card:hover::after, .ds-work-card:focus-visible::after { background: var(--color-dark-overlay-soft, rgb(36 18 16 / 32%)); } .ds-work-card span, .ds-work-card small { font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase; } .ds-work-card strong { max-width: 14ch; font-size: 1.5rem; font-weight: 400; line-height: 1.2; letter-spacing: -0.04em; text-transform: uppercase; }"
+    },
+    {
+      "name": "Case Placeholder",
+      "kind": "custom",
+      "refersTo": "case-placeholder",
+      "description": "Paper Wash field with hairline block borders and one uppercase label, holding the case-study hero slot until content lands.",
+      "html": "<div class=\"ds-case-placeholder\"><span>Hero artwork</span></div>",
+      "css": ".ds-case-placeholder { display: grid; place-items: center; min-height: 10rem; border-block: 1px solid var(--color-border, #C9A995); color: var(--color-text-secondary, #5A201D); background: var(--color-paper-overlay, rgb(246 240 231 / 84%)); } .ds-case-placeholder span { font-family: var(--font-sans, Jost, sans-serif); font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Meninges",
+    "overview": "The portfolio feels like artwork placed on warm paper beside a translucent watercolor anatomy study. Its visual world is spacious, organic, intimate, and slightly uncanny without becoming clinical or gory. Abby's real work supplies the detail and color; the interface remains restrained enough to frame it.\n\nThe homepage is one continuous paper field: a coral watercolor wash carries a monumental left-anchored name, three artwork previews gather low, and a slim \"Recent project\" panel closes the page. The deep dried-oxblood gallery lives on the Work page, where full-bleed artwork sits under dark pooled washes. The About and Case Study pages share a quieter version of the same paper field.",
+    "keyCharacteristics": [
+      "Pale paper fields crossed by one authored coral watercolor image",
+      "Geometric display lettering with a compressed, poster-like rhythm",
+      "Asymmetrical compositions and deliberate shifts between light and dark",
+      "Real artwork used at meaningful scale, never decorative placeholders"
+    ],
+    "rules": [
+      { "name": "The Watercolor Concentration Rule", "body": "Use the palette as material: broad pale fields, concentrated dark regions, and small wet-red points of interaction.", "section": "colors" },
+      { "name": "The Six Pigments Rule", "body": "The palette owns exactly six source values. A new role gets an alias or a derived wash of an existing pigment before it ever gets a new hex.", "section": "colors" },
+      { "name": "The One Monument Rule", "body": "Only one typographic element per view may dominate the composition.", "section": "typography" },
+      { "name": "The Flat Field Rule", "body": "Surfaces rest flat on the paper. Depth is earned by material (washes, overlap, scale), never by decorative box shadows.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do let Abby's original artwork provide the visual complexity.",
+      "Do use the watercolor hero image as one atmospheric field.",
+      "Do keep the case-study placeholder clearly labeled until Abby supplies its content.",
+      "Do preserve direct access to Work and About.",
+      "Do check every composition at narrow and wide viewport sizes."
+    ],
+    "donts": [
+      "Don't use stock imagery or generated imitations of Abby's work.",
+      "Don't use literal anatomy labels, gore, glossy effects, or glass panels.",
+      "Don't introduce new category menus or explanatory sections beyond the selected source pages.",
+      "Don't place artwork inside generic white application cards.",
+      "Don't add a seventh pigment; extend the palette with aliases and washes of the six source values."
+    ]
+  }
+}

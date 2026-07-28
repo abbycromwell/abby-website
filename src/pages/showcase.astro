@@ -1,31 +1,88 @@
 ---
+import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
+import previewRef1 from '../assets/home/preview-ref-1.png';
+import recentProjectPanel from '../assets/home/recent-project-panel.png';
+import spiderLily from '../assets/work/digital/spider-lily.webp';
 
-const colors = [
-  ['--color-bg', 'Meninges Paper', 'light fields'],
-  ['--color-bg-subtle', 'Diluted Coral Paper', 'warm secondary fields'],
-  ['--color-bg-dark', 'Deep Brown-Red', 'immersive gallery fields'],
-  ['--color-text', 'Deep Brown-Red', 'headings and body'],
-  ['--color-text-secondary', 'Dried Oxblood', 'supporting copy'],
-  ['--color-border', 'Watercolor Edge', 'dividers and outlines'],
-  ['--color-accent', 'Wet Red', 'links and concentrated emphasis'],
-  ['--color-accent-hover', 'Concentrated Red', 'hover states'],
-  ['--color-coral', 'Diluted Coral', 'warm secondary emphasis'],
+const colorFamilies = [
+  ['Paper', [
+    ['--color-bg', 'Meninges Paper', 'default light fields', null],
+    ['--color-text-on-dark', 'Meninges Paper', 'paper text on dark cards (alias of --color-bg)', '--color-bg-dark'],
+    ['--color-paper-overlay', 'Paper Wash', 'case-study placeholder field; --color-bg at 84%', '--color-accent'],
+  ]],
+  ['Coral', [
+    ['--color-border', 'Watercolor Edge', 'dividers, seams, scrollbar', null],
+  ]],
+  ['Red', [
+    ['--color-accent', 'Wet Red', 'link hover, active nav, kickers', null],
+    ['--color-text-secondary', 'Dried Oxblood', 'supporting copy and captions', null],
+    ['--color-hero-name', 'Name Red', 'hero name, scroll cue, homepage labels', null],
+    ['--color-bg-dark', 'Deep Brown-Red', 'dark gallery grounds', null],
+    ['--color-text', 'Deep Brown-Red', 'headings and body (alias of --color-bg-dark)', null],
+    ['--color-dark-overlay', 'Pooled Dark', 'resting wash over artwork; --color-bg-dark at 72%', '--color-accent'],
+    ['--color-dark-overlay-soft', 'Pooled Dark Soft', 'hover wash over artwork; --color-bg-dark at 32%', '--color-accent'],
+  ]],
 ];
 
-const sizes = ['--text-xs', '--text-sm', '--text-base', '--text-lg', '--text-xl', '--text-2xl', '--text-3xl', '--text-hero'];
+const sizes = [
+  ['--text-xs', 'The quick brown fox'],
+  ['--text-sm', 'The quick brown fox'],
+  ['--text-base', 'The quick brown fox'],
+  ['--text-lg', 'The quick brown fox'],
+  ['--text-xl', 'The quick brown fox'],
+  ['--text-art-title', 'Quick brown fox'],
+  ['--text-display', 'Abby'],
+];
 
-const spaces = ['--space-2xs', '--space-xs', '--space-sm', '--space-md', '--space-lg', '--space-xl', '--space-2xl'];
+const weights = [
+  ['--weight-light', 'hero name'],
+  ['--weight-normal', 'everything else'],
+  ['--weight-medium', 'nav name, kickers'],
+];
 
-const radii = [
-  ['--radius-sm', 'buttons, inputs, tags'],
-  ['--radius-md', 'cards, containers'],
+const leadings = [
+  ['--leading-display', 'page-title stacks'],
+  ['--leading-hero', 'hero name'],
+  ['--leading-tight', 'titles'],
+  ['--leading-normal', 'body'],
+];
+
+const trackings = [
+  ['--tracking-display', 'page and art titles'],
+  ['--tracking-label', 'labels, nav, and the hero name'],
+];
+
+const spaceLadder = [
+  '--space-2xs', '--space-xs', '--space-sm', '--space-md',
+  '--space-lg', '--space-xl', '--space-2xl',
+];
+
+const spaceRhythm = [
+  ['--space-edge', 'page edge padding'],
+  ['--space-section', 'between page blocks'],
+  ['--space-page-top', 'above interior page titles'],
+  ['--space-hero-top', 'above the hero name'],
+];
+
+const layoutWidths = [
+  ['--max-width-wide', 'header and interior pages'],
+  ['--max-width-copy', 'reading measure (72ch)'],
+  ['--max-width-prose', 'ledes and captions'],
 ];
 
 const navSections = [
-  ['Foundations', [['#color', 'Color'], ['#typography', 'Typography'], ['#spacing', 'Spacing']]],
-  ['Attributes', [['#radius', 'Radius']]],
-  ['Components', [['#component-nav', 'Nav Link'], ['#component-list', 'List Row']]],
+  ['Foundations', [['#color', 'Color'], ['#typography', 'Typography'], ['#spacing', 'Spacing'], ['#layout', 'Layout']]],
+  ['Attributes', [['#border', 'Border'], ['#motion', 'Motion']]],
+  ['Components', [
+    ['#component-nav', 'Nav Link'],
+    ['#component-kicker', 'Kicker'],
+    ['#component-scroll-cue', 'Scroll Cue'],
+    ['#component-art-card', 'Art Card'],
+    ['#component-work-tease', 'Work Tease'],
+    ['#component-work-card', 'Work Card'],
+    ['#component-case-placeholder', 'Case Placeholder'],
+  ]],
 ];
 ---
 
@@ -56,31 +113,85 @@ const navSections = [
 
       <section id="color">
         <h2>Color</h2>
-        <table class="ds-table">
-          <thead>
-            <tr><th></th><th>Token</th><th>Role</th><th>Used for</th></tr>
-          </thead>
-          <tbody>
-            {colors.map(([token, role, use]) => (
-              <tr>
-                <td><span class="ds-chip" style={`background: var(${token})`}></span></td>
-                <td><code>{token}</code></td>
-                <td>{role}</td>
-                <td class="ds-use">{use}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <p class="ds-note">
+          Eleven tokens in three watercolor families: paper, coral, and red as the wash
+          concentrates. Two are aliases and three are translucent washes derived from their
+          parent, so the whole palette resolves to six source values. Wash chips sit on a
+          demo ground so the translucency reads.
+        </p>
+        {colorFamilies.map(([family, rows]) => (
+          <>
+            <h3>{family} family</h3>
+            <table class="ds-table">
+              <tbody>
+                {rows.map(([token, role, use, base]) => (
+                  <tr>
+                    <td>
+                      <span class="ds-chip" style={base ? `background: var(${base})` : undefined}>
+                        <span class="ds-chip-layer" style={`background: var(${token})`}></span>
+                      </span>
+                    </td>
+                    <td><code>{token}</code></td>
+                    <td>{role}</td>
+                    <td class="ds-use">{use}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </>
+        ))}
       </section>
 
       <section id="typography">
         <h2>Typography</h2>
-        <p class="ds-note">Display font for impression, body font for information. Both set in <code>tokens.css</code>.</p>
+        <p class="ds-note">
+          One family: Jost (300 / 400 / 500 from Google Fonts), with Futura and Century
+          Gothic as local geometric fallbacks, via the single <code>--font-sans</code>
+          stack in <code>tokens.css</code>.
+        </p>
+
+        <h3>Size</h3>
         <div class="ds-type-scale">
-          {sizes.map((token) => (
+          {sizes.map(([token, sample]) => (
             <div class="ds-type-row">
               <code>{token}</code>
-              <p class="ds-type-sample" style={`font-size: var(${token})`}>The quick brown fox</p>
+              <p class="ds-type-sample" style={`font-size: var(${token})`}>{sample}</p>
+            </div>
+          ))}
+        </div>
+
+        <h3>Weight</h3>
+        <div class="ds-type-scale">
+          {weights.map(([token, use]) => (
+            <div class="ds-type-row">
+              <code>{token}</code>
+              <p class="ds-type-sample ds-type-sample--lg" style={`font-weight: var(${token})`}>
+                Abby Cromwell <span class="ds-use">{use}</span>
+              </p>
+            </div>
+          ))}
+        </div>
+
+        <h3>Leading</h3>
+        <div class="ds-type-scale">
+          {leadings.map(([token, use]) => (
+            <div class="ds-type-row">
+              <code>{token}</code>
+              <p class="ds-type-sample" style={`line-height: var(${token})`}>
+                Worlds, characters,<br />stories — {use}.
+              </p>
+            </div>
+          ))}
+        </div>
+
+        <h3>Tracking</h3>
+        <div class="ds-type-scale">
+          {trackings.map(([token, use]) => (
+            <div class="ds-type-row">
+              <code>{token}</code>
+              <p class="ds-type-sample ds-caps" style={`letter-spacing: var(${token})`}>
+                Abby Cromwell <span class="ds-use">{use}</span>
+              </p>
             </div>
           ))}
         </div>
@@ -88,56 +199,208 @@ const navSections = [
 
       <section id="spacing">
         <h2>Spacing</h2>
+        <p class="ds-note">
+          A seven-step fixed ladder plus four fluid rhythm tokens. Rhythm tokens flex with
+          the viewport; every number shows the value resolved right now.
+        </p>
+        <h3>Ladder</h3>
         <div class="ds-space-scale">
-          {spaces.map((token) => (
+          {spaceLadder.map((token) => (
             <div class="ds-space-row">
               <code>{token}</code>
-              <div class="ds-space-bar" style={`width: var(${token})`}></div>
+              <div class="ds-space-demo">
+                <div class="ds-space-bar" style={`width: var(${token})`}></div>
+                <span class="ds-space-value"></span>
+              </div>
+            </div>
+          ))}
+        </div>
+        <h3>Rhythm</h3>
+        <div class="ds-space-scale">
+          {spaceRhythm.map(([token, use]) => (
+            <div class="ds-space-row">
+              <code>{token}</code>
+              <div class="ds-space-demo">
+                <div class="ds-space-bar" style={`width: var(${token})`}></div>
+                <span class="ds-space-value"></span>
+                <span class="ds-use">{use}</span>
+              </div>
             </div>
           ))}
         </div>
       </section>
 
-      <section id="radius">
-        <h2>Radius</h2>
-        <div class="ds-radius-grid">
-          {radii.map(([token, use]) => (
-            <figure class="ds-radius-card">
-              <div class="ds-radius-demo" style={`border-radius: var(${token})`}></div>
-              <figcaption>
-                <code>{token}</code>
-                <span class="ds-use">{use}</span>
-              </figcaption>
-            </figure>
-          ))}
-        </div>
+      <section id="layout">
+        <h2>Layout</h2>
+        <p class="ds-note">
+          Mobile-first with a single min-width breakpoint at 48rem. Edge padding is
+          <code>--space-edge</code>; block rhythm is <code>--space-section</code> and
+          <code>--space-page-top</code>.
+        </p>
+        <table class="ds-table">
+          <thead>
+            <tr><th>Token</th><th>Used for</th></tr>
+          </thead>
+          <tbody>
+            {layoutWidths.map(([token, use]) => (
+              <tr>
+                <td><code>{token}</code></td>
+                <td class="ds-use">{use}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </section>
+
+      <section id="border">
+        <h2>Border</h2>
+        <p class="ds-note">
+          The system is flat and sharp: no radius or shadow tokens exist. Hairlines use
+          <code>--border-thin</code>; depth comes from washes, overlap, and scale.
+        </p>
+        <figure class="ds-attr-card">
+          <div class="ds-border-demo"></div>
+          <figcaption><code>--border-thin</code><span class="ds-use">hairline dividers and seams</span></figcaption>
+        </figure>
+      </section>
+
+      <section id="motion">
+        <h2>Motion</h2>
+        <p class="ds-note">
+          Color fades run on <code>--duration-fast</code>, image zooms and wash fades on
+          <code>--duration-standard</code>, everything on <code>--ease-out</code>. Nothing
+          moves position, and <code>prefers-reduced-motion</code> removes every transition.
+          Hover the component demos below to see both durations at work.
+        </p>
       </section>
 
       <section id="component-nav">
         <h2>Nav Link</h2>
         <div class="ds-demo">
           <a href="#component-nav" class="nav-name" style="margin-right: var(--space-lg);">Abby Cromwell</a>
-          <a href="#component-nav">Work</a>
+          <a href="#component-nav" style="margin-right: var(--space-lg);" aria-current="page">Work</a>
+          <a href="#component-nav">About</a>
         </div>
-        <p class="ds-note">The site header pieces, live from <code>global.css</code>.</p>
+        <p class="ds-note">
+          The site header pieces, live from <code>global.css</code>. The current page holds
+          Wet Red via <code>aria-current</code>; hover and focus match it.
+        </p>
       </section>
 
-      <section id="component-list">
-        <h2>List Row</h2>
+      <section id="component-kicker">
+        <h2>Kicker</h2>
         <div class="ds-demo">
-          <p style="margin: 0;"><a href="#component-list">First Project</a></p>
-          <p class="ds-use" style="margin: 0;">One line about this project.</p>
+          <p class="eyebrow" style="margin: 0;">Selected work</p>
         </div>
-        <p class="ds-note">The work-index row pattern. As you build new components, add each one here as its own section.</p>
+        <p class="ds-note">
+          The <code>.eyebrow</code> label from <code>global.css</code>: one Wet Red uppercase
+          kicker opens each interior page intro and detail column.
+        </p>
+      </section>
+
+      <section id="component-scroll-cue">
+        <h2>Scroll Cue</h2>
+        <div class="ds-demo">
+          <a class="ds-scroll-cue" href="#component-scroll-cue">
+            Scroll to explore
+            <span aria-hidden="true">↓</span>
+          </a>
+        </div>
+        <p class="ds-note">The homepage's Name Red anchor under the discipline line.</p>
+      </section>
+
+      <section id="component-art-card">
+        <h2>Art Card</h2>
+        <div class="ds-demo">
+          <div class="ds-art-card">
+            <Image
+              src={previewRef1}
+              alt="Atmospheric watercolor figure tangled in branching pale forms"
+              loading="lazy"
+              widths={[320, 480]}
+              sizes="14rem"
+            />
+          </div>
+        </div>
+        <p class="ds-note">
+          The homepage preview tile: 3:2 crop, 1px paper hairline, artwork edge to edge.
+          Three gather in a row above the fold.
+        </p>
+      </section>
+
+      <section id="component-work-tease">
+        <h2>Work Tease</h2>
+        <div class="ds-demo">
+          <a class="ds-tease" href="#component-work-tease" aria-label="Recent project">
+            <Image
+              src={recentProjectPanel}
+              alt="Vivid coral and deep red watercolor veins with a dark pooled region at the right"
+              loading="lazy"
+              widths={[774]}
+              sizes="40rem"
+            />
+            <span>Recent project</span>
+          </a>
+        </div>
+        <p class="ds-note">
+          The homepage's slim panel into Work: artwork anchored right, Name Red label pinned
+          top-left, 2% zoom on hover at <code>--duration-standard</code>.
+        </p>
+      </section>
+
+      <section id="component-work-card">
+        <h2>Work Card</h2>
+        <div class="ds-demo">
+          <a class="ds-work-card" href="#component-work-card">
+            <Image
+              src={spiderLily}
+              alt="Pale-haired figure surrounded by red spider lilies"
+              loading="lazy"
+              widths={[480, 640]}
+              sizes="18rem"
+            />
+            <span>01 / Case study</span>
+            <strong>Project forthcoming</strong>
+            <small>Open case study →</small>
+          </a>
+        </div>
+        <p class="ds-note">
+          The Work-page gallery card: artwork under a Pooled Dark wash with paper text.
+          Hover thins the wash to Pooled Dark Soft and zooms the art 2%.
+        </p>
+      </section>
+
+      <section id="component-case-placeholder">
+        <h2>Case Placeholder</h2>
+        <div class="ds-demo">
+          <div class="ds-case-placeholder">
+            <span>Hero artwork</span>
+          </div>
+        </div>
+        <p class="ds-note">
+          The case-study hero slot until content lands: a Paper Wash field with hairline
+          block borders and one uppercase label.
+        </p>
       </section>
     </article>
   </div>
+
+  <script>
+    const setSpaceValues = () => {
+      document.querySelectorAll('.ds-space-bar').forEach((bar) => {
+        const value = bar.parentElement?.querySelector('.ds-space-value');
+        if (value) value.textContent = `${Math.round(bar.getBoundingClientRect().width)}px`;
+      });
+    };
+    setSpaceValues();
+    addEventListener('resize', setSpaceValues);
+  </script>
 </Base>
 
 <style>
   .ds-layout {
     display: grid;
-    grid-template-columns: 160px minmax(0, 1fr);
+    grid-template-columns: 10rem minmax(0, 1fr);
     gap: var(--space-xl);
     align-items: start;
     max-width: var(--max-width-wide);
@@ -154,9 +417,9 @@ const navSections = [
 
   .ds-nav-label {
     font-size: var(--text-sm);
-    font-weight: 600;
+    font-weight: var(--weight-medium);
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: var(--tracking-label);
     color: var(--color-text-secondary);
     margin: 0 0 var(--space-xs);
   }
@@ -175,13 +438,13 @@ const navSections = [
   }
 
   h1 {
-    font-size: var(--text-2xl);
+    font-size: var(--text-xl);
     margin: 0 0 var(--space-sm);
   }
 
   .ds-intro {
     color: var(--color-text-secondary);
-    max-width: 40em;
+    max-width: var(--max-width-prose);
     margin: 0;
   }
 
@@ -193,7 +456,13 @@ const navSections = [
     font-size: var(--text-xl);
     margin: 0 0 var(--space-sm);
     padding-top: var(--space-lg);
-    border-top: 1px solid var(--color-border);
+    border-top: var(--border-thin) solid var(--color-border);
+  }
+
+  h3 {
+    font-size: var(--text-base);
+    margin: var(--space-lg) 0 var(--space-xs);
+    color: var(--color-text-secondary);
   }
 
   code {
@@ -216,12 +485,12 @@ const navSections = [
     font-size: var(--text-sm);
     text-align: left;
     padding: var(--space-xs) var(--space-sm) var(--space-xs) 0;
-    border-bottom: 1px solid var(--color-border);
+    border-bottom: var(--border-thin) solid var(--color-border);
   }
 
   .ds-table td {
     padding: var(--space-xs) var(--space-sm) var(--space-xs) 0;
-    border-bottom: 1px solid var(--color-border);
+    border-bottom: var(--border-thin) solid var(--color-border);
     font-size: var(--text-sm);
   }
 
@@ -229,22 +498,38 @@ const navSections = [
     display: block;
     width: var(--space-xl);
     height: var(--space-lg);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-sm);
+    border: var(--border-thin) solid var(--color-border);
+    overflow: hidden;
+  }
+
+  .ds-chip-layer {
+    display: block;
+    width: 100%;
+    height: 100%;
   }
 
   .ds-type-row {
     display: grid;
-    grid-template-columns: 120px 1fr;
+    grid-template-columns: 12rem 1fr;
     align-items: baseline;
     gap: var(--space-md);
     padding: var(--space-xs) 0;
-    border-bottom: 1px solid var(--color-border);
+    border-bottom: var(--border-thin) solid var(--color-border);
   }
 
   .ds-type-sample {
     margin: 0;
+    min-width: 0;
     line-height: var(--leading-tight);
+    overflow-wrap: anywhere;
+  }
+
+  .ds-type-sample--lg {
+    font-size: var(--text-lg);
+  }
+
+  .ds-caps {
+    text-transform: uppercase;
   }
 
   .ds-space-scale {
@@ -254,47 +539,197 @@ const navSections = [
 
   .ds-space-row {
     display: grid;
-    grid-template-columns: 120px 1fr;
+    grid-template-columns: 12rem 1fr;
     align-items: center;
     gap: var(--space-md);
   }
 
+  .ds-space-demo {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    min-width: 0;
+  }
+
   .ds-space-bar {
+    flex: 0 0 auto;
     height: var(--space-sm);
     background: var(--color-accent);
-    border-radius: var(--radius-sm);
   }
 
-  .ds-radius-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: var(--space-lg);
+  .ds-space-value {
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
   }
 
-  .ds-radius-card {
+  .ds-attr-card {
     margin: 0;
     display: grid;
     gap: var(--space-xs);
+    max-width: 14rem;
   }
 
-  .ds-radius-demo {
+  .ds-border-demo {
     height: var(--space-2xl);
-    background: var(--color-bg-subtle);
-    border: 1px solid var(--color-border);
+    background: var(--color-bg);
+    border: var(--border-thin) solid var(--color-border);
   }
 
-  .ds-radius-card figcaption {
+  .ds-attr-card figcaption {
     display: grid;
   }
 
   .ds-demo {
     padding: var(--space-lg);
-    background: var(--color-bg-subtle);
-    border: 1px solid var(--color-border);
+    background: var(--color-bg);
+    border: var(--border-thin) solid var(--color-border);
     margin-bottom: var(--space-xs);
   }
 
-  @media (max-width: 640px) {
+  .ds-scroll-cue {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    color: var(--color-hero-name);
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+  }
+
+  .ds-scroll-cue > span {
+    font-size: 0.9em;
+  }
+
+  .ds-art-card {
+    aspect-ratio: 3 / 2;
+    max-width: 14rem;
+    overflow: hidden;
+    border: var(--border-thin) solid var(--color-bg);
+  }
+
+  .ds-art-card img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ds-tease {
+    position: relative;
+    display: block;
+    height: clamp(8rem, 16vw, 10.5rem);
+    overflow: hidden;
+  }
+
+  .ds-tease img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: right center;
+    transition: transform var(--duration-standard) var(--ease-out);
+  }
+
+  .ds-tease span {
+    position: absolute;
+    top: var(--space-md);
+    left: var(--space-md);
+    color: var(--color-hero-name);
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .ds-tease:hover img,
+  .ds-tease:focus-visible img {
+    transform: scale(1.02);
+  }
+
+  .ds-work-card {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    aspect-ratio: 1.13 / 1;
+    max-width: 18rem;
+    overflow: hidden;
+    padding: var(--space-lg);
+    color: var(--color-text-on-dark);
+    background: var(--color-bg-dark);
+  }
+
+  .ds-work-card::after {
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    content: "";
+    background: var(--color-dark-overlay);
+    transition: background var(--duration-standard) var(--ease-out);
+  }
+
+  .ds-work-card img {
+    position: absolute;
+    z-index: -2;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--duration-standard) var(--ease-out);
+  }
+
+  .ds-work-card span,
+  .ds-work-card small {
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+  }
+
+  .ds-work-card strong {
+    max-width: 14ch;
+    font-size: var(--text-art-title);
+    font-weight: var(--weight-normal);
+    line-height: var(--leading-tight);
+    letter-spacing: var(--tracking-display);
+    text-transform: uppercase;
+  }
+
+  .ds-work-card:hover,
+  .ds-work-card:focus-visible {
+    color: var(--color-text-on-dark);
+  }
+
+  .ds-work-card:hover::after,
+  .ds-work-card:focus-visible::after {
+    background: var(--color-dark-overlay-soft);
+  }
+
+  .ds-work-card:hover img,
+  .ds-work-card:focus-visible img {
+    transform: scale(1.02);
+  }
+
+  .ds-case-placeholder {
+    display: grid;
+    min-height: var(--space-2xl);
+    padding: var(--space-xl) var(--space-lg);
+    place-items: center;
+    border-block: var(--border-thin) solid var(--color-border);
+    color: var(--color-text-secondary);
+    background: var(--color-paper-overlay);
+  }
+
+  .ds-case-placeholder span {
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 48rem) {
     .ds-layout {
       grid-template-columns: 1fr;
       gap: var(--space-lg);
@@ -306,6 +741,20 @@ const navSections = [
       justify-content: start;
       gap: var(--space-lg);
       overflow-x: auto;
+    }
+
+    .ds-type-row,
+    .ds-space-row {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--space-2xs);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ds-tease img,
+    .ds-work-card::after,
+    .ds-work-card img {
+      transition: none;
     }
   }
 </style>
