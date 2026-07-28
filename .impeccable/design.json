@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-07-28T15:45:00Z",
+  "generatedAt": "2026-07-28T16:20:00Z",
   "title": "Design System: Abby Cromwell Portfolio",
   "extensions": {
     "colorMeta": {
@@ -67,7 +67,7 @@
       "headline": { "displayName": "Headline", "purpose": "Interior page titles; compressed poster stacks at line-height 0.82, uppercase." },
       "title": { "displayName": "Title", "purpose": "Artwork titles inside work cards, uppercase." },
       "body": { "displayName": "Body", "purpose": "Default copy at 1rem/1.5; ledes step to 1.25rem." },
-      "label": { "displayName": "Label", "purpose": "Navigation, kickers, card metadata, scroll cue. 0.75rem, 0.14em tracking, uppercase; nav name at Medium 500." }
+      "label": { "displayName": "Label", "purpose": "Navigation, card metadata, scroll cue. 0.75rem, 0.14em tracking, uppercase; nav name and kickers at Medium 500." }
     },
     "shadows": [],
     "motion": [

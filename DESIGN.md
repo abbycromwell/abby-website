@@ -144,7 +144,9 @@ fields, concentrated dark regions, and small wet-red points of interaction.
 
 **The Six Pigments Rule.** The palette owns exactly six source values. A new
 role gets an alias or a derived wash of an existing pigment before it ever gets
-a new hex.
+a new hex. One deliberate exception sits outside the palette: the browser
+chrome (`theme-color` meta) is black; it frames the site and is not surface
+pigment.
 
 ## Typography
 
@@ -177,7 +179,7 @@ tracking, and role keep them distinct.
 - **Body** (Book 400, 1rem, line-height 1.5): Default copy. Ledes may step up
   to 1.25rem; the About introduction uses 1.5rem with tight leading.
 - **Label** (Book 400, 0.75rem, tracking 0.14em, uppercase): Navigation,
-  kickers, card metadata, and the scroll cue. The nav name uses Medium 500.
+  card metadata, and the scroll cue. The nav name and kickers use Medium 500.
 
 **The One Monument Rule.** Only one typographic element per view may dominate
 the composition.
@@ -221,7 +223,7 @@ that moment.
 Motion across all components is quiet: color fades at 150ms, image zooms and
 wash fades at 240ms, both on an exponential ease-out
 (cubic-bezier(0.16, 1, 0.3, 1)). Nothing moves position. Under
-`prefers-reduced-motion` every transition is removed.
+`prefers-reduced-motion` all movement is removed; color fades remain.
 
 ### Navigation
 

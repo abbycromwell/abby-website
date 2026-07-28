@@ -9,16 +9,17 @@
 html {
   scroll-behavior: smooth;
   background: var(--color-bg);
-  scrollbar-color: var(--color-border) var(--color-bg);
+  scrollbar-color: var(--color-text-secondary) var(--color-bg);
+  scrollbar-width: thin;
 }
 
 ::-webkit-scrollbar {
-  width: var(--border-thin);
+  width: var(--space-xs);
   background: var(--color-bg);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--color-border);
+  background: var(--color-text-secondary);
 }
 
 body {
@@ -172,5 +173,9 @@ a:focus-visible {
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+
+  .skip-link {
+    transition: none;
   }
 }

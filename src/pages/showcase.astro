@@ -123,6 +123,14 @@ const navSections = [
           <>
             <h3>{family} family</h3>
             <table class="ds-table">
+              <thead>
+                <tr>
+                  <th><span class="sr-only">Swatch</span></th>
+                  <th>Token</th>
+                  <th>Name</th>
+                  <th>Used for</th>
+                </tr>
+              </thead>
               <tbody>
                 {rows.map(([token, role, use, base]) => (
                   <tr>
@@ -269,8 +277,8 @@ const navSections = [
         <p class="ds-note">
           Color fades run on <code>--duration-fast</code>, image zooms and wash fades on
           <code>--duration-standard</code>, everything on <code>--ease-out</code>. Nothing
-          moves position, and <code>prefers-reduced-motion</code> removes every transition.
-          Hover the component demos below to see both durations at work.
+          moves position, and <code>prefers-reduced-motion</code> removes all movement;
+          color fades remain. Hover the component demos below to see both durations at work.
         </p>
       </section>
 
@@ -317,7 +325,7 @@ const navSections = [
               src={previewRef1}
               alt="Atmospheric watercolor figure tangled in branching pale forms"
               loading="lazy"
-              widths={[320, 480]}
+              widths={[297]}
               sizes="14rem"
             />
           </div>
@@ -400,8 +408,8 @@ const navSections = [
 <style>
   .ds-layout {
     display: grid;
-    grid-template-columns: 10rem minmax(0, 1fr);
-    gap: var(--space-xl);
+    grid-template-columns: 1fr;
+    gap: var(--space-lg);
     align-items: start;
     max-width: var(--max-width-wide);
     margin-inline: auto;
@@ -409,10 +417,20 @@ const navSections = [
   }
 
   .ds-nav {
-    position: sticky;
-    top: var(--space-lg);
     display: grid;
+    grid-auto-flow: column;
+    justify-content: start;
     gap: var(--space-lg);
+    overflow-x: auto;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
 
   .ds-nav-label {
@@ -510,9 +528,9 @@ const navSections = [
 
   .ds-type-row {
     display: grid;
-    grid-template-columns: 12rem 1fr;
+    grid-template-columns: minmax(0, 1fr);
     align-items: baseline;
-    gap: var(--space-md);
+    gap: var(--space-2xs);
     padding: var(--space-xs) 0;
     border-bottom: var(--border-thin) solid var(--color-border);
   }
@@ -539,9 +557,9 @@ const navSections = [
 
   .ds-space-row {
     display: grid;
-    grid-template-columns: 12rem 1fr;
+    grid-template-columns: minmax(0, 1fr);
     align-items: center;
-    gap: var(--space-md);
+    gap: var(--space-2xs);
   }
 
   .ds-space-demo {
@@ -729,24 +747,23 @@ const navSections = [
     text-transform: uppercase;
   }
 
-  @media (max-width: 48rem) {
+  @media (min-width: 48rem) {
     .ds-layout {
-      grid-template-columns: 1fr;
-      gap: var(--space-lg);
+      grid-template-columns: 10rem minmax(0, 1fr);
+      gap: var(--space-xl);
     }
 
     .ds-nav {
-      position: static;
-      grid-auto-flow: column;
-      justify-content: start;
-      gap: var(--space-lg);
-      overflow-x: auto;
+      position: sticky;
+      top: var(--space-lg);
+      grid-auto-flow: row;
+      overflow-x: visible;
     }
 
     .ds-type-row,
     .ds-space-row {
-      grid-template-columns: minmax(0, 1fr);
-      gap: var(--space-2xs);
+      grid-template-columns: 12rem 1fr;
+      gap: var(--space-md);
     }
   }
 

@@ -22,7 +22,7 @@ These rules are mandatory for all changes in this repo.
 
 ## Layout
 
-- Max page width: `var(--max-width-page)`, centered.
+- Max page width: `var(--max-width-wide)`, centered.
 - Mobile-first responsive design using `min-width` breakpoints.
 - No CSS frameworks. No inline styles in HTML.
 
