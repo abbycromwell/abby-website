@@ -121,9 +121,11 @@ obvious focus outline.
 
 ### Artwork previews
 
-Homepage artwork previews are unlabelled and tightly cropped. Work-page panels
-use restrained uppercase labels over full-bleed images, with the art remaining
-the dominant content.
+Homepage artwork previews use numbered, clearly labeled placeholders until
+Abby supplies approved work. Once content is selected, the cards become
+unlabelled, tightly cropped artwork previews. Work-page panels use restrained
+uppercase labels over full-bleed images, with the art remaining the dominant
+content.
 
 ## Do's and Don'ts
 
@@ -131,13 +133,14 @@ the dominant content.
 
 - **Do** let Abby's original artwork provide the visual complexity.
 - **Do** use the watercolor hero image as one atmospheric field.
+- **Do** use clearly labeled placeholders while Abby's homepage artwork and
+  case-study content remain unselected.
 - **Do** preserve direct access to Work, About, and Email.
 - **Do** check every composition at narrow and wide viewport sizes.
 
 ### Don't:
 
-- **Don't** introduce placeholder art, stock imagery, or generated imitations
-  of Abby's work.
+- **Don't** use stock imagery or generated imitations of Abby's work.
 - **Don't** use literal anatomy labels, gore, glossy effects, or glass panels.
 - **Don't** introduce new category menus or explanatory sections beyond the
   selected source pages.
