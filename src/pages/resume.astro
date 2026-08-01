@@ -1,0 +1,365 @@
+---
+import Base from '../layouts/Base.astro';
+
+const experience = [
+  {
+    org: 'Cromwell Works',
+    role: 'Design Intern',
+    dates: 'June 2026 – Present',
+    note: 'Generalist designer working across illustration, motion and video, graphic design, UX, and web prototyping.',
+  },
+  {
+    org: 'UCLA ACM',
+    role: 'Design Intern',
+    dates: 'August 2025 – Present',
+    note: "Support ACM's internal and cross-organization projects by creating visual assets, maintaining design consistency, and collaborating with designers and developers across UCLA's largest computing community.",
+  },
+  {
+    org: 'Adobe',
+    role: 'Student Ambassador',
+    dates: 'August 2025 – Present',
+    note: 'Educate campus students about Adobe software as a student ambassador.',
+  },
+  {
+    org: 'Palo Alto Art Center',
+    role: 'Teaching Assistant',
+    dates: 'July 2021 – September 2023',
+    note: 'Assisted with classroom management, including preparing materials and helping participants with artwork.',
+  },
+];
+
+const education = [
+  {
+    org: 'UCLA Design Media Arts',
+    role: 'Sophomore',
+    dates: 'September 2025 – Present',
+    note: 'Courses taken: Video and Motion, Design Culture, Typography, Media History, Creative Coding and Generative AI, Digital Cultures and Societies.',
+  },
+  {
+    org: 'Palo Alto High School',
+    role: '',
+    dates: 'August 2021 – June 2025',
+    note: 'Advanced placement and honors classes including Chemistry H, Advanced Painting and Drawing H, AP Psychology, AP Environmental Science, AP Language and Composition, AP Art History, and AP Art and Design.',
+  },
+  {
+    org: 'Summer and Pre-College Art Programs',
+    role: '',
+    dates: '2021 – Present',
+    note: 'Huntington Fine Arts (portfolio development), CalArts Extended Studies (visual storytelling), School of Visual Arts Pre-College (animation), RISD Advanced Online Program (design exploration), California College of the Arts (figure drawing; comics and visual storytelling), SAIC Early College Program Summer Institute (figure drawing, merit scholarship), and The Oxbow Art School (honors studio arts).',
+  },
+];
+
+const awards = [
+  { title: 'Scholastic Art and Writing, 2025', detail: '4 Gold Keys, 1 Silver Key, 3 Honorable Mentions' },
+  { title: 'Scholastic Art and Writing, 2024', detail: '1 Gold Key, 1 Honorable Mention' },
+  { title: 'SAIC Early College Program Summer Institute, 2023', detail: 'Merit Scholarship' },
+  { title: 'Scholastic Art and Writing, 2023', detail: '4 Honorable Mentions' },
+  {
+    title: "President's Service Award (Gold), 2022 and 2024",
+    detail: 'More than 200 hours of community service: Palo Alto Art Center, Youth Community Service, Heart and Home Collaborative',
+  },
+  { title: 'AP Scholar Award, 2024', detail: '' },
+];
+
+const exhibitions = [
+  { title: 'Youth Art Exhibition, 2024', detail: 'Untitled (watercolor)' },
+  { title: 'Changing the Narrative juried international exhibition, 2024', detail: 'The Setting (encaustic monotype)' },
+  { title: 'Huntington Fine Arts, 2023–2024', detail: 'Various pieces' },
+  { title: 'Oxbow, Napa, 2022', detail: 'Distracting Myself' },
+];
+
+const software = [
+  'Figma, Procreate, Procreate Dreams',
+  'Adobe Animate, Illustrator, Photoshop, After Effects',
+];
+---
+
+<Base
+  title="Resume — Abby Cromwell"
+  description="Resume of Abby Cromwell, Design Media Arts student at UCLA."
+  atmospheric
+>
+  <div class="resume-page">
+    <section class="resume" aria-labelledby="resume-title">
+      <p class="eyebrow">Abby Cromwell</p>
+      <h1 id="resume-title">Resume</h1>
+      <p class="resume__lede">
+        Sophomore at UCLA Design Media Arts, passionate about art, design,
+        animals, and Japanese culture.
+      </p>
+      <p class="resume__contact">
+        <a href="mailto:abbycromwell@ucla.edu">abbycromwell at ucla dot edu</a>
+      </p>
+
+      <div class="resume__grid">
+        <div class="resume__main">
+          <section class="resume-section" aria-labelledby="experience-title">
+            <h2 class="eyebrow" id="experience-title">Experience</h2>
+            {experience.map((entry) => (
+              <article class="resume-entry">
+                <h3>{entry.org}</h3>
+                <p class="resume-entry__meta">
+                  {entry.role && <span>{entry.role}</span>}
+                  <span>{entry.dates}</span>
+                </p>
+                {entry.note && <p class="resume-entry__note">{entry.note}</p>}
+              </article>
+            ))}
+          </section>
+
+          <section class="resume-section" aria-labelledby="education-title">
+            <h2 class="eyebrow" id="education-title">Education</h2>
+            {education.map((entry) => (
+              <article class="resume-entry">
+                <h3>{entry.org}</h3>
+                <p class="resume-entry__meta">
+                  {entry.role && <span>{entry.role}</span>}
+                  <span>{entry.dates}</span>
+                </p>
+                {entry.note && <p class="resume-entry__note">{entry.note}</p>}
+              </article>
+            ))}
+          </section>
+
+        </div>
+
+        <aside class="resume__side">
+          <section class="resume-section" aria-labelledby="software-title">
+            <h2 class="eyebrow" id="software-title">Software</h2>
+            <ul class="resume-list">
+              {software.map((item) => <li>{item}</li>)}
+            </ul>
+          </section>
+
+          <section class="resume-section" aria-labelledby="awards-title">
+            <h2 class="eyebrow" id="awards-title">Awards &amp; Scholarships</h2>
+            <ul class="resume-list resume-list--detailed">
+              {awards.map((item) => (
+                <li>
+                  <span class="resume-list__title">{item.title}</span>
+                  {item.detail && <span class="resume-list__detail">{item.detail}</span>}
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          <section class="resume-section" aria-labelledby="exhibitions-title">
+            <h2 class="eyebrow" id="exhibitions-title">Exhibitions</h2>
+            <ul class="resume-list resume-list--detailed">
+              {exhibitions.map((item) => (
+                <li>
+                  <span class="resume-list__title">{item.title}</span>
+                  <span class="resume-list__detail">{item.detail}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+
+        </aside>
+      </div>
+
+      <footer class="resume__close">
+        <div>
+          <p class="eyebrow">Contact</p>
+          <p><a href="mailto:abbycromwell@ucla.edu">abbycromwell at ucla dot edu</a></p>
+        </div>
+        <div>
+          <p class="eyebrow">Work</p>
+          <a href="/work/">View the work</a>
+        </div>
+        <div>
+          <p class="eyebrow">Download</p>
+          <a href="/abby-cromwell-resume.pdf">Resume PDF</a>
+        </div>
+      </footer>
+    </section>
+  </div>
+</Base>
+
+<style>
+  .resume {
+    max-width: var(--max-width-wide);
+    margin-inline: auto;
+    padding: var(--space-page-top) var(--space-edge) var(--space-section);
+  }
+
+  h1 {
+    margin-bottom: var(--space-xl);
+    font-size: var(--text-display);
+    font-weight: var(--weight-light);
+    line-height: var(--leading-hero);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+  }
+
+  .resume__lede {
+    max-width: var(--max-width-prose);
+    margin-bottom: var(--space-md);
+    color: var(--color-text-secondary);
+    font-size: var(--text-xl);
+    line-height: var(--leading-tight);
+  }
+
+  .resume__contact {
+    margin-bottom: 0;
+    color: var(--color-text-secondary);
+  }
+
+  .resume__contact a {
+    border-bottom: var(--border-thin) solid currentColor;
+  }
+
+  .resume__grid {
+    display: grid;
+    gap: var(--space-2xl);
+    margin-top: var(--space-section);
+  }
+
+  .resume__main,
+  .resume__side {
+    display: grid;
+    gap: var(--space-2xl);
+    align-content: start;
+  }
+
+  .resume__side {
+    gap: var(--space-xl);
+    padding: var(--space-lg);
+    background: var(--color-paper-overlay);
+  }
+
+  .resume-section {
+    display: grid;
+    gap: var(--space-lg);
+  }
+
+  .resume-section .eyebrow {
+    margin-bottom: 0;
+  }
+
+  .resume-entry {
+    border-top: var(--border-thin) solid var(--color-border);
+    padding-top: var(--space-md);
+  }
+
+  .resume-entry h3 {
+    margin-bottom: var(--space-2xs);
+    font-size: var(--text-lg);
+    font-weight: var(--weight-medium);
+  }
+
+  .resume-entry__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs) var(--space-md);
+    margin-bottom: var(--space-sm);
+    color: var(--color-text-secondary);
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+  }
+
+  .resume-entry__note {
+    max-width: var(--max-width-prose);
+    margin-bottom: 0;
+    color: var(--color-text-secondary);
+  }
+
+  .resume-list {
+    display: grid;
+    gap: var(--space-sm);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: var(--border-thin) solid var(--color-border);
+    padding-top: var(--space-md);
+    color: var(--color-text-secondary);
+  }
+
+  .resume-list--detailed {
+    gap: var(--space-md);
+  }
+
+  .resume-list--detailed li {
+    display: grid;
+    gap: var(--space-2xs);
+  }
+
+  .resume-list__title {
+    color: var(--color-text);
+    font-weight: var(--weight-medium);
+  }
+
+  .resume__close {
+    display: grid;
+    gap: var(--space-xl);
+    max-width: var(--max-width-copy);
+    margin-top: var(--space-section);
+    border-top: var(--border-thin) solid var(--color-border);
+    padding-top: var(--space-lg);
+    color: var(--color-text-secondary);
+  }
+
+  .resume__close p {
+    margin-bottom: 0;
+  }
+
+  .resume__close a {
+    border-bottom: var(--border-thin) solid currentColor;
+  }
+
+  @media (min-width: 48rem) {
+    .resume__grid {
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+      column-gap: var(--space-2xl);
+    }
+
+    .resume__close {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+</style>
+
+<style is:global>
+  /* Print / PDF export: clean paper, no site chrome, two columns forced
+     (print width sits below the 48rem screen breakpoint). */
+  @media print {
+    @page {
+      size: letter;
+      margin: 0.5in;
+    }
+
+    * {
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+
+    .site-header,
+    .skip-link,
+    .site-watercolor,
+    .resume__close {
+      display: none !important;
+    }
+
+    .resume {
+      padding: var(--space-lg) 0 0;
+    }
+
+    .resume__grid {
+      margin-top: var(--space-xl);
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+      column-gap: var(--space-xl);
+    }
+
+    .resume__main,
+    .resume__side {
+      gap: var(--space-xl);
+    }
+
+    .resume-entry,
+    .resume-list li {
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+  }
+</style>
