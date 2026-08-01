@@ -1,246 +1,110 @@
-import paintingUntitledOne from '../assets/archive/painting/painting-untitled-1.webp';
-import oilStillLife from '../assets/archive/painting/oil-still-life.webp';
-import aloneFlock from '../assets/archive/painting/alone-flock.webp';
-import paintingUntitledTwo from '../assets/archive/painting/painting-untitled-2.webp';
-import figureDrawingAlfred from '../assets/archive/drawing/figure-drawing-alfred.webp';
-import charcoalFigureAlfred from '../assets/archive/drawing/charcoal-figure-alfred.webp';
-import drawing2021 from '../assets/archive/drawing/drawing-2021.webp';
-import ccaStudyFour from '../assets/archive/drawing/cca-week-6-study-4.webp';
-import ccaStudyFive from '../assets/archive/drawing/cca-week-6-study-5.webp';
-import charcoalFigureJackie from '../assets/archive/drawing/charcoal-figure-jackie.webp';
-import spiderLily from '../assets/archive/digital/spider-lily.webp';
-import digitalUntitledOne from '../assets/archive/digital/digital-untitled-1.webp';
-import digitalUntitledThree from '../assets/archive/digital/digital-untitled-3.webp';
-import digitalUntitledSix from '../assets/archive/digital/digital-untitled-6.webp';
-import digitalUntitledFour from '../assets/archive/digital/digital-untitled-4.webp';
-import digitalUntitled from '../assets/archive/digital/digital-untitled.webp';
-import rollingStill from '../assets/archive/animation/rolling-tumbling-along.webp';
-import rollingCharacterSheet from '../assets/archive/animation/rolling-character-sheet.webp';
-import designWork from '../assets/archive/design/design-work.webp';
-import bugsLife from '../assets/archive/printmaking/a-bugs-life-monotype.webp';
-import darkCircle from '../assets/archive/printmaking/dark-circle-monotype.webp';
-import glassWorkOne from '../assets/archive/glass/glass-work-1.webp';
-import glassWorkTwo from '../assets/archive/glass/glass-work-2.webp';
-import selfPortraitSculpture from '../assets/archive/sculpture/self-portrait-sculpture.webp';
-import alienSinus from '../assets/archive/sculpture/alien-sinus-installation.webp';
-import colorStudyTwelve from '../assets/archive/sketches/color-study-12.webp';
-import colorStudyFourteen from '../assets/archive/sketches/color-study-14.webp';
-import colorStudySeven from '../assets/archive/sketches/color-study-7.webp';
-import sketch2241 from '../assets/archive/sketches/sketch-2241.webp';
-import sketch2555 from '../assets/archive/sketches/sketch-2555.webp';
-import sketch2558 from '../assets/archive/sketches/sketch-2558.webp';
-import sketch2562 from '../assets/archive/sketches/sketch-2562.webp';
-import sketch2580 from '../assets/archive/sketches/sketch-2580.webp';
-import sketch2589 from '../assets/archive/sketches/sketch-2589.webp';
-import sketch2593 from '../assets/archive/sketches/sketch-2593.webp';
-import sketch5606 from '../assets/archive/sketches/sketch-5606.webp';
+/*
+  Work-page content source — each chapter fills the Table of Plates.
+  Image plates: { src: <imported image>, alt: '<description>', title?, medium? }
+  Clip plates:  { clip: <imported mp4 url>, alt: '<description>', title?, medium? }
+  A null plate renders as a labeled membrane placeholder.
+*/
+import squidBonnetCollage from '../assets/illustration/squid-bonnet-collage.webp';
+import confettiProfile from '../assets/illustration/confetti-profile.webp';
+import prawnComicPage from '../assets/illustration/prawn-comic-page.webp';
+import checkeredFloorPlayer from '../assets/illustration/checkered-floor-player.webp';
+import matsuriPanels from '../assets/illustration/matsuri-panels.webp';
+import tissueStudyPage from '../assets/illustration/tissue-study-page.webp';
+import tentacleField from '../assets/sketch/tentacle-field.webp';
+import coveredEyesKiss from '../assets/sketch/covered-eyes-kiss.webp';
+import overpassStudies from '../assets/sketch/overpass-studies.webp';
+import wingedFigureSketch from '../assets/sketch/winged-figure-sketch.webp';
+import mirrorSelfie from '../assets/sketch/mirror-selfie.webp';
+import rollingClip from '../assets/animation/rolling-rolling-tumbling-along.mp4';
+import finalProjectClip from '../assets/animation/final-project-animation.mp4';
+import animationShortClip from '../assets/animation/animation-short.mp4';
 
-export const workCategories = [
+export const chapters = [
   {
-    slug: 'painting',
-    title: 'Painting',
-    items: [
-      {
-        src: paintingUntitledOne,
-        alt: 'Blue skeletal figure seated on a chair',
-      },
-      {
-        src: oilStillLife,
-        alt: 'Still life with draped fabric, fruit, vessels, and two hanging figures',
-      },
-      {
-        src: aloneFlock,
-        alt: 'Dense flock of white birds surrounding a central standing figure',
-      },
-      {
-        src: paintingUntitledTwo,
-        alt: 'Sneakers suspended over a blue and purple abstract ground',
-      },
-    ],
+    slug: 'typography',
+    no: '01',
+    title: 'Typography',
+    kind: 'case-study',
+    href: '/case-study/',
   },
   {
-    slug: 'drawing',
-    title: 'Drawing',
-    items: [
+    slug: 'illustration',
+    no: '02',
+    title: 'Illustration',
+    layout: 'trio',
+    plates: [
       {
-        src: figureDrawingAlfred,
-        alt: 'Standing figure holding a long length of fabric',
+        src: confettiProfile,
+        alt: 'Purple-haired figure in glasses facing a sketched face erupting into colorful confetti shapes',
       },
       {
-        src: charcoalFigureAlfred,
-        alt: 'Reclining figure stretched across a warm brown ground',
+        src: squidBonnetCollage,
+        alt: 'Two characters in frilled bonnets and polka dots flanking a photorealistic squid and floating eggplant fragments under an orange sky',
       },
       {
-        src: drawing2021,
-        alt: 'Twisted drapery study rendered in graphite and charcoal',
+        src: tissueStudyPage,
+        alt: 'Layered page with a bandaged forearm opened to a fibrous cross-section and hands holding a bowed figure beneath coral-pink tissue',
       },
       {
-        src: ccaStudyFour,
-        alt: 'Two seated figures drawn in pale green and charcoal',
+        src: matsuriPanels,
+        alt: 'Festival panels: children with popsicles in a matsuri crowd, dark red splatter, and a tearful figure shading their eyes',
       },
       {
-        src: ccaStudyFive,
-        alt: 'Seated figure leaning over the back of a chair',
+        src: checkeredFloorPlayer,
+        alt: 'Figure in a track jacket lying beside a fallen mic stand on a checkered floor, framed by a red music-player interface',
       },
       {
-        src: charcoalFigureJackie,
-        alt: 'Reclining figure with one arm raised behind the head',
-      },
-    ],
-  },
-  {
-    slug: 'digital',
-    title: 'Digital',
-    items: [
-      {
-        src: spiderLily,
-        alt: 'Pale-haired figure surrounded by red spider lilies',
-      },
-      {
-        src: digitalUntitledOne,
-        alt: 'Red-bordered collage with a character, mask, landscape, and skeletal hand',
-      },
-      {
-        src: digitalUntitledThree,
-        alt: 'Purple-haired character turnaround and expression sheet',
-      },
-      {
-        src: digitalUntitledSix,
-        alt: 'Sepia interior perspective study with tables and a distant skyline',
-      },
-      {
-        src: digitalUntitledFour,
-        alt: 'Purple-haired character collage with red branching lines',
-      },
-      {
-        src: digitalUntitled,
-        alt: 'Two characters in a dark red and black illustrated composition',
+        src: prawnComicPage,
+        alt: 'Comic page moving from a jungle stream over a blood-marked log, past a row of red prawn glyphs, to a bespectacled figure at a computer',
       },
     ],
   },
   {
     slug: 'animation',
+    no: '03',
     title: 'Animation',
-    items: [
+    layout: 'wide',
+    plates: [
       {
-        src: rollingStill,
-        alt: 'Rolling sphere crossing a colorful landscape toward distant houses',
+        clip: rollingClip,
+        alt: 'Animated short: a sphere rolls and tumbles across a colorful landscape',
+        title: 'Rolling Rolling, Tumbling Along',
       },
       {
-        src: rollingCharacterSheet,
-        alt: 'Character sheet for Cola, a small angular figure with a dark red scarf',
+        clip: finalProjectClip,
+        alt: 'Hand-drawn animated short film excerpt',
       },
-    ],
-  },
-  {
-    slug: 'design',
-    title: 'Design',
-    items: [
       {
-        src: designWork,
-        alt: 'Pink tunnel-book construction with layered organic cutouts',
+        clip: animationShortClip,
+        alt: 'Animated line-drawn figures melting over a warm orange wash',
       },
     ],
   },
   {
-    slug: 'printmaking',
-    title: 'Printmaking',
-    items: [
+    slug: 'sketch',
+    no: '04',
+    title: 'Sketch',
+    layout: 'dense',
+    plates: [
       {
-        src: bugsLife,
-        alt: 'Tall monotype layered with black circular patterns and red marks',
+        src: wingedFigureSketch,
+        alt: 'Pencil sketch of a winged figure in a frilled headdress, seated with one arm outstretched into a feathered wing',
       },
       {
-        src: darkCircle,
-        alt: 'Dark monotype filled with overlapping black rings and red marks',
-      },
-    ],
-  },
-  {
-    slug: 'glass',
-    title: 'Glass',
-    items: [
-      {
-        src: glassWorkOne,
-        alt: 'Red and black blown-glass form with a curling handle',
+        src: tentacleField,
+        alt: 'Child with a black bob in a yellow raglan shirt holding a curled red tentacle in tall grass',
       },
       {
-        src: glassWorkTwo,
-        alt: 'Clear sculpted glass form with a long pointed profile',
-      },
-    ],
-  },
-  {
-    slug: 'sculpture',
-    title: '3D',
-    items: [
-      {
-        src: selfPortraitSculpture,
-        alt: 'Gray sculpted head with an open mouth against a black ground',
+        src: mirrorSelfie,
+        alt: 'Mirror selfie in a steamed bathroom, a pink-haired figure in glasses giving a peace sign above the sink',
       },
       {
-        src: alienSinus,
-        alt: 'Translucent red installation arranged around a standing viewer',
-      },
-    ],
-  },
-  {
-    slug: 'storyboard',
-    title: 'Storyboard',
-    items: [
-      {
-        src: rollingCharacterSheet,
-        alt: 'Character sheet for Cola, a small angular figure with a dark red scarf',
-      },
-    ],
-  },
-  {
-    slug: 'sketches',
-    title: 'Sketches',
-    items: [
-      {
-        src: colorStudyTwelve,
-        alt: 'Loose gesture studies of standing and seated figures',
+        src: overpassStudies,
+        alt: 'Red gestural figure studies layered over a painted overpass with a blue parking sign and dark rippling water',
       },
       {
-        src: colorStudyFourteen,
-        alt: 'Charcoal study of a seated figure facing forward',
-      },
-      {
-        src: colorStudySeven,
-        alt: 'Overlapping contour studies of standing figures',
-      },
-      {
-        src: sketch2241,
-        alt: 'Seated draped figure rendered in dark charcoal',
-      },
-      {
-        src: sketch2555,
-        alt: 'Blue line study of two figures leaning over a railing',
-      },
-      {
-        src: sketch2558,
-        alt: 'Sparse gesture studies of standing figures',
-      },
-      {
-        src: sketch2562,
-        alt: 'Two standing figures reaching toward each other',
-      },
-      {
-        src: sketch2580,
-        alt: 'Overlapping contour studies of three standing figures',
-      },
-      {
-        src: sketch2589,
-        alt: 'Small studies of seated figures viewed from the side',
-      },
-      {
-        src: sketch2593,
-        alt: 'Two reclining figure studies drawn in graphite',
-      },
-      {
-        src: sketch5606,
-        alt: 'Seated figure leaning one arm across a raised surface',
+        src: coveredEyesKiss,
+        alt: 'Black-and-white scene of two figures about to kiss in a dim room, one hand covering the other’s eyes',
       },
     ],
   },
