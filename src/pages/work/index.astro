@@ -1,10 +1,5 @@
 ---
-import { Image } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
-import spiderLily from '../../assets/work/digital/spider-lily.webp';
-import aloneFlock from '../../assets/work/painting/alone-flock.webp';
-import bugsLife from '../../assets/work/printmaking/a-bugs-life-monotype.webp';
-import alienSinus from '../../assets/work/sculpture/alien-sinus-installation.webp';
 ---
 
 <Base
@@ -22,29 +17,14 @@ import alienSinus from '../../assets/work/sculpture/alien-sinus-installation.web
 
     <section class="work-grid" aria-label="Selected work">
       <a class="work-card work-card--featured" href="/case-study/">
-        <Image src={spiderLily} alt="Pale-haired figure surrounded by red spider lilies" loading="eager" />
         <span>01 / Case study</span>
         <strong>Project forthcoming</strong>
         <small>Open case study →</small>
       </a>
-      <article class="work-card">
-        <Image src={aloneFlock} alt="Dense flock of white birds surrounding a central standing figure" loading="lazy" />
-        <span>02 / Artwork</span>
-        <strong>Selected piece</strong>
-        <small>Painting</small>
-      </article>
-      <article class="work-card">
-        <Image src={bugsLife} alt="Tall monotype layered with black circular patterns and red marks" loading="lazy" />
-        <span>03 / Artwork</span>
-        <strong>Selected piece</strong>
-        <small>Printmaking</small>
-      </article>
-      <article class="work-card">
-        <Image src={alienSinus} alt="Translucent red installation arranged around a standing viewer" loading="lazy" />
-        <span>04 / Artwork</span>
-        <strong>Selected piece</strong>
-        <small>Installation</small>
-      </article>
+    </section>
+
+    <section class="work-placeholder" aria-label="Artwork placeholder">
+      <span>New work arriving</span>
     </section>
   </div>
 </Base>
@@ -137,6 +117,24 @@ import alienSinus from '../../assets/work/sculpture/alien-sinus-installation.web
 
   .work-card--featured {
     aspect-ratio: 2.25 / 1;
+  }
+
+  .work-placeholder {
+    display: grid;
+    min-height: min(32vw, 24rem);
+    max-width: var(--max-width-wide);
+    margin-inline: auto;
+    margin-block: var(--space-section);
+    place-items: center;
+    border-block: var(--border-thin) solid var(--color-border);
+    color: var(--color-text-secondary);
+    background: var(--color-paper-overlay);
+  }
+
+  .work-placeholder span {
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
   }
 
   a.work-card:hover,
