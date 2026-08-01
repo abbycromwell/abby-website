@@ -64,11 +64,10 @@ components:
   scroll-cue:
     textColor: "{colors.name-red}"
     typography: "{typography.label}"
-  work-card:
+  plate:
+    borderColor: "{colors.watercolor-edge}"
     backgroundColor: "{colors.deep-brown-red}"
-    textColor: "{colors.paper}"
     rounded: "0"
-    padding: "24px"
 ---
 
 # Design System: Abby Cromwell Portfolio
@@ -84,9 +83,10 @@ the detail and color; the interface remains restrained enough to frame it.
 
 The homepage is one continuous paper field: a coral watercolor wash carries a
 monumental left-anchored name, three artwork previews gather low, and a slim
-"Recent project" panel closes the page. The deep dried-oxblood gallery lives on
-the Work page, where full-bleed artwork sits under dark pooled washes. The
-About and Case Study pages share a quieter version of the same paper field.
+"Recent project" panel of three SongBook pages closes the page. The deep
+dried-oxblood gallery lives on the Work page, where framed artwork hangs on
+the dark ground beneath a large-type contents table. The Case Study page holds
+the SongBook flipbook; About shares the quieter paper field.
 
 **Key Characteristics:**
 
@@ -213,17 +213,21 @@ material (washes, overlap, scale), never by box shadows.
 ## Shapes
 
 Artwork and interface geometry are sharp: every surface uses square corners and
-hairline 1px borders, and no radius tokens exist. The work grid draws its seams
-by setting a Watercolor Edge background behind a 1px grid gap. If a genuinely
-compact control ever needs rounding, a radius token gets added deliberately at
-that moment.
+hairline 1px borders, and no radius tokens exist. Gallery grids hang framed:
+each plate carries its own Watercolor Edge hairline frame with the dark ground
+showing in the gaps between plates. If a genuinely compact control ever needs
+rounding, a radius token gets added deliberately at that moment.
 
 ## Components
 
 Motion across all components is quiet: color fades at 150ms, image zooms and
 wash fades at 240ms, both on an exponential ease-out
-(cubic-bezier(0.16, 1, 0.3, 1)). Nothing moves position. Under
-`prefers-reduced-motion` all movement is removed; color fades remain.
+(cubic-bezier(0.16, 1, 0.3, 1)). Nothing moves position, with two authored
+exceptions native to their content: the case-study flipbook page turn (640ms
+ease-in-out leaf rotation around the spine) and animation clips that play
+muted while in view and pause when scrolled away. Under
+`prefers-reduced-motion` all movement is removed; color fades remain, the
+flipbook swaps spreads instantly, and clips wait with native controls.
 
 ### Navigation
 
@@ -250,22 +254,31 @@ discipline line and pointing to the selected-work anchor.
 
 The homepage gathers three 3:2 artwork previews (`.art-card`) in a row of
 capped columns, separated by 1px paper hairlines, images cropped to fill. The
-"Recent project" tease is a short full-width panel: artwork anchored right,
-a Name Red uppercase label pinned top-left, and a 2% image zoom on hover.
+"Recent project" tease is a short full-width panel of three SongBook pages in
+a hairline-gapped grid, a Name Red uppercase label pinned top-left, a 2% image
+zoom on hover, linking to the case study.
 
-### Work cards
+### Work page — Table of Plates
 
-Work-page panels are full-bleed artwork under a Pooled Dark wash with paper
-text: an uppercase numbered label, a compressed Title, and a small medium tag.
-Hover and focus thin the wash to Pooled Dark Soft and zoom the artwork 2%. The
-featured case-study card runs 2.25:1 across the full grid; secondary pieces sit
-two-up at 1.13:1 past 48rem.
+The work page opens on paper: a hero-style "Selected work" line, then a
+contents table (`.plate-index`) of large-type rows — number, category, count —
+each rule anchoring to its chapter in the gallery. The dark gallery hangs
+framed plates (`.plate`): artwork inside a Watercolor Edge hairline frame, the
+dark ground showing between plates, and no text over the artwork. Chapter
+rules carry the number, title, and count. The featured Typography chapter
+shows the SongBook cover as a single full-width plate linking to the case
+study, with a small corner cta. Animation plates hold muted looping clips that
+play in view (letterboxed, never cropped); a plate awaiting artwork shows the
+translucent Paper Wash membrane with a small "Forthcoming" label.
 
-### Case-study placeholders
+### Case study — SongBook
 
-Until content lands, the case-study hero is a Paper Wash field with hairline
-top and bottom borders and a single uppercase label. Detail rows (Role, Medium,
-Year) open with a Watercolor Edge top rule, a kicker, and a large value.
+The case study opens with detail rows (Role, Medium, Year: Watercolor Edge top
+rule, kicker, large value), a premise section quoting the book's own essay,
+then the flipbook: one open spread inside a hairline frame, pages turning
+around the spine via buttons, arrow keys, edge clicks, or swipe, with a
+tabular "N / 24" counter. Content still to come (the song-animation clip)
+keeps the labeled Paper Wash placeholder treatment.
 
 ## Do's and Don'ts
 

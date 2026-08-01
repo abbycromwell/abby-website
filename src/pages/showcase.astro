@@ -80,7 +80,7 @@ const navSections = [
     ['#component-scroll-cue', 'Scroll Cue'],
     ['#component-art-card', 'Art Card'],
     ['#component-work-tease', 'Work Tease'],
-    ['#component-work-card', 'Work Card'],
+    ['#component-work-card', 'Plate'],
     ['#component-case-placeholder', 'Case Placeholder'],
   ]],
 ];
@@ -351,15 +351,16 @@ const navSections = [
           </a>
         </div>
         <p class="ds-note">
-          The homepage's slim panel into Work: artwork anchored right, Name Red label pinned
-          top-left, 2% zoom on hover at <code>--duration-standard</code>.
+          The homepage's slim panel into the case study: book pages in a hairline-gapped
+          grid, Name Red label pinned top-left, 2% zoom on hover at
+          <code>--duration-standard</code>.
         </p>
       </section>
 
       <section id="component-work-card">
-        <h2>Work Card</h2>
-        <div class="ds-demo">
-          <a class="ds-work-card" href="#component-work-card">
+        <h2>Plate</h2>
+        <div class="ds-demo ds-demo--dark">
+          <figure class="ds-plate">
             <Image
               src={tripleApple}
               alt="Reclining robed figure with a round pale helmet, red apples falling and splitting around their sandals"
@@ -367,14 +368,12 @@ const navSections = [
               widths={[480, 640]}
               sizes="18rem"
             />
-            <span>01 / Case study</span>
-            <strong>Project forthcoming</strong>
-            <small>Open case study →</small>
-          </a>
+          </figure>
         </div>
         <p class="ds-note">
-          The Work-page gallery card: artwork under a Pooled Dark wash with paper text.
-          Hover thins the wash to Pooled Dark Soft and zooms the art 2%.
+          The gallery's framed hang: artwork inside a Watercolor Edge hairline frame on the
+          dark ground, no text over the art. Chapter rules above the grid carry all labels;
+          clips play muted in view inside the same frame.
         </p>
       </section>
 
@@ -667,68 +666,24 @@ const navSections = [
     transform: scale(1.02);
   }
 
-  .ds-work-card {
-    position: relative;
-    isolation: isolate;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    aspect-ratio: 1.13 / 1;
-    max-width: 18rem;
-    overflow: hidden;
+  .ds-demo--dark {
     padding: var(--space-lg);
-    color: var(--color-text-on-dark);
     background: var(--color-bg-dark);
   }
 
-  .ds-work-card::after {
-    position: absolute;
-    z-index: -1;
-    inset: 0;
-    content: "";
-    background: var(--color-dark-overlay);
-    transition: background var(--duration-standard) var(--ease-out);
+  .ds-plate {
+    aspect-ratio: 1 / 1;
+    max-width: 18rem;
+    margin: 0;
+    border: var(--border-thin) solid var(--color-border);
+    background: var(--color-bg-dark);
   }
 
-  .ds-work-card img {
-    position: absolute;
-    z-index: -2;
-    inset: 0;
+  .ds-plate img {
+    display: block;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform var(--duration-standard) var(--ease-out);
-  }
-
-  .ds-work-card span,
-  .ds-work-card small {
-    font-size: var(--text-xs);
-    letter-spacing: var(--tracking-label);
-    text-transform: uppercase;
-  }
-
-  .ds-work-card strong {
-    max-width: 14ch;
-    font-size: var(--text-art-title);
-    font-weight: var(--weight-normal);
-    line-height: var(--leading-tight);
-    letter-spacing: var(--tracking-display);
-    text-transform: uppercase;
-  }
-
-  .ds-work-card:hover,
-  .ds-work-card:focus-visible {
-    color: var(--color-text-on-dark);
-  }
-
-  .ds-work-card:hover::after,
-  .ds-work-card:focus-visible::after {
-    background: var(--color-dark-overlay-soft);
-  }
-
-  .ds-work-card:hover img,
-  .ds-work-card:focus-visible img {
-    transform: scale(1.02);
   }
 
   .ds-case-placeholder {

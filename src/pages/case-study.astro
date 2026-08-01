@@ -1,31 +1,158 @@
 ---
+import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
+
+/*
+  The 24 book spreads, in the PDF's export order: cover, contents, essay,
+  review, discography, black & white studies, color & image studies,
+  animation stills, colophon.
+*/
+const spreadImages = import.meta.glob('../assets/case-study/spread-*.webp', {
+  import: 'default',
+  eager: true,
+});
+
+const spreadAlts = [
+  'Cover: coral watercolor streaks with the song title m@HΦu 少女 in red display letters',
+  'Contents spread listing editorial, black and white, color and image, and animation chapters',
+  'Song essay spread: why the song was chosen and why it is set in Futura',
+  'Album review spread for Mariko Goto’s 299792458 with a portrait and a red cityscape illustration',
+  'Goto-san in Midori: live photo and an annotated Midori discography',
+  'Black and white studies 1 to 4: stacked text-block grids and tiny centered settings',
+  'Black and white studies 5 to 8: a figure built from repeated type, scattered numerals, circular flows',
+  'Black and white studies 9 to 12: dense glyph fields and faint letterpress-like settings',
+  'Black and white studies 13 to 16: pattern fields, mirrored settings, and thread-like arcs of type',
+  'Black and white studies 17 to 20: octopus of dotted type, umbrella arcs, a monumental 女 character',
+  'Inspirations spread on Shūzō Oshimi’s Flowers of Evil with anime stills and a quote on puberty',
+  'Black and white study 24: skewed collage of white-on-black type blocks',
+  'Black and white study 23: barcode setting of 299792458 under vertical rules',
+  'Black and white study 22: tumbling black-and-white cards with mariko goto labels',
+  'Black and white study 21: 少女 characters over a black-and-white tile pattern',
+  'Color studies 25 and 26: chromatic type debris on dark red, white glyphs raining on sky blue',
+  'Color studies 27 and 28: red DOKI lyric poster and layered gray glyph field',
+  'Color study 29: photo cover of a figure in tall grass holding a red tentacle, wrapped in type',
+  'Color study 30: night street photo montage with thin white display type on black',
+  'Color study 31: illustrated cover of a crouching figure with ants, title in red',
+  'Color study 32: blue city montage cover with DOKI type and tangled cables',
+  'Animation stills: nine frames of lyric type flashing over live concert footage',
+  'Animation stills: eighteen frames in black, blue, and red framings',
+  'Colophon: typeset in Futura PT, text paper Neenah Royal Sundance brilliant white',
+];
+
+const spreads = Object.keys(spreadImages)
+  .sort()
+  .map((path, i) => ({ src: spreadImages[path], alt: spreadAlts[i] ?? 'SongBook spread' }));
 ---
 
 <Base
-  title="Case Study — Abby Cromwell"
-  description="Case study by Abby Cromwell."
+  title="SongBook — Abby Cromwell"
+  description="SongBook: a typographic study of one song, M@HΦU 少女。。 by Mariko Gotou, set entirely in Futura."
   atmospheric
 >
   <div class="case-study">
     <header class="case-header">
-      <p class="eyebrow">Case study / forthcoming</p>
-      <h1>Project title<br />to come.</h1>
+      <p class="eyebrow">Case study · Typography</p>
+      <h1>SongBook</h1>
       <p>
-        This page is ready for a project narrative, process notes, final artwork,
-        and credits once Abby chooses the first case study.
+        A print book that studies one song — “M@HΦU 少女。。” by Mariko Gotou —
+        through essays, reviews, and chapter after chapter of type experiments,
+        set entirely in Futura.
       </p>
     </header>
 
-    <section class="case-placeholder" aria-label="Artwork placeholder">
-      <span>Hero artwork</span>
+    <section class="case-notes" aria-label="Project details">
+      <div><p class="eyebrow">Role</p><p>Design · Illustration · Writing</p></div>
+      <div><p class="eyebrow">Medium</p><p>Print book, set in Futura PT</p></div>
+      <div><p class="eyebrow">Year</p><p>2026</p></div>
     </section>
 
-    <section class="case-notes" aria-label="Project details">
-      <div><p class="eyebrow">Role</p><p>To be defined</p></div>
-      <div><p class="eyebrow">Medium</p><p>To be defined</p></div>
-      <div><p class="eyebrow">Year</p><p>To be defined</p></div>
+    <section class="case-premise" aria-labelledby="premise-title">
+      <h2 id="premise-title">One song, one typeface</h2>
+      <p>
+        The book opens with a song essay: what “M@HΦU 少女。。” (“Mahou Shoujo” —
+        magical girl) is, and why it stuck. From the essay:
+      </p>
+      <blockquote>
+        <p>
+          “If I had to summarize the song with one word it would be — bittersweet.
+          A fleeting moment filled with emotional release, containing clashing
+          feelings of joy and grief.”
+        </p>
+      </blockquote>
+      <p>
+        Every study that follows is set in Futura — round, clean, seemingly
+        without imperfections — chosen so the typeface intentionally clashes
+        with the song’s unruly, multi-script title and its duality between an
+        idealized life and freedom from conformity.
+      </p>
     </section>
+
+    <section class="case-reader" aria-labelledby="reader-title">
+      <div class="case-reader__rule">
+        <h2 id="reader-title">Read the book</h2>
+        <div class="case-reader__controls">
+          <button type="button" data-book-prev aria-label="Previous spread">
+            <span aria-hidden="true">←</span> Prev
+          </button>
+          <p aria-live="polite">
+            <span data-spread-count>1</span> / {spreads.length}
+            <span class="case-reader__sr" data-spread-alt></span>
+          </p>
+          <button type="button" data-book-next aria-label="Next spread">
+            Next <span aria-hidden="true">→</span>
+          </button>
+        </div>
+      </div>
+      <div class="case-reader__stage">
+        <div
+          class="book"
+          data-book
+          tabindex="0"
+          role="region"
+          aria-roledescription="book"
+          aria-label="SongBook spreads. Use the arrow keys to turn pages."
+        >
+          <ul>
+            {spreads.map((spread, i) => (
+              <li>
+                <Image
+                  src={spread.src}
+                  alt={spread.alt}
+                  widths={[768, 1152, 2040]}
+                  sizes="(min-width: 48rem) 88vw, 95vw"
+                  loading={i < 3 ? 'eager' : 'lazy'}
+                />
+              </li>
+            ))}
+          </ul>
+          <div class="book__leaf" data-leaf hidden>
+            <div class="book__face book__face--front"></div>
+            <div class="book__face book__face--back"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="case-animation" aria-labelledby="animation-title">
+      <div class="case-animation__inner">
+        <h2 id="animation-title">Song animation</h2>
+        <p>
+          The book closes its argument in motion: a kinetic-type animation that
+          sets the lyrics flashing over live footage. Its stills close the
+          spreads above; the clip itself lands here once it is found.
+        </p>
+        <div class="case-animation__placeholder">
+          <span>Clip forthcoming</span>
+        </div>
+      </div>
+    </section>
+
+    <aside class="case-close">
+      <p>
+        Typeset in Futura PT. Text paper: Neenah Royal Sundance, brilliant white.
+      </p>
+      <a href="/work/#typography">Typography in the gallery <span aria-hidden="true">→</span></a>
+    </aside>
   </div>
 </Base>
 
@@ -48,7 +175,7 @@ import Base from '../layouts/Base.astro';
 
   h1 {
     margin-bottom: var(--space-lg);
-    font-size: var(--text-display);
+    font-size: min(var(--text-display), 10.5vw);
     line-height: var(--leading-display);
     letter-spacing: var(--tracking-display);
     text-transform: uppercase;
@@ -60,23 +187,6 @@ import Base from '../layouts/Base.astro';
     color: var(--color-text-secondary);
     font-size: var(--text-lg);
     line-height: var(--leading-normal);
-  }
-
-  .case-placeholder {
-    display: grid;
-    min-height: min(58vw, 44rem);
-    max-width: var(--max-width-wide);
-    margin-inline: auto;
-    place-items: center;
-    border-block: var(--border-thin) solid var(--color-border);
-    color: var(--color-text-secondary);
-    background: var(--color-paper-overlay);
-  }
-
-  .case-placeholder span {
-    font-size: var(--text-xs);
-    letter-spacing: var(--tracking-label);
-    text-transform: uppercase;
   }
 
   .case-notes {
@@ -97,9 +207,407 @@ import Base from '../layouts/Base.astro';
     font-size: var(--text-lg);
   }
 
+  /* Premise */
+
+  .case-premise {
+    max-width: var(--max-width-wide);
+    margin-inline: auto;
+    padding-inline: var(--space-edge);
+    padding-bottom: var(--space-section);
+  }
+
+  .case-premise h2,
+  .case-reader__rule h2,
+  .case-animation h2 {
+    margin-bottom: var(--space-lg);
+    color: var(--color-accent);
+    font-size: var(--text-xl);
+    letter-spacing: var(--tracking-display);
+    text-transform: uppercase;
+  }
+
+  .case-premise p {
+    max-width: var(--max-width-prose);
+    color: var(--color-text-secondary);
+    line-height: var(--leading-normal);
+  }
+
+  .case-premise blockquote {
+    max-width: var(--max-width-copy);
+    margin: var(--space-xl) 0;
+    padding-left: var(--space-lg);
+    border-left: var(--border-thin) solid var(--color-border);
+  }
+
+  .case-premise blockquote p {
+    max-width: none;
+    margin: 0;
+    color: var(--color-hero-name);
+    font-size: var(--text-xl);
+    line-height: var(--leading-tight);
+  }
+
+  /* Reader strip */
+
+  .case-reader {
+    padding-block: var(--space-xl) var(--space-section);
+    color: var(--color-text-on-dark);
+    background: var(--color-bg-dark);
+  }
+
+  .case-reader__rule {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-2xs) var(--space-lg);
+    max-width: var(--max-width-wide);
+    margin-inline: auto;
+    margin-bottom: var(--space-lg);
+    padding-inline: var(--space-edge);
+  }
+
+  .case-reader__rule h2 {
+    margin-bottom: 0;
+    color: var(--color-text-on-dark);
+  }
+
+  .case-reader__controls {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-lg);
+  }
+
+  .case-reader__controls p {
+    margin: 0;
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .case-reader__controls button {
+    min-height: 44px;
+    padding: var(--space-xs) var(--space-sm);
+    border: 0;
+    background: none;
+    color: var(--color-text-on-dark);
+    font-family: var(--font-sans);
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: color var(--duration-fast) var(--ease-out);
+  }
+
+  .case-reader__controls button:hover,
+  .case-reader__controls button:focus-visible {
+    color: var(--color-accent);
+  }
+
+  .case-reader__controls button:focus-visible {
+    outline: var(--border-thin) solid currentColor;
+    outline-offset: var(--space-2xs);
+  }
+
+  .case-reader__controls button[disabled] {
+    opacity: 0.4;
+    cursor: default;
+  }
+
+  .case-reader__sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .case-reader__stage {
+    max-width: var(--max-width-wide);
+    margin-inline: auto;
+    padding-inline: var(--space-edge);
+  }
+
+  /*
+    The book. Without JS the spreads stack vertically; with JS the list
+    becomes one open spread and a turning leaf, hinged at the spine.
+  */
+  .book {
+    position: relative;
+    border: var(--border-thin) solid var(--color-border);
+    perspective: 2400px;
+  }
+
+  .book:focus-visible {
+    outline: var(--border-thin) solid var(--color-accent);
+    outline-offset: var(--space-2xs);
+  }
+
+  .book ul {
+    display: grid;
+    gap: var(--space-md);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .book img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .book--active {
+    aspect-ratio: 1224 / 432;
+  }
+
+  .book--active ul {
+    display: block;
+  }
+
+  .book--active li {
+    position: absolute;
+    inset: 0;
+    visibility: hidden;
+  }
+
+  .book--active li img {
+    height: 100%;
+  }
+
+  .book--active li.is-current {
+    z-index: 2;
+    visibility: visible;
+  }
+
+  .book--active li.is-under {
+    z-index: 1;
+    visibility: visible;
+  }
+
+  .book--active li.is-turn-top {
+    z-index: 2;
+    visibility: visible;
+    clip-path: inset(0 50% 0 0);
+  }
+
+  .book__leaf {
+    position: absolute;
+    z-index: 3;
+    top: 0;
+    left: 50%;
+    width: 50%;
+    height: 100%;
+    transform-origin: left center;
+    transform-style: preserve-3d;
+    will-change: transform;
+    transition: transform 640ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .book__face {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    backface-visibility: hidden;
+    background: var(--color-bg);
+  }
+
+  .book__face img {
+    position: absolute;
+    top: 0;
+    width: 200%;
+    max-width: none;
+    height: 100%;
+  }
+
+  .book__face--front img {
+    left: -100%;
+  }
+
+  .book__face--back {
+    transform: rotateY(180deg);
+  }
+
+  .book__face--back img {
+    left: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .book__leaf {
+      transition: none;
+    }
+  }
+
+  /* Song animation */
+
+  .case-animation {
+    padding-block: var(--space-section) 0;
+    background: var(--color-bg);
+  }
+
+  .case-animation__inner {
+    max-width: var(--max-width-wide);
+    margin-inline: auto;
+    padding-inline: var(--space-edge);
+  }
+
+  .case-animation p {
+    max-width: var(--max-width-prose);
+    margin-bottom: var(--space-xl);
+    color: var(--color-text-secondary);
+  }
+
+  .case-animation__placeholder {
+    display: grid;
+    min-height: min(40vw, 24rem);
+    place-items: center;
+    border-block: var(--border-thin) solid var(--color-border);
+    color: var(--color-text-secondary);
+    background: var(--color-paper-overlay);
+  }
+
+  .case-animation__placeholder span {
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+  }
+
+  /* Close */
+
+  .case-close {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-lg);
+    max-width: var(--max-width-wide);
+    margin-inline: auto;
+    padding: var(--space-section) var(--space-edge);
+  }
+
+  .case-close p {
+    max-width: var(--max-width-prose);
+    margin: 0;
+    color: var(--color-text-secondary);
+  }
+
+  .case-close a {
+    color: var(--color-hero-name);
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    white-space: nowrap;
+    transition: color var(--duration-fast) var(--ease-out);
+  }
+
+  .case-close a:hover,
+  .case-close a:focus-visible {
+    color: var(--color-accent);
+  }
+
   @media (min-width: 48rem) {
-    .case-notes {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+    .spread {
+      width: min(72vw, 60rem);
     }
   }
 </style>
+
+<script>
+  const book = document.querySelector('[data-book]');
+  if (book) {
+    const pages = [...book.querySelectorAll('ul > li')];
+    const leaf = book.querySelector('[data-leaf]');
+    const front = leaf.querySelector('.book__face--front');
+    const back = leaf.querySelector('.book__face--back');
+    const counter = document.querySelector('[data-spread-count]');
+    const altOut = document.querySelector('[data-spread-alt]');
+    const prevBtn = document.querySelector('[data-book-prev]');
+    const nextBtn = document.querySelector('[data-book-next]');
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let current = 0;
+    let busy = false;
+
+    book.classList.add('book--active');
+
+    const show = (i) => {
+      pages.forEach((li, n) => {
+        li.classList.toggle('is-current', n === i);
+        li.setAttribute('aria-hidden', n === i ? 'false' : 'true');
+      });
+      counter.textContent = String(i + 1);
+      altOut.textContent = ' — ' + (pages[i].querySelector('img')?.alt ?? '');
+      prevBtn.disabled = i === 0;
+      nextBtn.disabled = i === pages.length - 1;
+    };
+
+    const half = (i) => {
+      const img = pages[i].querySelector('img').cloneNode(true);
+      img.loading = 'eager';
+      img.removeAttribute('aria-hidden');
+      img.alt = '';
+      return img;
+    };
+
+    const turn = (dir) => {
+      const target = current + dir;
+      if (busy || target < 0 || target >= pages.length) return;
+      if (reduceMotion) {
+        current = target;
+        show(current);
+        return;
+      }
+      busy = true;
+      const a = dir > 0 ? current : target;
+      const b = dir > 0 ? target : current;
+      pages[a].classList.add('is-turn-top');
+      pages[b].classList.add('is-under');
+      front.replaceChildren(half(a));
+      back.replaceChildren(half(b));
+      leaf.hidden = false;
+      leaf.style.transition = 'none';
+      leaf.style.transform = dir > 0 ? 'rotateY(0deg)' : 'rotateY(-180deg)';
+      leaf.getBoundingClientRect();
+      leaf.style.transition = '';
+      requestAnimationFrame(() => {
+        leaf.style.transform = dir > 0 ? 'rotateY(-180deg)' : 'rotateY(0deg)';
+      });
+      const done = () => {
+        if (!busy) return;
+        busy = false;
+        leaf.hidden = true;
+        pages[a].classList.remove('is-turn-top');
+        pages[b].classList.remove('is-under');
+        current = target;
+        show(current);
+      };
+      leaf.addEventListener('transitionend', done, { once: true });
+      setTimeout(done, 900);
+    };
+
+    prevBtn.addEventListener('click', () => turn(-1));
+    nextBtn.addEventListener('click', () => turn(1));
+
+    book.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') { e.preventDefault(); turn(1); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); turn(-1); }
+    });
+
+    let downX = null;
+    book.addEventListener('pointerdown', (e) => { downX = e.clientX; });
+    book.addEventListener('pointerup', (e) => {
+      if (downX === null) return;
+      const delta = e.clientX - downX;
+      downX = null;
+      if (Math.abs(delta) > 40) {
+        turn(delta < 0 ? 1 : -1);
+      } else {
+        const mid = book.getBoundingClientRect();
+        turn(e.clientX > mid.left + mid.width / 2 ? 1 : -1);
+      }
+    });
+
+    show(0);
+  }
+</script>

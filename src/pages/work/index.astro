@@ -1,31 +1,129 @@
 ---
+import { Image } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
+import { chapters } from '../../data/work.js';
+import songbookCover from '../../assets/case-study/spread-01.webp';
+
+const featured = chapters.find((chapter) => chapter.kind === 'case-study');
+const galleryChapters = chapters.filter((chapter) => chapter.plates);
 ---
 
+<!--
+  THESIS: The work page is the contents leaf of a printed folio — typography
+  carries the room and the plates carry the art; refuses the thumbnail-grid archive.
+  OWN-WORLD: Meninges paper and deep brown-red gallery, coral hairline seams,
+  translucent membrane placeholders, compressed Jost uppercase, wet-red interaction points.
+  STORY: An employer reads four large contents rows, jumps to a chapter or walks
+  the gallery, watches the clips play, opens the typography case study, leaves toward About.
+  FIRST VIEWPORT: Kicker and three-line compressed headline anchor left; the
+  contents table begins beneath, its first rule visible as the invitation to scroll.
+  FORM: Table of Plates — candidate 3 of 7 grounded structures, seed a15b54c4.
+  Staging: animation clips play only while in view; nothing moves position.
+-->
 <Base
   title="Work — Abby Cromwell"
-  description="Selected work by Abby Cromwell."
+  description="Selected work by Abby Cromwell: typography, illustration, animation, and sketch."
   activePage="work"
   atmospheric
 >
   <div class="inner-page">
     <header class="page-intro">
-      <p class="eyebrow">Selected work</p>
-      <h1>Worlds,<br />characters,<br />stories.</h1>
-      <p>Illustrative art and character-led storytelling for entertainment worlds.</p>
+      <h1>Selected work</h1>
     </header>
 
-    <section class="work-grid" aria-label="Selected work">
-      <a class="work-card work-card--featured" href="/case-study/">
-        <span>01 / Case study</span>
-        <strong>Project forthcoming</strong>
-        <small>Open case study →</small>
-      </a>
-    </section>
+    <nav class="plate-index" aria-label="Contents">
+      <ol>
+        {chapters.map((chapter) => (
+          <li>
+            <a class="plate-index__row" href={`#${chapter.slug}`}>
+              <span class="plate-index__no">{chapter.no}</span>
+              <span class="plate-index__name">{chapter.title}</span>
+              <span class="plate-index__meta">
+                {chapter.plates ? `${chapter.plates.length} works` : 'Case study'}
+              </span>
+            </a>
+          </li>
+        ))}
+      </ol>
+    </nav>
 
-    <section class="work-placeholder" aria-label="Artwork placeholder">
-      <span>New work arriving</span>
-    </section>
+    <div class="gallery">
+      {featured && (
+        <section id={featured.slug} class="chapter" aria-labelledby="ch-typography">
+          <header class="chapter__rule">
+            <h2 id="ch-typography">
+              <span class="chapter__no">{featured.no}</span>
+              {featured.title}
+            </h2>
+            <p>Case study · SongBook</p>
+          </header>
+          <a class="case-plate" href={featured.href} aria-label="Open the SongBook case study">
+            <Image
+              src={songbookCover}
+              alt="SongBook cover spread: coral watercolor streaks with the song title m@HΦu 少女 in red display letters"
+              widths={[768, 1152, 2040]}
+              sizes="(min-width: 48rem) 92vw, 95vw"
+              loading="eager"
+            />
+            <small class="case-plate__cta">Open case study <span aria-hidden="true">→</span></small>
+          </a>
+        </section>
+      )}
+
+      {galleryChapters.map((chapter) => {
+        const empty = chapter.plates.every((plate) => !plate);
+        return (
+          <section id={chapter.slug} class="chapter" aria-labelledby={`ch-${chapter.slug}`}>
+            <header class="chapter__rule">
+              <h2 id={`ch-${chapter.slug}`}>
+                <span class="chapter__no">{chapter.no}</span>
+                {chapter.title}
+              </h2>
+              <p>{empty ? `${chapter.plates.length} works · forthcoming` : `${chapter.plates.length} works`}</p>
+            </header>
+            {/* Empty plate grids are decorative; aria-hidden lifts once artwork lands. */}
+            <ul class={`chapter__grid chapter__grid--${chapter.layout}`} aria-hidden={empty ? 'true' : undefined}>
+              {chapter.plates.map((plate) => (
+                <li>
+                  {plate?.clip ? (
+                    <figure class="plate plate--filled">
+                      <video
+                        class="plate__clip"
+                        src={plate.clip}
+                        muted
+                        loop
+                        playsinline
+                        preload="metadata"
+                        aria-label={plate.alt}
+                      ></video>
+                    </figure>
+                  ) : plate ? (
+                    <figure class="plate plate--filled">
+                      <Image
+                        src={plate.src}
+                        alt={plate.alt}
+                        widths={[480, 768, 1152]}
+                        sizes="(min-width: 48rem) 45vw, 95vw"
+                        loading="lazy"
+                      />
+                    </figure>
+                  ) : (
+                    <div class="plate">
+                      <span class="plate__label">Forthcoming</span>
+                    </div>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </section>
+        );
+      })}
+    </div>
+
+    <aside class="page-close">
+      <p>Illustrative art and character-led storytelling for entertainment worlds.</p>
+      <a href="/about/">About the artist <span aria-hidden="true">→</span></a>
+    </aside>
   </div>
 </Base>
 
@@ -38,134 +136,315 @@ import Base from '../../layouts/Base.astro';
   .page-intro {
     max-width: var(--max-width-wide);
     margin-inline: auto;
-    padding: var(--space-page-top) var(--space-edge) var(--space-section);
+    padding: var(--space-page-top) var(--space-edge) var(--space-xl);
   }
 
+  /* Matches the homepage hero name: light, wide-tracked, Name Red */
   h1 {
-    margin-bottom: var(--space-lg);
-    font-size: var(--text-display);
-    line-height: var(--leading-display);
-    letter-spacing: var(--tracking-display);
+    margin-bottom: 0;
+    color: var(--color-hero-name);
+    /* min() keeps the single line inside narrow screens */
+    font-size: min(var(--text-display), 8.5vw);
+    font-weight: var(--weight-light);
+    line-height: var(--leading-hero);
+    letter-spacing: var(--tracking-label);
     text-transform: uppercase;
   }
 
-  .page-intro > p:last-child {
-    max-width: var(--max-width-prose);
-    margin-bottom: 0;
-    color: var(--color-text-secondary);
-    font-size: var(--text-lg);
-    line-height: var(--leading-normal);
-  }
+  /* Table of plates */
 
-  .work-grid {
-    display: grid;
+  .plate-index {
     max-width: var(--max-width-wide);
     margin-inline: auto;
-    border: var(--border-thin) solid var(--color-border);
-    background: var(--color-border);
-    gap: var(--border-thin);
+    padding-inline: var(--space-edge);
   }
 
-  .work-card {
-    position: relative;
-    isolation: isolate;
-    display: flex;
-    aspect-ratio: 1.13 / 1;
-    min-width: 0;
-    overflow: hidden;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: var(--space-lg);
+  .plate-index ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .plate-index__row {
+    display: grid;
+    grid-template-columns: minmax(2.5rem, 4rem) minmax(0, 1fr) auto;
+    align-items: baseline;
+    gap: var(--space-md);
+    padding-block: var(--space-lg);
+    border-top: var(--border-thin) solid var(--color-border);
+    color: var(--color-text);
+  }
+
+  .plate-index li:last-child .plate-index__row {
+    border-bottom: var(--border-thin) solid var(--color-border);
+  }
+
+  .plate-index__no {
+    color: var(--color-hero-name);
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-label);
+  }
+
+  .plate-index__name {
+    font-size: var(--text-xl);
+    line-height: var(--leading-tight);
+    letter-spacing: var(--tracking-display);
+    text-transform: uppercase;
+    transition: color var(--duration-fast) var(--ease-out);
+  }
+
+  .plate-index__row:hover .plate-index__name,
+  .plate-index__row:focus-visible .plate-index__name {
+    color: var(--color-accent);
+  }
+
+  .plate-index__meta {
+    color: var(--color-text-secondary);
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+  }
+
+  /* Gallery */
+
+  .gallery {
+    margin-top: var(--space-section);
+    padding-block: var(--space-xl) var(--space-section);
     color: var(--color-text-on-dark);
     background: var(--color-bg-dark);
   }
 
-  .work-card::after {
-    position: absolute;
-    z-index: -1;
-    inset: 0;
-    content: "";
-    background: var(--color-dark-overlay);
-    transition: background var(--duration-standard) var(--ease-out);
+  .chapter {
+    max-width: var(--max-width-wide);
+    margin-inline: auto;
+    padding-inline: var(--space-edge);
+    scroll-margin-top: var(--space-xl);
   }
 
-  .work-card img {
-    position: absolute;
-    z-index: -2;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform var(--duration-standard) var(--ease-out);
+  .chapter + .chapter {
+    margin-top: var(--space-section);
   }
 
-  .work-card span,
-  .work-card small {
-    font-size: var(--text-xs);
-    letter-spacing: var(--tracking-label);
-    text-transform: uppercase;
+  .chapter__rule {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-2xs) var(--space-lg);
+    margin-bottom: var(--space-lg);
+    padding-bottom: var(--space-sm);
+    border-bottom: var(--border-thin) solid var(--color-border);
   }
 
-  .work-card strong {
-    max-width: 14ch;
-    font-size: var(--text-art-title);
-    font-weight: var(--weight-normal);
-    line-height: var(--leading-tight);
+  .chapter__rule h2 {
+    flex: 1 1 auto;
+    margin: 0;
+    font-size: var(--text-xl);
     letter-spacing: var(--tracking-display);
     text-transform: uppercase;
   }
 
-  .work-card--featured {
-    aspect-ratio: 2.25 / 1;
+  .chapter__no {
+    margin-right: var(--space-sm);
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-label);
   }
 
-  .work-placeholder {
+  .chapter__rule p {
+    margin: 0;
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  /* Featured case plate — the SongBook cover, pure artwork as the link */
+
+  .case-plate {
+    position: relative;
+    display: block;
+    border: var(--border-thin) solid var(--color-border);
+  }
+
+  .case-plate img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .case-plate__cta {
+    position: absolute;
+    bottom: var(--space-md);
+    left: var(--space-md);
+    color: var(--color-hero-name);
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    transition: color var(--duration-fast) var(--ease-out);
+  }
+
+  .case-plate:hover .case-plate__cta,
+  .case-plate:focus-visible .case-plate__cta {
+    color: var(--color-accent);
+  }
+
+  /* Plates */
+
+  /* Framed hang: each plate carries its own hairline frame on the dark wall */
+  .chapter__grid {
     display: grid;
-    min-height: min(32vw, 24rem);
-    max-width: var(--max-width-wide);
-    margin-inline: auto;
-    margin-block: var(--space-section);
-    place-items: center;
-    border-block: var(--border-thin) solid var(--color-border);
-    color: var(--color-text-secondary);
+    margin: 0;
+    padding: 0;
+    gap: var(--space-md);
+    list-style: none;
+  }
+
+  .chapter__grid li {
+    min-width: 0;
+  }
+
+  .chapter__grid--dense {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .chapter__grid--dense li:first-child {
+    grid-column: span 2;
+  }
+
+  .plate {
+    position: relative;
+    isolation: isolate;
+    height: 100%;
+    aspect-ratio: 4 / 3;
+    margin: 0;
+    border: var(--border-thin) solid var(--color-border);
+    background: var(--color-bg-dark);
+  }
+
+  /* Membrane wash for plates still awaiting artwork */
+  .plate:not(.plate--filled)::before {
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    content: "";
     background: var(--color-paper-overlay);
   }
 
-  .work-placeholder span {
+  .chapter__grid--trio .plate {
+    aspect-ratio: 1 / 1;
+  }
+
+  .chapter__grid--wide .plate {
+    aspect-ratio: 4 / 3;
+  }
+
+  .chapter__grid--dense .plate {
+    aspect-ratio: 4 / 5;
+  }
+
+  .chapter__grid--dense li:first-child .plate {
+    aspect-ratio: 1.63 / 1;
+  }
+
+  .plate--filled img,
+  .plate--filled .plate__clip {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Clips letterbox onto the dark ground instead of cropping motion */
+  .plate--filled .plate__clip {
+    object-fit: contain;
+  }
+
+  .plate__label {
+    position: absolute;
+    top: var(--space-md);
+    left: var(--space-md);
+    color: var(--color-text-secondary);
     font-size: var(--text-xs);
     letter-spacing: var(--tracking-label);
     text-transform: uppercase;
   }
 
-  a.work-card:hover,
-  a.work-card:focus-visible {
-    color: var(--color-text-on-dark);
+  /* Close */
+
+  .page-close {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-lg);
+    max-width: var(--max-width-wide);
+    margin-inline: auto;
+    padding: var(--space-section) var(--space-edge);
   }
 
-  a.work-card:hover::after,
-  a.work-card:focus-visible::after {
-    background: var(--color-dark-overlay-soft);
+  .page-close p {
+    max-width: var(--max-width-prose);
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: var(--text-lg);
   }
 
-  a.work-card:hover img,
-  a.work-card:focus-visible img {
-    transform: scale(1.02);
+  .page-close a {
+    color: var(--color-hero-name);
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    white-space: nowrap;
+    transition: color var(--duration-fast) var(--ease-out);
+  }
+
+  .page-close a:hover,
+  .page-close a:focus-visible {
+    color: var(--color-accent);
   }
 
   @media (min-width: 48rem) {
-    .work-grid {
+    .chapter__grid--trio {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .chapter__grid--wide {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .work-card--featured {
+    .chapter__grid--wide li:first-child {
       grid-column: span 2;
     }
-  }
 
-  @media (prefers-reduced-motion: reduce) {
-    .work-card::after,
-    .work-card img {
-      transition: none;
+    .chapter__grid--wide li:first-child .plate {
+      aspect-ratio: 2.25 / 1;
+    }
+
+    .chapter__grid--dense {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
     }
   }
 </style>
+
+<script>
+  const clips = document.querySelectorAll('.plate__clip');
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduceMotion || !('IntersectionObserver' in window)) {
+    clips.forEach((clip) => clip.setAttribute('controls', ''));
+  } else {
+    const stage = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            entry.target.play().catch(() => {});
+          } else {
+            entry.target.pause();
+          }
+        }
+      },
+      { threshold: 0.35 }
+    );
+    clips.forEach((clip) => stage.observe(clip));
+  }
+</script>

@@ -2,23 +2,25 @@
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import heroWatercolor from '../assets/home/hero-watercolor-veins.png';
-import recentProjectPanel from '../assets/home/recent-project-panel.png';
-import previewRef1 from '../assets/home/preview-ref-1.png';
-import previewRef2 from '../assets/home/preview-ref-2.png';
-import previewRef3 from '../assets/home/preview-ref-3.png';
+import songbookGlyphs from '../assets/case-study/spread-07.webp';
+import songbookDoki from '../assets/case-study/spread-17.webp';
+import songbookStills from '../assets/case-study/spread-22.webp';
+import confettiProfile from '../assets/illustration/confetti-profile.webp';
+import matsuriPanels from '../assets/illustration/matsuri-panels.webp';
+import checkeredFloorPlayer from '../assets/illustration/checkered-floor-player.webp';
 
 const heroPreviews = [
   {
-    src: previewRef1,
-    alt: 'Atmospheric watercolor figure tangled in branching pale forms',
+    src: confettiProfile,
+    alt: 'Purple-haired figure in glasses facing a sketched face erupting into colorful confetti shapes',
   },
   {
-    src: previewRef2,
-    alt: 'Atmospheric watercolor portrait of a cloaked bird-like figure',
+    src: matsuriPanels,
+    alt: 'Festival panels with children holding popsicles in a matsuri crowd',
   },
   {
-    src: previewRef3,
-    alt: 'Atmospheric watercolor figure reaching toward a pale sun',
+    src: checkeredFloorPlayer,
+    alt: 'Figure in a track jacket lying beside a fallen mic stand on a checkered floor',
   },
 ];
 ---
@@ -69,14 +71,33 @@ const heroPreviews = [
 
   <section class="work-tease" id="work" aria-labelledby="work-title">
     <h2 class="work-tease__label" id="work-title">Selected work</h2>
-    <a class="work-tease__panel" href="/work/" aria-label="Recent project">
-      <Image
-        src={recentProjectPanel}
-        alt="Vivid coral and deep red watercolor veins with a dark pooled region at the right"
-        loading="lazy"
-        widths={[774]}
-        sizes="(min-width: 48rem) 66vw, 100vw"
-      />
+    <a class="work-tease__panel" href="/case-study/" aria-label="Recent project: SongBook case study">
+      <div class="work-tease__spreads">
+        <Image
+          class="work-tease__crop--left"
+          src={songbookGlyphs}
+          alt="SongBook page of monumental black Futura glyphs on a salmon ground"
+          loading="lazy"
+          widths={[480, 960]}
+          sizes="(min-width: 48rem) 22vw, 33vw"
+        />
+        <Image
+          class="work-tease__crop--left"
+          src={songbookDoki}
+          alt="SongBook page: red lyric poster with a monumental 女 character"
+          loading="lazy"
+          widths={[480, 960]}
+          sizes="(min-width: 48rem) 22vw, 33vw"
+        />
+        <Image
+          class="work-tease__crop--right"
+          src={songbookStills}
+          alt="SongBook page of animation stills, lyric type over dark concert footage"
+          loading="lazy"
+          widths={[480, 960]}
+          sizes="(min-width: 48rem) 22vw, 33vw"
+        />
+      </div>
       <span>Recent project</span>
     </a>
   </section>
@@ -202,14 +223,26 @@ const heroPreviews = [
     overflow: hidden;
   }
 
+  .work-tease__spreads {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-xs);
+    height: 100%;
+  }
+
   .work-tease__panel img {
-    position: absolute;
-    inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: right center;
     transition: transform var(--duration-standard) var(--ease-out);
+  }
+
+  .work-tease__crop--left {
+    object-position: left center;
+  }
+
+  .work-tease__crop--right {
+    object-position: right center;
   }
 
   .work-tease__panel span {
