@@ -169,8 +169,11 @@ Display and Headline share one size token (`--text-display`); weight, leading,
 tracking, and role keep them distinct.
 
 - **Display** (Light 300, clamp(4rem, 9vw, 6rem), line-height 1.05,
-  tracking 0.14em, uppercase): The hero name only. Wide-tracked and airy where
-  everything else is compressed.
+  tracking 0.14em, uppercase): The hero name, plus the title of standalone
+  document pages (Resume), where it acts as a letterpress cover. Wide-tracked
+  and airy where everything else is compressed. The One Monument Rule still
+  holds: one Display element per view, and interior section pages (Work, About,
+  Case Study) keep the compressed Headline.
 - **Headline** (Book 400, clamp(4rem, 9vw, 6rem), line-height 0.82,
   tracking -0.04em, uppercase): Page titles on Work, About, and Case Study;
   stacked short lines with poster-like compression.

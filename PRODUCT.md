@@ -30,12 +30,15 @@ Abby's work includes illustrative art, character design, and storytelling. Game 
 
 - Display name: **Abby Cromwell**
 - Contact email: **abbycromwell@ucla.edu**
-- Availability: **Not currently available**
+- Availability: **Not taking new projects**
 - Role label: Open; do not assign one yet.
 - External links: Open; do not add any unless Abby supplies them.
 
 ## Deliberately Unresolved
 
+- About bio paragraph: written by Abby, in her own voice. The current two
+  sentences are a bare-facts placeholder; do not expand or polish them with
+  generated copy.
 - Initial case-study project, title, and narrative
 - External portfolio, social, and resume links
 - Role label and any additional hiring details

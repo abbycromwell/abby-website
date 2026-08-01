@@ -4,7 +4,7 @@ import Base from '../layouts/Base.astro';
 
 <Base
   title="About — Abby Cromwell"
-  description="About Abby Cromwell."
+  description="Abby Cromwell is an illustrator, character designer, and storyteller studying Design Media Arts at UCLA. Contact, availability, and resume."
   activePage="about"
   atmospheric
 >
@@ -14,22 +14,29 @@ import Base from '../layouts/Base.astro';
       <h1 id="about-title">Abby Cromwell</h1>
       <div class="about__copy">
         <p>
-          Abby is an illustrator, character designer, and storyteller interested in
+          I'm an illustrator, character designer, and storyteller interested in
           entertainment worlds and game design.
         </p>
         <p>
-          This is a deliberately quiet space in the portfolio: a pause from the work,
-          with room for a longer bio when it is ready.
+          I'm a sophomore in Design Media Arts at UCLA.
         </p>
       </div>
       <div class="about__contact">
         <div>
-          <p class="eyebrow">Contact</p>
-          <a href="mailto:abbycromwell@ucla.edu">abbycromwell@ucla.edu</a>
+          <h2 class="eyebrow">Contact</h2>
+          <p><a href="mailto:abbycromwell@ucla.edu">abbycromwell at ucla dot edu</a></p>
         </div>
         <div>
-          <p class="eyebrow">Availability</p>
-          <p>Not currently available</p>
+          <h2 class="eyebrow">Availability</h2>
+          <p>Not taking new projects</p>
+        </div>
+        <div>
+          <h2 class="eyebrow">Resume</h2>
+          <a href="/resume/">View the resume</a>
+        </div>
+        <div>
+          <h2 class="eyebrow">Work</h2>
+          <a href="/work/">View the work</a>
         </div>
       </div>
     </section>
@@ -37,11 +44,6 @@ import Base from '../layouts/Base.astro';
 </Base>
 
 <style>
-  .about-page {
-    min-height: calc(100vh - var(--space-2xl));
-    overflow: hidden;
-  }
-
   .about {
     max-width: var(--max-width-wide);
     margin-inline: auto;
@@ -64,7 +66,7 @@ import Base from '../layouts/Base.astro';
   }
 
   .about__copy {
-    max-width: var(--max-width-copy);
+    max-width: var(--max-width-prose);
     font-size: var(--text-xl);
     line-height: var(--leading-tight);
   }
@@ -77,6 +79,8 @@ import Base from '../layouts/Base.astro';
   .about__contact {
     max-width: var(--max-width-copy);
     margin-top: var(--space-section);
+    padding: var(--space-lg);
+    background: var(--color-paper-overlay);
   }
 
   .about__contact a {
@@ -84,7 +88,6 @@ import Base from '../layouts/Base.astro';
   }
 
   @media (min-width: 48rem) {
-    .about__copy,
     .about__contact {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
