@@ -1,0 +1,738 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Secret Art Racks — interaction study</title>
+    <style>
+      :root {
+        --paper: #f6f0e7;
+        --paper-solid: #fbf7ef;
+        --ink: #241210;
+        --red: #670d0d;
+        --edge: #a85d50;
+        --shadow: rgba(49, 18, 15, 0.2);
+        --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      * { box-sizing: border-box; }
+      html { background: var(--paper); }
+      body {
+        margin: 0;
+        color: var(--ink);
+        background: var(--paper);
+        font-family: Arial, Helvetica, sans-serif;
+      }
+      button { color: inherit; font: inherit; }
+      button:focus-visible { outline: 2px solid var(--red); outline-offset: 4px; }
+
+      .storage {
+        position: relative;
+        min-height: 100svh;
+        overflow: hidden;
+        isolation: isolate;
+        background: var(--paper) url("../../../src/assets/home/hero-watercolor-veins.png") center / cover no-repeat;
+      }
+      .storage::before {
+        position: absolute;
+        z-index: -1;
+        inset: 0;
+        content: "";
+        background: rgba(246, 240, 231, 0.44);
+      }
+
+      .topline {
+        position: relative;
+        z-index: 30;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        min-height: 68px;
+        padding: 0 30px;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+      }
+      .topline nav { display: flex; gap: 30px; }
+      .topline a { color: inherit; font-style: italic; text-decoration: none; }
+
+      .storage-stage {
+        position: relative;
+        display: grid;
+        grid-template-columns: minmax(290px, 0.78fr) minmax(480px, 1.55fr) minmax(300px, 0.8fr);
+        gap: 20px;
+        min-height: calc(100svh - 68px);
+        padding: 8px 24px 20px;
+      }
+
+      .storage-intro {
+        position: relative;
+        z-index: 20;
+        min-width: 0;
+        padding: 14px 0 18px 6px;
+      }
+      .storage-title {
+        max-width: 100%;
+        margin: 0;
+        color: var(--red);
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: clamp(52px, 4.6vw, 72px);
+        font-weight: 400;
+        line-height: 0.82;
+        letter-spacing: -0.04em;
+      }
+      .storage-title em { font-weight: 400; }
+      .storage-note {
+        max-width: 25ch;
+        margin: min(10vh, 78px) 0 0 12px;
+        font-size: 14px;
+        line-height: 1.45;
+      }
+      .rack-toggle {
+        position: absolute;
+        left: 12px;
+        bottom: 42px;
+        padding: 0 0 9px;
+        border: 0;
+        border-bottom: 1px solid var(--red);
+        color: var(--red);
+        background: transparent;
+        cursor: pointer;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      .featured-hang {
+        position: relative;
+        z-index: 6;
+        align-self: start;
+        justify-self: center;
+        width: min(100%, 740px);
+        height: min(860px, calc(100svh - 116px));
+        min-width: 0;
+        min-height: 0;
+        margin: 0;
+        padding: 12px 12px 45px;
+        background: rgba(251, 247, 239, 0.94);
+        box-shadow: 0 24px 55px var(--shadow);
+      }
+      .featured-hang img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        min-height: 0;
+        object-fit: cover;
+        object-position: center;
+      }
+      .featured-hang figcaption {
+        position: absolute;
+        left: 27px;
+        right: 27px;
+        bottom: 15px;
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+      .featured-hang figcaption span:last-child { font-style: italic; }
+
+      .rack-area {
+        position: relative;
+        z-index: 12;
+        align-self: start;
+        height: min(860px, calc(100svh - 116px));
+        min-width: 0;
+        margin-bottom: 0;
+        perspective: 1200px;
+      }
+      .rack-rails {
+        position: absolute;
+        inset: 52px 12px 58px 14px;
+        display: flex;
+        justify-content: flex-end;
+        gap: 7px;
+      }
+      .rack-rail {
+        position: relative;
+        flex: 0 0 30px;
+        height: 100%;
+        padding: 11px 8px;
+        border: 1px solid var(--red);
+        color: var(--red);
+        background: rgba(246, 240, 231, 0.72);
+        cursor: pointer;
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 0.09em;
+        text-align: left;
+        text-transform: uppercase;
+        writing-mode: vertical-rl;
+        transition: color 180ms ease, background 180ms ease, transform 320ms var(--ease-out);
+      }
+      .rack-rail:hover { transform: translateY(-8px); }
+      .rack-rail[aria-pressed="true"] {
+        color: var(--paper-solid);
+        background: var(--red);
+      }
+
+      .rack-depth {
+        position: absolute;
+        top: 19%;
+        right: 56px;
+        width: min(276px, 22vw);
+        aspect-ratio: 0.7;
+        padding: 8px 8px 34px;
+        border: 1px solid var(--edge);
+        background: rgba(251, 247, 239, 0.94);
+        box-shadow: 10px 14px 24px rgba(49, 18, 15, 0.1);
+        transition: transform 620ms var(--ease-out), opacity 240ms ease;
+        pointer-events: none;
+      }
+      .rack-depth[hidden] { display: none; }
+      .rack-depth[data-depth-index="0"] { z-index: 7; transform: rotateY(-3deg) translateX(-56px) translateY(14px); }
+      .rack-depth[data-depth-index="1"] { z-index: 6; transform: rotateY(-5deg) translateX(-38px) translateY(25px); }
+      .rack-depth[data-depth-index="2"] { z-index: 5; transform: rotateY(-7deg) translateX(-20px) translateY(36px); }
+      .rack-depth-media {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0.82;
+      }
+      video.rack-depth-media { object-fit: contain; background: var(--ink); }
+      .rack-depth-label {
+        position: absolute;
+        left: 10px;
+        right: 10px;
+        bottom: 10px;
+        overflow: hidden;
+        color: var(--red);
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-overflow: ellipsis;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+
+      .rack-card {
+        position: absolute;
+        z-index: 10;
+        top: 17%;
+        right: 58px;
+        width: min(286px, 23vw);
+        aspect-ratio: 0.69;
+        padding: 10px 10px 66px;
+        border: 1px solid var(--red);
+        background: var(--paper-solid);
+        box-shadow: 18px 20px 40px rgba(36, 18, 16, 0.18);
+        transform: translateX(-92px);
+        transform-origin: right center;
+        transition: transform 680ms var(--ease-out), opacity 240ms ease;
+        pointer-events: none;
+      }
+      .rack-card-ghost {
+        z-index: 14;
+        transition: none;
+        backface-visibility: hidden;
+        transform-style: preserve-3d;
+        will-change: transform, opacity;
+      }
+      .rack-card-ghost .rack-card-controls { visibility: hidden; }
+      .rack-area.is-stowed .rack-card,
+      .rack-area.is-stowed .rack-depth {
+        pointer-events: none;
+        transform: rotateY(-4deg) translateX(340px) scale(0.985);
+      }
+      .rack-area.is-retracting .rack-card,
+      .rack-area.is-retracting .rack-depth {
+        transition-duration: 360ms;
+        transition-timing-function: cubic-bezier(0.7, 0, 0.84, 0);
+      }
+      .rack-card-media {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        background: var(--ink);
+      }
+      video.rack-card-media { object-fit: contain; }
+      .rack-card-footer {
+        position: absolute;
+        left: 12px;
+        right: 10px;
+        bottom: 10px;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: end;
+        gap: 12px;
+        color: var(--red);
+      }
+      .rack-card-meta { min-width: 0; }
+      .rack-card-label {
+        display: block;
+        font-size: 10px;
+        font-weight: 700;
+        line-height: 1.25;
+        letter-spacing: 0.11em;
+        text-transform: uppercase;
+      }
+      .rack-card-count {
+        display: block;
+        margin-top: 5px;
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 0.11em;
+        text-transform: uppercase;
+      }
+      .rack-card-controls { display: flex; flex: 0 0 auto; gap: 4px; }
+      .rack-card-controls button {
+        display: grid;
+        place-items: center;
+        width: 28px;
+        height: 28px;
+        padding: 0;
+        border: 1px solid var(--red);
+        color: var(--red);
+        background: transparent;
+        cursor: pointer;
+        pointer-events: auto;
+      }
+      .rack-instruction {
+        position: absolute;
+        z-index: 16;
+        right: 14px;
+        bottom: 4px;
+        margin: 0;
+        color: var(--red);
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 0.11em;
+        text-transform: uppercase;
+        writing-mode: vertical-rl;
+      }
+
+      .prototype-note {
+        position: fixed;
+        z-index: 50;
+        left: 24px;
+        bottom: 18px;
+        margin: 0;
+        padding: 8px 11px;
+        color: var(--paper-solid);
+        background: var(--ink);
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      @media (max-width: 1050px) {
+        .storage { overflow: auto; }
+        .storage-stage {
+          grid-template-columns: minmax(220px, 0.72fr) minmax(430px, 1.4fr);
+          min-height: calc(100svh - 68px);
+        }
+        .rack-area {
+          position: absolute;
+          top: 90px;
+          right: 10px;
+          width: 330px;
+          height: min(720px, calc(100svh - 140px));
+        }
+        .featured-hang { margin-right: 150px; }
+        .rack-card { width: 250px; }
+        .rack-depth { width: 242px; }
+      }
+
+      @media (max-width: 720px) {
+        .storage { min-height: auto; overflow: hidden; }
+        .topline { min-height: 58px; padding: 0 18px; }
+        .topline nav { gap: 14px; }
+        .topline nav a:nth-child(2) { display: none; }
+        .storage-stage {
+          display: flex;
+          flex-direction: column;
+          gap: 24px;
+          min-height: 0;
+          padding: 12px 18px 82px;
+        }
+        .storage-intro { padding: 0; }
+        .storage-title { max-width: 7ch; font-size: clamp(50px, 15vw, 68px); }
+        .storage-note { margin: 30px 0 0; }
+        .rack-toggle { position: static; margin-top: 28px; }
+        .featured-hang {
+          width: 100%;
+          height: min(720px, calc(100svh - 96px));
+          min-height: 0;
+          margin: 0;
+        }
+        .rack-area {
+          position: relative;
+          inset: auto;
+          width: 100%;
+          height: min(580px, calc(100svh - 96px));
+          margin: 0;
+        }
+        .rack-rails { inset: 0 0 auto; justify-content: stretch; height: 52px; gap: 5px; }
+        .rack-rail {
+          flex: 1 1 0;
+          height: 52px;
+          min-width: 0;
+          padding: 7px 5px;
+          font-size: 8px;
+          text-align: center;
+          writing-mode: horizontal-tb;
+        }
+        .rack-rail:hover { transform: translateY(-3px); }
+        .rack-card,
+        .rack-depth {
+          top: 76px;
+          right: 8%;
+          width: 78%;
+          max-width: 340px;
+        }
+        .rack-card { transform: translateX(-12%); }
+        .rack-depth[data-depth-index="0"] { transform: rotateY(-2deg) translateX(-2%) translateY(12px); }
+        .rack-depth[data-depth-index="1"] { transform: rotateY(-4deg) translateX(4%) translateY(24px); }
+        .rack-depth[data-depth-index="2"] { transform: rotateY(-6deg) translateX(10%) translateY(36px); }
+        .rack-instruction { display: none; }
+        .prototype-note { left: 18px; right: 18px; bottom: 12px; text-align: center; }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .rack-card, .rack-depth, .rack-rail { transition: none; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="storage">
+      <header class="topline">
+        <b>Abby Cromwell · Open Storage</b>
+        <nav aria-label="Prototype navigation">
+          <a href="#featured">On view</a>
+          <a href="#racks">All work</a>
+          <a href="#about">About</a>
+        </nav>
+      </header>
+
+      <section class="storage-stage" aria-label="Secret Art Racks concept">
+        <div class="storage-intro" id="about">
+          <h1 class="storage-title">Nine works <em>on the walls.</em> Everything else one pull away.</h1>
+          <p class="storage-note">The main path is sparse and cinematic. A hidden rack lets curious visitors physically pull out whole families of related work.</p>
+          <button class="rack-toggle" type="button" aria-expanded="true" data-rack-toggle>Stow the rack ←</button>
+        </div>
+
+        <figure class="featured-hang" id="featured">
+          <img src="../../../src/assets/home/watercolor-cockroach.webp" alt="Watercolor figure surrounded by oversized cockroaches and clipped text fragments" loading="eager" />
+          <figcaption><span>Watercolor Cockroach</span><span>Featured hang · 01</span></figcaption>
+        </figure>
+
+        <section class="rack-area" id="racks" aria-label="Hidden artwork racks" data-rack-area>
+          <div class="rack-rails" role="toolbar" aria-label="Pull an artwork rack">
+            <button class="rack-rail" type="button" data-rack="illustration-one" aria-pressed="false">Illustration 01</button>
+            <button class="rack-rail" type="button" data-rack="illustration-two" aria-pressed="true">Illustration 02</button>
+            <button class="rack-rail" type="button" data-rack="animation" aria-pressed="false">Animation</button>
+            <button class="rack-rail" type="button" data-rack="sketchbook" aria-pressed="false">Sketchbook</button>
+            <button class="rack-rail" type="button" data-rack="typography" aria-pressed="false">Typography</button>
+            <button class="rack-rail" type="button" data-rack="archive" aria-pressed="false">Archive</button>
+          </div>
+
+          <article class="rack-depth" data-rack-depth data-depth-index="0" aria-hidden="true">
+            <img class="rack-depth-media" src="../../../src/assets/illustration/checkered-floor-player.webp" alt="" />
+            <span class="rack-depth-label">Checkered Floor Player</span>
+          </article>
+          <article class="rack-depth" data-rack-depth data-depth-index="1" aria-hidden="true">
+            <img class="rack-depth-media" src="../../../src/assets/illustration/prawn-comic-page.webp" alt="" />
+            <span class="rack-depth-label">Prawn Comic Page</span>
+          </article>
+          <article class="rack-depth" data-rack-depth data-depth-index="2" aria-hidden="true" hidden>
+            <img class="rack-depth-media" src="../../../src/assets/illustration/confetti-profile.webp" alt="" />
+            <span class="rack-depth-label">Stored work</span>
+          </article>
+
+          <article class="rack-card" aria-live="polite" data-rack-card>
+            <img class="rack-card-media" src="../../../src/assets/illustration/tissue-study-page.webp" alt="Layered anatomical tissue study with a bandaged figure" data-rack-media />
+            <footer class="rack-card-footer">
+              <span class="rack-card-meta">
+                <b class="rack-card-label" data-rack-label>Rack 02 · Tissue Study</b>
+                <span class="rack-card-count" data-rack-count>Work 1 of 3</span>
+              </span>
+              <span class="rack-card-controls">
+                <button type="button" aria-label="Previous work in this rack" data-previous>←</button>
+                <button type="button" aria-label="Next work in this rack" data-next>→</button>
+              </span>
+            </footer>
+          </article>
+          <p class="rack-instruction">Choose a spine · then browse the pulled rack</p>
+        </section>
+      </section>
+    </main>
+    <p class="prototype-note">Faithful interaction study · portfolio code unchanged</p>
+
+    <script>
+      const racks = {
+        'illustration-one': {
+          name: 'Rack 01',
+          works: [
+            { title: 'Confetti Profile', src: '../../../src/assets/illustration/confetti-profile.webp', alt: 'Purple-haired figure facing a sketched face erupting into colorful confetti shapes' },
+            { title: 'Squid Bonnet Collage', src: '../../../src/assets/illustration/squid-bonnet-collage.webp', alt: 'Two bonneted characters surrounding a squid and floating fragments' },
+            { title: 'Matsuri Panels', src: '../../../src/assets/illustration/matsuri-panels.webp', alt: 'Festival panels showing characters in a crowded summer scene' }
+          ]
+        },
+        'illustration-two': {
+          name: 'Rack 02',
+          works: [
+            { title: 'Tissue Study', src: '../../../src/assets/illustration/tissue-study-page.webp', alt: 'Layered anatomical tissue study with a bandaged figure' },
+            { title: 'Checkered Floor Player', src: '../../../src/assets/illustration/checkered-floor-player.webp', alt: 'Characters on a checkered floor framed by a music-player interface' },
+            { title: 'Prawn Comic Page', src: '../../../src/assets/illustration/prawn-comic-page.webp', alt: 'Comic page moving through a forest and character scene' }
+          ]
+        },
+        animation: {
+          name: 'Animation',
+          works: [
+            { title: 'Rolling, Tumbling Along', src: '../../../src/assets/animation/rolling-rolling-tumbling-along.mp4', alt: 'Animated sphere rolling across a colorful landscape', type: 'video' },
+            { title: 'Final Project Animation', src: '../../../src/assets/animation/final-project-animation.mp4', alt: 'Hand-drawn animated short film excerpt', type: 'video' },
+            { title: 'Animation Short', src: '../../../src/assets/animation/animation-short.mp4', alt: 'Animated line-drawn figures moving over a warm wash', type: 'video' }
+          ]
+        },
+        sketchbook: {
+          name: 'Sketchbook',
+          works: [
+            { title: 'Tentacle Field', src: '../../../src/assets/sketch/tentacle-field.webp', alt: 'Character holding a red tentacle in tall grass' },
+            { title: 'Covered Eyes Kiss', src: '../../../src/assets/sketch/covered-eyes-kiss.webp', alt: 'Two figures about to kiss in a dim room' },
+            { title: 'Overpass Studies', src: '../../../src/assets/sketch/overpass-studies.webp', alt: 'Gestural figure studies layered over an overpass' },
+            { title: 'Winged Figure', src: '../../../src/assets/sketch/winged-figure-sketch.webp', alt: 'Pencil sketch of a winged seated figure' },
+            { title: 'Mirror Selfie', src: '../../../src/assets/sketch/mirror-selfie.webp', alt: 'Character taking a mirror selfie in a bathroom' }
+          ]
+        },
+        typography: {
+          name: 'Typography',
+          works: [
+            { title: 'SongBook', src: '../../../src/assets/case-study/spread-01.webp', alt: 'SongBook cover with coral watercolor and red display lettering' }
+          ]
+        },
+        archive: {
+          name: 'Archive',
+          works: [
+            { title: 'Confetti Profile', src: '../../../src/assets/illustration/confetti-profile.webp', alt: 'Purple-haired figure facing a sketched face erupting into colorful confetti shapes' },
+            { title: 'Watercolor Cockroach', src: '../../../src/assets/home/watercolor-cockroach.webp', alt: 'Watercolor figure surrounded by oversized cockroaches and clipped text fragments' },
+            { title: 'Tissue Study', src: '../../../src/assets/illustration/tissue-study-page.webp', alt: 'Layered anatomical tissue study with a bandaged figure' }
+          ]
+        }
+      };
+
+      const rackArea = document.querySelector('[data-rack-area]');
+      const rackCard = document.querySelector('[data-rack-card]');
+      const rackLabel = document.querySelector('[data-rack-label]');
+      const rackCounter = document.querySelector('[data-rack-count]');
+      const rackToggle = document.querySelector('[data-rack-toggle]');
+      const railButtons = [...document.querySelectorAll('[data-rack]')];
+      const depthCards = [...document.querySelectorAll('[data-rack-depth]')];
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      let activeRack = 'illustration-two';
+      let activeWork = 0;
+      let motionAnimations = [];
+      let switchSequence = 0;
+
+      function mediaElement(work) {
+        if (work.type === 'video') {
+          const video = document.createElement('video');
+          video.className = 'rack-card-media';
+          video.src = work.src;
+          video.setAttribute('aria-label', work.alt);
+          video.muted = true;
+          video.loop = true;
+          video.playsInline = true;
+          return video;
+        }
+        const image = document.createElement('img');
+        image.className = 'rack-card-media';
+        image.src = work.src;
+        image.alt = work.alt;
+        return image;
+      }
+
+      function depthMediaElement(work) {
+        const media = mediaElement(work);
+        media.className = 'rack-depth-media';
+        if (media instanceof HTMLImageElement) media.alt = '';
+        else media.removeAttribute('aria-label');
+        return media;
+      }
+
+      function renderDepthStack() {
+        const works = racks[activeRack].works;
+        const remaining = Array.from(
+          { length: Math.max(0, works.length - 1) },
+          (_, offset) => works[(activeWork + offset + 1) % works.length]
+        );
+
+        depthCards.forEach((card, index) => {
+          const work = remaining[index];
+          card.hidden = !work;
+          if (!work) return;
+          card.querySelector('.rack-depth-media').replaceWith(depthMediaElement(work));
+          card.querySelector('.rack-depth-label').textContent = work.title;
+          const video = card.querySelector('video');
+          if (video && !reduceMotion) video.play().catch(() => {});
+        });
+      }
+
+      function renderWork() {
+        const rack = racks[activeRack];
+        const work = rack.works[activeWork];
+        const oldMedia = rackCard.querySelector('.rack-card-media');
+        oldMedia.replaceWith(mediaElement(work));
+        rackLabel.textContent = `${rack.name} · ${work.title}`;
+        rackCounter.textContent = `Work ${activeWork + 1} of ${rack.works.length}`;
+        renderDepthStack();
+        const video = rackCard.querySelector('video');
+        if (video && !reduceMotion) video.play().catch(() => {});
+      }
+
+      function stopMotion() {
+        motionAnimations.forEach((animation) => animation.cancel());
+        motionAnimations = [];
+        rackArea.querySelectorAll('.rack-card-ghost').forEach((ghost) => ghost.remove());
+      }
+
+      async function settleBehindStack(outgoing, movingForward) {
+        const clearTransform = movingForward
+          ? 'translateX(-92px) rotateY(-6deg) rotateZ(-3deg)'
+          : 'translateX(-92px) rotateY(5deg) rotateZ(-3deg)';
+        const shallowTransform = movingForward
+          ? 'translateX(-92px) rotateY(-18deg) rotateZ(2deg)'
+          : 'translateX(-92px) rotateY(14deg) rotateZ(2deg)';
+        outgoing.style.transformOrigin = 'center center';
+        const journey = outgoing.animate([
+          { offset: 0, translate: '0 0', transform: 'translateX(-92px) rotateY(0deg) rotateZ(0deg)', scale: 1, opacity: 1, zIndex: '14', easing: 'cubic-bezier(0.16, 1, 0.3, 1)' },
+          { offset: 0.06, translate: '-10px -8px', transform: 'translateX(-92px) rotateY(0deg) rotateZ(-0.8deg)', scale: 1.01, opacity: 1, zIndex: '14', easing: 'cubic-bezier(0.65, 0, 0.35, 1)' },
+          { offset: 0.36, translate: '-220px -14px', transform: clearTransform, scale: 1, opacity: 1, zIndex: '14' },
+          { offset: 0.361, translate: '-220px -14px', transform: clearTransform, scale: 1, opacity: 1, zIndex: '8', easing: 'cubic-bezier(0.65, 0, 0.35, 1)' },
+          { offset: 0.64, translate: '-96px 30px', transform: shallowTransform, scale: 0.96, opacity: 0.62, zIndex: '8', easing: 'cubic-bezier(0.16, 1, 0.3, 1)' },
+          { offset: 0.88, translate: '34px 46px', transform: 'translateX(-92px) rotateY(-7deg) rotateZ(2.5deg)', scale: 0.92, opacity: 0.34, zIndex: '8' },
+          { offset: 0.881, translate: '34px 46px', transform: 'translateX(-92px) rotateY(-7deg) rotateZ(2.5deg)', scale: 0.92, opacity: 0.34, zIndex: '3', easing: 'cubic-bezier(0.16, 1, 0.3, 1)' },
+          { offset: 1, translate: '44px 42px', transform: 'translateX(-92px) rotateY(-4deg) rotateZ(2deg)', scale: 0.92, opacity: 0.34, zIndex: '3' }
+        ], {
+          duration: 650,
+          easing: 'linear',
+          fill: 'forwards'
+        });
+        motionAnimations.push(journey);
+
+        try {
+          await journey.finished;
+        } catch {
+          return;
+        }
+        motionAnimations = motionAnimations.filter((animation) => animation !== journey);
+        outgoing.remove();
+      }
+
+      function animateStack(direction) {
+        const count = racks[activeRack].works.length;
+        if (count < 2) return;
+
+        stopMotion();
+        const outgoing = rackCard.cloneNode(true);
+        outgoing.classList.add('rack-card-ghost');
+        outgoing.removeAttribute('data-rack-card');
+        outgoing.setAttribute('aria-hidden', 'true');
+        outgoing.querySelectorAll('button').forEach((button) => { button.tabIndex = -1; });
+        rackArea.append(outgoing);
+
+        activeWork = (activeWork + direction + count) % count;
+        renderWork();
+
+        if (reduceMotion) {
+          outgoing.remove();
+          return;
+        }
+
+        const movingForward = direction > 0;
+        void settleBehindStack(outgoing, movingForward);
+        const incomingAnimation = rackCard.animate([
+          {
+            translate: movingForward ? '38px 14px' : '72px 34px',
+            transform: 'translateX(-92px) rotateY(-6deg)',
+            scale: movingForward ? 0.985 : 0.96
+          },
+          {
+            translate: '0 0',
+            transform: 'translateX(-92px) rotateY(0deg)',
+            scale: 1
+          }
+        ], {
+          duration: 420,
+          delay: 180,
+          easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+          fill: 'both'
+        });
+
+        const advancingAnimations = [incomingAnimation];
+        motionAnimations.push(...advancingAnimations);
+        Promise.allSettled(advancingAnimations.map((animation) => animation.finished)).then(() => {
+          advancingAnimations.forEach((animation) => animation.cancel());
+          motionAnimations = motionAnimations.filter((animation) => !advancingAnimations.includes(animation));
+        });
+      }
+
+      function navigateRack(direction) {
+        animateStack(direction);
+      }
+
+      function setRackExpanded(expanded) {
+        rackToggle.textContent = expanded ? 'Stow the rack ←' : 'Pull the rack →';
+        rackToggle.setAttribute('aria-expanded', String(expanded));
+      }
+
+      async function retractDeck() {
+        stopMotion();
+        rackArea.classList.add('is-retracting', 'is-stowed');
+        setRackExpanded(false);
+        if (!reduceMotion) await new Promise((resolve) => window.setTimeout(resolve, 370));
+        rackArea.classList.remove('is-retracting');
+      }
+
+      function revealDeck() {
+        setRackExpanded(true);
+        requestAnimationFrame(() => rackArea.classList.remove('is-stowed'));
+      }
+
+      async function pullRack(key) {
+        const sequence = ++switchSequence;
+        const changingRack = key !== activeRack;
+        const deckIsOpen = !rackArea.classList.contains('is-stowed');
+
+        if (changingRack && deckIsOpen) await retractDeck();
+        if (sequence !== switchSequence) return;
+
+        activeRack = key;
+        activeWork = 0;
+        renderWork();
+        railButtons.forEach((button) => button.setAttribute('aria-pressed', String(button.dataset.rack === key)));
+        revealDeck();
+      }
+
+      railButtons.forEach((button) => button.addEventListener('click', () => pullRack(button.dataset.rack)));
+
+      document.querySelector('[data-previous]').addEventListener('click', () => navigateRack(-1));
+
+      document.querySelector('[data-next]').addEventListener('click', () => navigateRack(1));
+
+      rackToggle.addEventListener('click', async () => {
+        if (rackArea.classList.contains('is-stowed')) revealDeck();
+        else await retractDeck();
+      });
+
+      renderWork();
+    </script>
+  </body>
+</html>
