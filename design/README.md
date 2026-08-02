@@ -1,5 +1,9 @@
 # Design Reference Log
 
+## Archived experiments
+
+- [Secret Art Racks prototype](experiments/secret-art-racks/README.md) — interactive category rack and dealt-card navigation study, preserved for later consideration.
+
 ## Directional Reference
 
 ### Abby's internal visual brief
