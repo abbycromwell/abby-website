@@ -211,17 +211,26 @@ import { pods } from '../data/home-previews.js';
     opacity: 1;
     /*
       The stops end at 72%, not 92%. A radial-gradient sizes to farthest-corner,
-      so on a square the box's edge midpoints sit at ~71% of the gradient radius
-      — anything opaque past that gets hard-clipped by border-radius, which is
-      what put a cut edge on the membrane. The fade now completes first.
+      so on a square the box's edge midpoints sit at exactly 70.71% of the
+      gradient radius. The stop lands there, so alpha reaches zero precisely
+      where border-radius would otherwise cut a hard edge.
     */
-    mask-image: radial-gradient(ellipse at center, #000 var(--feather), transparent 72%);
+    mask-image: radial-gradient(ellipse at center, #000 var(--feather), transparent 70.7%);
     transition:
       --feather var(--duration-standard) var(--ease-out),
       border-radius var(--duration-slow) var(--ease-out),
       opacity var(--duration-standard) var(--ease-out),
       transform var(--duration-standard) var(--ease-out);
     animation: pod-wake var(--duration-wake) var(--ease-in-out) both;
+  }
+
+  /*
+    Wake and wobble share the `animation` property, so hovering cancels an
+    in-flight wake and un-hovering used to re-declare it — the pods breathed
+    again every time the cursor left. Retired once it has run.
+  */
+  .pod.is-awake .pod__skin {
+    animation: none;
   }
 
   /*
@@ -235,6 +244,7 @@ import { pods } from '../data/home-previews.js';
   */
   .pod__skin::after {
     content: "";
+    display: none;
     position: absolute;
     inset: 0;
     background-image: var(--heroWash);
@@ -408,6 +418,15 @@ import { pods } from '../data/home-previews.js';
       grid-row: 2;
     }
 
+    /*
+      The sampler is viewport-fixed, so it only tracks the hero where the hero
+      does not scroll. Above 48rem the page is one non-scrolling screen; below it
+      the hero is taller than the viewport and the two would drift apart.
+    */
+    .pod__skin::after {
+      display: block;
+    }
+
     /* oversize and pull left/up so the red wash reaches behind the pods */
     .hero__watercolor {
       top: -10%;
@@ -455,7 +474,12 @@ import { pods } from '../data/home-previews.js';
     */
     .pod--typography {
       top: 46%;
-      right: min(38%, calc(100% - var(--space-edge) - var(--max-width-prose) - 11rem));
+      /*
+        max() floors it at 4%. The text-column bound alone goes negative between
+        768 and ~808px — 768 - 23 - 608 - 176 is -39px — which pushed the pod off
+        the right edge and let .hero { overflow: hidden } cut ~40% of it away.
+      */
+      right: max(4%, min(38%, calc(100% - var(--space-edge) - var(--max-width-prose) - 11rem)));
       width: clamp(5.75rem, 12.5vw, 11.5rem);
     }
   }
@@ -494,10 +518,13 @@ import { pods } from '../data/home-previews.js';
     a frozen first frame with no way to play it.
   */
   for (const video of document.querySelectorAll('.pod__clip')) {
-    if (reducedMotion.matches) {
-      video.controls = true;
-      continue;
-    }
+    /*
+      No controls here: the clip sits inside the pod's anchor, and interactive
+      controls nested in a link give conflicting keyboard and pointer behaviour,
+      with the mask clipping the control bar besides. Under reduced motion the
+      pod stays a still frame; the Work page plays the clip with proper controls.
+    */
+    if (reducedMotion.matches) continue;
 
     const watcher = new IntersectionObserver(
       (entries) => {
@@ -562,7 +589,12 @@ import { pods } from '../data/home-previews.js';
       /* volume is conserved: what it gains along the axis it loses across it */
       drag.style.setProperty('--drag-squash', (1 / stretch).toFixed(4));
 
-      if (!tracking && speed < REST) {
+      /*
+        Settling, not hover state, ends the loop. Gating on `tracking` meant a
+        motionless pointer resting inside a pod kept a 60fps loop and its style
+        writes alive indefinitely. The next pointermove restarts it.
+      */
+      if (speed < REST && Math.hypot(velocityX, velocityY) < REST) {
         running = false;
         rest();
         return;
@@ -589,14 +621,23 @@ import { pods } from '../data/home-previews.js';
       { passive: true },
     );
 
-    pod.addEventListener(
-      'pointerleave',
-      () => {
-        tracking = false;
-      },
-      { passive: true },
-    );
+    const release = () => {
+      tracking = false;
+      if (!running) {
+        running = true;
+        requestAnimationFrame(tick);
+      }
+    };
+
+    pod.addEventListener('pointerleave', release, { passive: true });
+    /* a cancelled pointer never fires pointerleave, so the pod would stay bent */
+    pod.addEventListener('pointercancel', release, { passive: true });
   }
 
-  for (const pod of document.querySelectorAll('.pod')) wireDrag(pod);
+  for (const pod of document.querySelectorAll('.pod')) {
+    wireDrag(pod);
+    pod
+      .querySelector('.pod__skin')
+      ?.addEventListener('animationend', () => pod.classList.add('is-awake'), { once: true });
+  }
 </script>

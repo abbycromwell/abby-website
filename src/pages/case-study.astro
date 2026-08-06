@@ -592,8 +592,10 @@ const spreads = Object.keys(spreadImages)
       leaf.getBoundingClientRect();
       leaf.style.transition = '';
       leaf.style.transform = dir > 0 ? 'rotateY(-180deg)' : 'rotateY(0deg)';
+      let fallback = 0;
       const done = () => {
         if (!busy) return;
+        clearTimeout(fallback);
         busy = false;
         leaf.hidden = true;
         leaf.style.removeProperty('--turn-ms');
@@ -603,7 +605,11 @@ const spreads = Object.keys(spreadImages)
         show(current);
       };
       leaf.addEventListener('transitionend', done, { once: true });
-      setTimeout(done, 900);
+      /*
+        Cleared in done(). Left running, a finished turn's timer fires during the
+        NEXT turn, sees that turn's busy flag, and rolls the reader back a page.
+      */
+      fallback = setTimeout(done, ms + 260);
     };
 
     prevBtn.addEventListener('click', () => turn(-1));
