@@ -14,7 +14,7 @@ colors:
 typography:
   display:
     fontFamily: "Jost, Futura, Century Gothic, sans-serif"
-    fontSize: "clamp(4rem, 9vw, 6rem)"
+    fontSize: "clamp(2.25rem, 9vw, 6rem)"
     fontWeight: 300
     lineHeight: 1.05
     letterSpacing: "0.14em"
@@ -61,9 +61,6 @@ components:
   kicker:
     textColor: "{colors.wet-red}"
     typography: "{typography.label}"
-  scroll-cue:
-    textColor: "{colors.name-red}"
-    typography: "{typography.label}"
   plate:
     borderColor: "{colors.watercolor-edge}"
     backgroundColor: "{colors.deep-brown-red}"
@@ -81,9 +78,9 @@ watercolor anatomy study. Its visual world is spacious, organic, intimate, and
 slightly uncanny without becoming clinical or gory. Abby's real work supplies
 the detail and color; the interface remains restrained enough to frame it.
 
-The homepage is one continuous paper field: a coral watercolor wash carries a
-monumental left-anchored name, three artwork previews gather low, and a slim
-"Recent project" panel of three SongBook pages closes the page. The deep
+The homepage is one continuous paper field and nothing else: a coral watercolor
+wash carries a monumental left-anchored name, and three artwork pods hang in the
+right half as the entrances to Illustration, Animation, and Typography. The deep
 dried-oxblood gallery lives on the Work page, where framed artwork hangs on
 the dark ground beneath a large-type contents table. The Case Study page holds
 the SongBook flipbook; About shares the quieter paper field.
@@ -108,7 +105,7 @@ the corals of the world live in the artwork itself, not in interface pigment.
   watercolor marks.
 - **Name Red** (#570000, `--color-hero-name`): A pure dark red sampled from the
   approved homepage reference, distinct from the browner Dried Oxblood. Carries
-  the hero name, the scroll cue, and the homepage's small uppercase labels.
+  the hero name and the homepage's small uppercase labels.
 
 ### Secondary
 
@@ -151,9 +148,14 @@ pigment.
 ## Typography
 
 **Font:** Jost (Light 300 for the hero name, Book 400 elsewhere, Medium 500 for
-the nav name), with Futura and Century Gothic as local geometric fallbacks, as
+navigation and kickers, Semibold 600 for the homepage pod's category name and
+nothing else), with Futura and Century Gothic as local geometric fallbacks, as
 the single `--font-sans` stack. Fallbacks exist only for the instant before the
 webfont loads, so the stack stays short.
+
+600 exists because the pod name sits on artwork with nothing behind it: at 500
+it read as a caption rather than a destination. If it stops earning its place,
+drop it from the font link and take `--weight-semibold` with it.
 
 Jost is loaded from Google Fonts as the open stand-in for Futura PT, which the
 system stack never actually served. If an Adobe Fonts kit for Futura PT becomes
@@ -168,12 +170,13 @@ copy stays small, open, and calm.
 Display and Headline share one size token (`--text-display`); weight, leading,
 tracking, and role keep them distinct.
 
-- **Display** (Light 300, clamp(4rem, 9vw, 6rem), line-height 1.05,
+- **Display** (Light 300, clamp(2.25rem, 9vw, 6rem), line-height 1.05,
   tracking 0.14em, uppercase): The hero name, plus the title of standalone
   document pages (Resume), where it acts as a letterpress cover. Wide-tracked
   and airy where everything else is compressed. The One Monument Rule still
   holds: one Display element per view, and interior section pages (Work, About,
-  Case Study) keep the compressed Headline.
+  Case Study) keep the compressed Headline. The floor is 2.25rem, not 4rem: at
+  4rem "Cromwell" ran past the viewport on every phone and was silently clipped.
 - **Headline** (Book 400, clamp(4rem, 9vw, 6rem), line-height 0.82,
   tracking -0.04em, uppercase): Page titles on Work, About, and Case Study;
   stacked short lines with poster-like compression.
@@ -182,7 +185,7 @@ tracking, and role keep them distinct.
 - **Body** (Book 400, 1rem, line-height 1.5): Default copy. Ledes may step up
   to 1.25rem; the About introduction uses 1.5rem with tight leading.
 - **Label** (Book 400, 0.75rem, tracking 0.14em, uppercase): Navigation,
-  card metadata, and the scroll cue. The nav name and kickers use Medium 500.
+  and card metadata. Navigation and kickers use Medium 500.
 
 **The One Monument Rule.** Only one typographic element per view may dominate
 the composition.
@@ -207,8 +210,16 @@ fixed spacing scale runs 4px–96px in named steps.
 
 The system is flat: no shadow tokens exist. Depth comes from watercolor
 translucency, overlap, scale, and the shift between paper and deep oxblood.
-Work cards layer artwork beneath a Pooled Dark wash that thins on hover;
-containers never imitate floating application cards.
+Containers never imitate floating application cards.
+
+The homepage pods are the live example: `mix-blend-mode: multiply` and a
+feathered mask sink artwork into the wash with no frame and no shadow at all.
+
+`--color-dark-overlay` and `--color-dark-overlay-soft` are currently unused. They
+described a Pooled Dark wash that sat over work-card artwork and thinned on
+hover, which the framed-plates redesign removed. They are kept because the
+pattern is still the right answer if artwork ever needs text over it, but no
+surface uses them today.
 
 **The Flat Field Rule.** Surfaces rest flat on the paper. Depth is earned by
 material (washes, overlap, scale), never by box shadows.
@@ -221,21 +232,32 @@ each plate carries its own Watercolor Edge hairline frame with the dark ground
 showing in the gaps between plates. If a genuinely compact control ever needs
 rounding, a radius token gets added deliberately at that moment.
 
+**The one curved exception.** The homepage artwork pods are entirely curves, by
+Abby and Vivian's explicit ruling. They are membranes, not surfaces: their
+silhouettes come from eight-value `border-radius` declarations authored per pod
+and per state, which is why they take no radius token and never will. The rule
+holds everywhere else on the site.
+
 ## Components
 
 Motion across all components is quiet: color fades at 150ms, image zooms and
 wash fades at 240ms, both on an exponential ease-out
-(cubic-bezier(0.16, 1, 0.3, 1)). Nothing moves position, with two authored
+(cubic-bezier(0.16, 1, 0.3, 1)). Nothing moves position, with three authored
 exceptions native to their content: the case-study flipbook page turn (640ms
-ease-in-out leaf rotation around the spine) and animation clips that play
-muted while in view and pause when scrolled away. Under
-`prefers-reduced-motion` all movement is removed; color fades remain, the
-flipbook swaps spreads instantly, and clips wait with native controls.
+ease-in-out leaf rotation around the spine), animation clips that play muted
+while in view and pause when scrolled away, and the homepage pods, which drift
+and deform under the pointer. Looping motion uses `--ease-in-out`
+(cubic-bezier(0.45, 0, 0.55, 1)) rather than `--ease-out`, which lurches where a
+loop wraps. Under `prefers-reduced-motion` all movement is removed; color fades
+remain, the flipbook swaps spreads instantly, clips wait with native controls
+except the homepage pod, whose clip sits inside a link and so holds a still
+frame instead, and the pods hold their resting shape.
 
 ### Navigation
 
-The name (Medium 500) and the Work and About links use small geometric
-uppercase lettering with wide tracking. On immersive pages the header overlays
+The name and the Work and About links use small geometric uppercase lettering
+with wide tracking, all in Medium 500 — on immersive pages the links carry the
+header alone over the watercolor, and Book 400 read too faint against it. On immersive pages the header overlays
 the hero and the name is dropped, leaving only right-aligned links. Hover and
 focus shift to Wet Red; the current page holds Wet Red via `aria-current`.
 Focus adds a 1px outline offset by 4px. A skip link sits fixed top-left,
@@ -248,18 +270,36 @@ A small Wet Red uppercase label (`.eyebrow`) that opens interior page intros
 and titles the case-study detail columns. One per block, always paired with a
 headline or value below it.
 
-### Scroll cue
+### Artwork pods
 
-An uppercase Name Red text link with a downward arrow, sitting under the hero
-discipline line and pointing to the selected-work anchor.
+The homepage's only navigation into the work. Three pods (`.pod`) hang in the
+right half of the hero at uneven heights and unequal sizes, clear of the name
+and of the Work/About links: Illustration largest at the top, Typography
+smallest in the middle, Animation low in the densest part of the wash, where a
+moving clip holds up better than a still would.
 
-### Artwork previews
+Each pod is a membrane rather than a card. An eight-value `border-radius` gives
+it its own silhouette, a radial-gradient mask feathers its edge into the paper,
+and `mix-blend-mode: multiply` at 80% opacity sinks the artwork into the wash
+the way layered pigment would. No frame, no shadow, no plate. The blend lives on
+the transformed wrapper (`.pod__drag`), not the skin: a transform creates a
+stacking context, and on the skin the blend would have nothing to multiply
+against.
 
-The homepage gathers three 3:2 artwork previews (`.art-card`) in a row of
-capped columns, separated by 1px paper hairlines, images cropped to fill. The
-"Recent project" tease is a short full-width panel of three SongBook pages in
-a hairline-gapped grid, a Name Red uppercase label pinned top-left, a 2% image
-zoom on hover, linking to the case study.
+On hover the pod comes alive three ways at once. The silhouette drifts between
+three authored shapes over 7s so it never settles; the artwork drops to 40%
+opacity so the category name owns the pod; and pointer velocity stretches the
+membrane along the drag axis, squashing it by the inverse across that axis and
+trailing it behind the cursor, then letting surface tension pull it back. The
+category name fades in centred, in Jost 600 Name Red, with nothing behind it.
+
+Sources sit in `src/data/home-previews.js`. Illustration and Animation shuffle
+within their own chapter of `work.js` once per build, so each deploy deals a
+different face. Typography holds a fixed SongBook spread; the darker spreads
+were tried against the watercolor and rejected.
+
+Below 48rem the pods stack in a plain centred column and the category names sit
+statically beneath them, since there is no hover to reveal them.
 
 ### Work page — Table of Plates
 

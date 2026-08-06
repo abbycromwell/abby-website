@@ -6,3 +6,6 @@ dist/
 design/inspiration/
 .pnpm-store/
 .claude/settings.local.json
+
+# impeccable tool caches (the critique snapshots are worth keeping)
+.impeccable/hook.cache.json
