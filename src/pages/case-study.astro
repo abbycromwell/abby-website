@@ -297,12 +297,22 @@ const spreads = Object.keys(spreadImages)
     letter-spacing: var(--tracking-label);
     text-transform: uppercase;
     cursor: pointer;
-    transition: color var(--duration-fast) var(--ease-out);
+    transition:
+      color var(--duration-fast) var(--ease-out),
+      transform var(--duration-fast) var(--ease-out);
   }
 
   .case-reader__controls button:hover,
   .case-reader__controls button:focus-visible {
     color: var(--color-accent);
+  }
+
+  /*
+    You press these two dozen times to read the book, so the press has to answer.
+    Kept near-imperceptible for that frequency: 3%, and gone in 150ms.
+  */
+  .case-reader__controls button:active:not(:disabled) {
+    transform: scale(0.97);
   }
 
   .case-reader__controls button:focus-visible {
@@ -403,7 +413,12 @@ const spreads = Object.keys(spreadImages)
     transform-origin: left center;
     transform-style: preserve-3d;
     will-change: transform;
-    transition: transform 640ms cubic-bezier(0.4, 0, 0.2, 1);
+    /*
+      640ms is the authored page-turn beat. --turn-ms lets a fast swipe shorten it,
+      so a flick lands quicker than a deliberate button press; the script sets it
+      per turn and clears it after.
+    */
+    transition: transform var(--turn-ms, var(--duration-slow)) var(--ease-in-out);
   }
 
   .book__face {
@@ -550,7 +565,10 @@ const spreads = Object.keys(spreadImages)
       return img;
     };
 
-    const turn = (dir) => {
+    const TURN_MS = 640;
+    const TURN_MS_MIN = 380;
+
+    const turn = (dir, speed = 0) => {
       const target = current + dir;
       if (busy || target < 0 || target >= pages.length) return;
       if (reduceMotion) {
@@ -559,6 +577,9 @@ const spreads = Object.keys(spreadImages)
         return;
       }
       busy = true;
+      /* a flick carries its speed into the turn; a click keeps the full beat */
+      const ms = Math.round(TURN_MS - (TURN_MS - TURN_MS_MIN) * Math.min(speed, 1));
+      leaf.style.setProperty('--turn-ms', `${ms}ms`);
       const a = dir > 0 ? current : target;
       const b = dir > 0 ? target : current;
       pages[a].classList.add('is-turn-top');
@@ -575,6 +596,7 @@ const spreads = Object.keys(spreadImages)
         if (!busy) return;
         busy = false;
         leaf.hidden = true;
+        leaf.style.removeProperty('--turn-ms');
         pages[a].classList.remove('is-turn-top');
         pages[b].classList.remove('is-under');
         current = target;
@@ -594,17 +616,25 @@ const spreads = Object.keys(spreadImages)
 
     let downX = null;
     let downY = null;
-    book.addEventListener('pointerdown', (e) => { downX = e.clientX; downY = e.clientY; });
+    let downAt = 0;
+    // px/ms at which a swipe counts as a full-speed flick
+    const FLICK = 1.1;
+    book.addEventListener('pointerdown', (e) => {
+      downX = e.clientX;
+      downY = e.clientY;
+      downAt = e.timeStamp;
+    });
     book.addEventListener('pointerup', (e) => {
       if (downX === null) return;
       const dx = e.clientX - downX;
       const dy = e.clientY - downY;
+      const elapsed = Math.max(e.timeStamp - downAt, 1);
       downX = null;
       downY = null;
       // A mostly-vertical gesture is a scroll, never a page turn
       if (Math.abs(dy) > 30 && Math.abs(dy) > Math.abs(dx)) return;
       if (Math.abs(dx) > 40) {
-        turn(dx < 0 ? 1 : -1);
+        turn(dx < 0 ? 1 : -1, Math.abs(dx) / elapsed / FLICK);
       } else {
         const mid = book.getBoundingClientRect();
         turn(e.clientX > mid.left + mid.width / 2 ? 1 : -1);
