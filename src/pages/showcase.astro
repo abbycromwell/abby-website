@@ -273,10 +273,14 @@ const navSections = [
       <section id="motion">
         <h2>Motion</h2>
         <p class="ds-note">
-          Color fades run on <code>--duration-fast</code>, image zooms and wash fades on
-          <code>--duration-standard</code>, both on <code>--ease-out</code>. Looping motion
-          uses <code>--ease-in-out</code> instead, which does not lurch where a loop wraps.
-          Nothing moves position outside the three authored exceptions in DESIGN.md, and
+          Color fades run on <code>--duration-fast</code> (150ms), image zooms and wash
+          fades on <code>--duration-standard</code> (240ms), both on
+          <code>--ease-out</code>. Three authored beats sit outside that:
+          <code>--duration-slow</code> (640ms) for the flipbook page turn and the pod's
+          silhouette, <code>--duration-wake</code> (1.4s) for the pods' one breath on
+          load, and <code>--duration-drift</code> (7s) for the pod's hover wobble. Looping
+          motion uses <code>--ease-in-out</code> rather than <code>--ease-out</code>, which
+          lurches where a loop wraps. Nothing else moves position, and
           <code>prefers-reduced-motion</code> removes all movement; color fades remain.
         </p>
       </section>

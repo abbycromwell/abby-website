@@ -1,0 +1,653 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Work page — seven directions</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../../../src/styles/tokens.css" />
+    <style>
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        padding: var(--space-xl) var(--space-edge) var(--space-2xl);
+        color: var(--color-text);
+        background: var(--color-bg);
+        font-family: var(--font-sans);
+      }
+
+      .board__intro {
+        max-width: var(--max-width-prose);
+        margin-bottom: var(--space-2xl);
+      }
+
+      .board__intro h1 {
+        margin: 0 0 var(--space-sm);
+        font-size: var(--text-xl);
+        font-weight: var(--weight-light);
+        letter-spacing: var(--tracking-label);
+        text-transform: uppercase;
+      }
+
+      .board__intro p {
+        margin: 0;
+        color: var(--color-text-secondary);
+        font-size: var(--text-sm);
+        line-height: var(--leading-normal);
+      }
+
+      .board {
+        display: grid;
+        gap: var(--space-2xl);
+      }
+
+      @media (min-width: 75rem) {
+        .board { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      }
+
+      .card__head {
+        display: flex;
+        align-items: baseline;
+        gap: var(--space-sm);
+        margin-bottom: var(--space-xs);
+      }
+
+      .card__no {
+        color: var(--color-accent);
+        font-size: var(--text-xs);
+        font-weight: var(--weight-medium);
+        letter-spacing: var(--tracking-label);
+      }
+
+      .card__name {
+        margin: 0;
+        font-size: var(--text-lg);
+        font-weight: var(--weight-normal);
+        letter-spacing: var(--tracking-display);
+        text-transform: uppercase;
+      }
+
+      .card__note {
+        margin: 0 0 var(--space-sm);
+        max-width: 46ch;
+        color: var(--color-text-secondary);
+        font-size: var(--text-xs);
+        line-height: var(--leading-normal);
+      }
+
+      /* every direction is judged inside the same window, at the same scale */
+      .stage {
+        position: relative;
+        height: 30rem;
+        overflow-y: auto;
+        overflow-x: hidden;
+        border: var(--border-thin) solid var(--color-border);
+        background: var(--color-bg-dark);
+        scroll-behavior: smooth;
+      }
+
+      .paper-top {
+        padding: var(--space-lg) var(--space-md) var(--space-xl);
+        background: var(--color-bg);
+      }
+
+      .paper-top h2 {
+        margin: 0;
+        color: var(--color-hero-name);
+        font-size: var(--text-xl);
+        font-weight: var(--weight-normal);
+        letter-spacing: var(--tracking-display);
+        text-transform: uppercase;
+      }
+
+      .contents {
+        margin: var(--space-md) 0 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .contents li {
+        border-top: var(--border-thin) solid var(--color-border);
+      }
+
+      .contents a {
+        display: flex;
+        gap: var(--space-sm);
+        align-items: baseline;
+        padding: var(--space-xs) 0;
+        color: var(--color-text);
+        font-size: var(--text-base);
+        letter-spacing: var(--tracking-display);
+        text-decoration: none;
+        text-transform: uppercase;
+      }
+
+      .contents a:hover { color: var(--color-accent); }
+
+      .contents .n {
+        color: var(--color-text-secondary);
+        font-size: var(--text-xs);
+        letter-spacing: var(--tracking-label);
+      }
+
+      .chapter { padding: var(--space-lg) var(--space-md); }
+
+      .chapter__rule {
+        display: flex;
+        gap: var(--space-sm);
+        align-items: baseline;
+        padding-bottom: var(--space-xs);
+        margin-bottom: var(--space-md);
+        border-bottom: var(--border-thin) solid var(--color-border);
+        color: var(--color-text-on-dark);
+      }
+
+      .chapter__rule h3 {
+        margin: 0;
+        font-size: var(--text-base);
+        font-weight: var(--weight-normal);
+        letter-spacing: var(--tracking-label);
+        text-transform: uppercase;
+      }
+
+      .chapter__rule span {
+        color: var(--color-border);
+        font-size: var(--text-xs);
+        letter-spacing: var(--tracking-label);
+      }
+
+      .plates {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: var(--space-xs);
+      }
+
+      .plate {
+        aspect-ratio: 1 / 1;
+        overflow: hidden;
+        border: var(--border-thin) solid var(--color-border);
+      }
+
+      .plate img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      /* the typography chapter breaks the ground, in every direction */
+      .chapter--type {
+        background: #3a0f14;
+      }
+
+      .chapter--type .premise {
+        margin: 0 0 var(--space-md);
+        color: var(--color-bg);
+        font-size: var(--text-lg);
+        font-weight: var(--weight-light);
+        line-height: var(--leading-tight);
+        letter-spacing: var(--tracking-display);
+        text-transform: uppercase;
+      }
+
+      .chapter--type .plates { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .chapter--type .plate { aspect-ratio: 3 / 4; }
+
+      /* ─── 1. capillary rail ─── */
+      .d1 .stage { display: grid; grid-template-columns: 4.5rem 1fr; }
+      .d1 .rail {
+        position: sticky;
+        top: 0;
+        align-self: start;
+        height: 30rem;
+        padding: var(--space-md) 0 0 var(--space-sm);
+        background: var(--color-bg-dark);
+      }
+      .d1 .vein {
+        position: relative;
+        width: var(--border-thin);
+        height: 100%;
+        background: linear-gradient(var(--color-border), var(--color-accent));
+      }
+      .d1 .node {
+        position: absolute;
+        left: -0.28rem;
+        width: 0.62rem;
+        height: 0.62rem;
+        border-radius: 58% 42% 47% 53% / 45% 52% 48% 55%;
+        background: var(--color-border);
+      }
+      .d1 .node[data-on] { background: var(--color-accent); transform: scale(1.7); }
+      .d1 .node::after {
+        content: attr(data-label);
+        position: absolute;
+        left: 1rem;
+        top: -0.1rem;
+        color: var(--color-border);
+        font-size: 0.5rem;
+        letter-spacing: var(--tracking-label);
+      }
+
+      /* ─── 3. fore-edge ─── */
+      .d3 .stage { display: grid; grid-template-columns: 1fr 2.6rem; }
+      .d3 .edge {
+        position: sticky;
+        top: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        align-items: center;
+        height: 30rem;
+        border-left: var(--border-thin) solid var(--color-border);
+        background: var(--color-bg-dark);
+      }
+      .d3 .edge span {
+        color: var(--color-border);
+        font-size: var(--text-xs);
+        letter-spacing: var(--tracking-label);
+        writing-mode: vertical-rl;
+      }
+      .d3 .edge span[data-on] { color: var(--color-accent); }
+
+      /* ─── 4. specimen sheet ─── */
+      .d4 .sheet {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        gap: 2px;
+        padding: var(--space-xs);
+        background: var(--color-bg-dark);
+        border-bottom: var(--border-thin) solid var(--color-border);
+      }
+      .d4 .sheet img {
+        display: block;
+        width: 100%;
+        aspect-ratio: 1;
+        object-fit: cover;
+        opacity: 0.55;
+      }
+      .d4 .sheet img[data-on] { opacity: 1; outline: var(--border-thin) solid var(--color-accent); }
+
+      /* ─── 5. atlas legend ─── */
+      .d5 .stage { display: grid; grid-template-columns: 1fr 7rem; }
+      .d5 .legend {
+        position: sticky;
+        top: 0;
+        height: 30rem;
+        padding: var(--space-md) var(--space-xs);
+        border-left: var(--border-thin) solid var(--color-border);
+        background: var(--color-bg-dark);
+        color: var(--color-border);
+        font-size: 0.55rem;
+        letter-spacing: var(--tracking-label);
+        line-height: 2;
+        text-transform: uppercase;
+      }
+      .d5 .legend b { color: var(--color-accent); font-weight: var(--weight-medium); }
+      .d5 .plate { position: relative; }
+      .d5 .plate::after {
+        content: attr(data-n);
+        position: absolute;
+        top: 2px;
+        left: 4px;
+        color: var(--color-bg);
+        font-size: 0.5rem;
+        letter-spacing: var(--tracking-label);
+      }
+
+      /* ─── 6. drawers ─── */
+      .d6 details { border-bottom: var(--border-thin) solid var(--color-border); }
+      .d6 summary {
+        padding: var(--space-sm) var(--space-md);
+        color: var(--color-text-on-dark);
+        font-size: var(--text-xs);
+        letter-spacing: var(--tracking-label);
+        text-transform: uppercase;
+        cursor: pointer;
+      }
+      .d6 details[open] summary { color: var(--color-accent); }
+
+      /* ─── 7. running head ─── */
+      .d7 .running {
+        padding: var(--space-sm) var(--space-md);
+        background: var(--color-bg-dark);
+      }
+      .d7 .running__vein {
+        height: 2px;
+        margin-bottom: var(--space-xs);
+        border-radius: 2px;
+        background: linear-gradient(90deg, var(--color-border), var(--color-accent));
+      }
+      .d7 .running__vein--deep { height: 4px; background: var(--color-accent); }
+      .d7 .running ol {
+        display: flex;
+        gap: var(--space-md);
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+      .d7 .running a {
+        color: var(--color-border);
+        font-size: 0.6rem;
+        letter-spacing: var(--tracking-label);
+        text-decoration: none;
+        text-transform: uppercase;
+      }
+      .d7 .running a[data-on] { color: var(--color-accent); }
+
+      .roll {
+        display: inline-block;
+        margin-left: var(--space-xs);
+        padding: 2px var(--space-2xs);
+        border: var(--border-thin) solid var(--color-accent);
+        color: var(--color-accent);
+        font-size: 0.55rem;
+        letter-spacing: var(--tracking-label);
+        text-transform: uppercase;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="board__intro">
+      <h1>Work page — seven directions</h1>
+      <p>
+        Every panel is the same page with the same real artwork, the same tokens, and the
+        same three decisions already locked: paper intro, dark oxblood gallery, framed
+        square plates, and a Typography chapter that breaks the ground. Only the
+        navigation differs. Scroll inside each window.
+      </p>
+    </div>
+
+    <div class="board">
+      <!-- 1 -->
+      <section class="card d1">
+        <div class="card__head"><span class="card__no">01</span><h2 class="card__name">The Capillary Rail</h2></div>
+        <p class="card__note">A vein down the edge, branching once per chapter. Your position is a pigment node travelling down it.</p>
+        <div class="stage">
+          <div class="rail">
+            <div class="vein">
+              <i class="node" data-on style="top:8%" data-label="ILL"></i>
+              <i class="node" style="top:34%" data-label="ANI"></i>
+              <i class="node" style="top:60%" data-label="TYP"></i>
+              <i class="node" style="top:86%" data-label="SKE"></i>
+            </div>
+          </div>
+          <div>
+            <div class="paper-top"><h2>Selected work</h2></div>
+            <section class="chapter">
+              <div class="chapter__rule"><h3>01 Illustration</h3><span>6 works</span></div>
+              <div class="plates">
+                <div class="plate"><img src="../../../src/assets/illustration/confetti-profile.webp" alt="" /></div>
+                <div class="plate"><img src="../../../src/assets/illustration/matsuri-panels.webp" alt="" /></div>
+              </div>
+            </section>
+            <section class="chapter">
+              <div class="chapter__rule"><h3>02 Animation</h3><span>3 clips</span></div>
+              <div class="plates">
+                <div class="plate"><img src="../../../src/assets/archive/animation/rolling-tumbling-along.webp" alt="" /></div>
+                <div class="plate"><img src="../../../src/assets/archive/animation/rolling-character-sheet.webp" alt="" /></div>
+              </div>
+            </section>
+            <section class="chapter chapter--type">
+              <p class="premise">One song.<br />One typeface.<br />Twenty-four spreads.</p>
+              <div class="plates">
+                <div class="plate"><img src="../../../src/assets/case-study/spread-07.webp" alt="" /></div>
+                <div class="plate"><img src="../../../src/assets/case-study/spread-17.webp" alt="" /></div>
+                <div class="plate"><img src="../../../src/assets/case-study/spread-22.webp" alt="" /></div>
+              </div>
+            </section>
+            <section class="chapter">
+              <div class="chapter__rule"><h3>04 Sketch</h3><span>5 works</span></div>
+              <div class="plates">
+                <div class="plate"><img src="../../../src/assets/sketch/winged-figure-sketch.webp" alt="" /></div>
+                <div class="plate"><img src="../../../src/assets/sketch/tentacle-field.webp" alt="" /></div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2 -->
+      <section class="card d2">
+        <div class="card__head"><span class="card__no">02</span><h2 class="card__name">Chapter as Viewport</h2></div>
+        <p class="card__note">Four full-height chapters, snapped one to the next. Plates run horizontally inside each.</p>
+        <div class="stage" style="scroll-snap-type: y mandatory">
+          <section class="chapter" style="height:30rem;scroll-snap-align:start">
+            <div class="chapter__rule"><h3>01 Illustration</h3><span>6 works</span></div>
+            <div class="plates" style="grid-auto-flow:column;grid-auto-columns:9rem;grid-template-columns:none;overflow-x:auto">
+              <div class="plate"><img src="../../../src/assets/illustration/confetti-profile.webp" alt="" /></div>
+              <div class="plate"><img src="../../../src/assets/illustration/matsuri-panels.webp" alt="" /></div>
+              <div class="plate"><img src="../../../src/assets/illustration/squid-bonnet-collage.webp" alt="" /></div>
+            </div>
+          </section>
+          <section class="chapter" style="height:30rem;scroll-snap-align:start">
+            <div class="chapter__rule"><h3>02 Animation</h3><span>3 clips</span></div>
+            <div class="plates" style="grid-auto-flow:column;grid-auto-columns:9rem;grid-template-columns:none;overflow-x:auto">
+              <div class="plate"><img src="../../../src/assets/archive/animation/rolling-tumbling-along.webp" alt="" /></div>
+              <div class="plate"><img src="../../../src/assets/archive/animation/rolling-character-sheet.webp" alt="" /></div>
+            </div>
+          </section>
+          <section class="chapter chapter--type" style="height:30rem;scroll-snap-align:start">
+            <p class="premise">One song.<br />One typeface.</p>
+            <div class="plates" style="grid-template-columns:repeat(2,1fr)">
+              <div class="plate"><img src="../../../src/assets/case-study/spread-07.webp" alt="" /></div>
+              <div class="plate"><img src="../../../src/assets/case-study/spread-17.webp" alt="" /></div>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <!-- 3 -->
+      <section class="card d3">
+        <div class="card__head"><span class="card__no">03</span><h2 class="card__name">The Fore-Edge</h2></div>
+        <p class="card__note">Chapter names set rotated in the outer margin, like type printed on a book's fore-edge.</p>
+        <div class="stage">
+          <div>
+            <div class="paper-top"><h2>Selected work</h2></div>
+            <section class="chapter">
+              <div class="chapter__rule"><h3>01 Illustration</h3><span>6 works</span></div>
+              <div class="plates">
+                <div class="plate"><img src="../../../src/assets/illustration/confetti-profile.webp" alt="" /></div>
+                <div class="plate"><img src="../../../src/assets/illustration/tissue-study-page.webp" alt="" /></div>
+              </div>
+            </section>
+            <section class="chapter">
+              <div class="chapter__rule"><h3>02 Animation</h3><span>3 clips</span></div>
+              <div class="plates">
+                <div class="plate"><img src="../../../src/assets/archive/animation/rolling-tumbling-along.webp" alt="" /></div>
+                <div class="plate"><img src="../../../src/assets/archive/animation/rolling-character-sheet.webp" alt="" /></div>
+              </div>
+            </section>
+            <section class="chapter chapter--type">
+              <p class="premise">One song. One typeface.</p>
+              <div class="plates">
+                <div class="plate"><img src="../../../src/assets/case-study/spread-07.webp" alt="" /></div>
+                <div class="plate"><img src="../../../src/assets/case-study/spread-17.webp" alt="" /></div>
+                <div class="plate"><img src="../../../src/assets/case-study/spread-22.webp" alt="" /></div>
+              </div>
+            </section>
+          </div>
+          <nav class="edge">
+            <span data-on>Illustration</span>
+            <span>Animation</span>
+            <span>Typography</span>
+            <span>Sketch</span>
+          </nav>
+        </div>
+      </section>
+
+      <!-- 4 -->
+      <section class="card d4">
+        <div class="card__head"><span class="card__no">04</span><h2 class="card__name">The Specimen Sheet</h2></div>
+        <p class="card__note">Every piece as a small plate on one sheet that never leaves. The sheet is the map.</p>
+        <div class="stage">
+          <div class="sheet">
+            <img data-on src="../../../src/assets/illustration/confetti-profile.webp" alt="" />
+            <img src="../../../src/assets/illustration/matsuri-panels.webp" alt="" />
+            <img src="../../../src/assets/illustration/squid-bonnet-collage.webp" alt="" />
+            <img src="../../../src/assets/illustration/tissue-study-page.webp" alt="" />
+            <img src="../../../src/assets/illustration/prawn-comic-page.webp" alt="" />
+            <img src="../../../src/assets/illustration/checkered-floor-player.webp" alt="" />
+            <img src="../../../src/assets/archive/animation/rolling-tumbling-along.webp" alt="" />
+            <img src="../../../src/assets/archive/animation/rolling-character-sheet.webp" alt="" />
+            <img src="../../../src/assets/case-study/spread-07.webp" alt="" />
+            <img src="../../../src/assets/sketch/winged-figure-sketch.webp" alt="" />
+            <img src="../../../src/assets/sketch/tentacle-field.webp" alt="" />
+            <img src="../../../src/assets/sketch/mirror-selfie.webp" alt="" />
+          </div>
+          <section class="chapter">
+            <div class="chapter__rule"><h3>01 Illustration</h3><span>6 works</span></div>
+            <div class="plates">
+              <div class="plate"><img src="../../../src/assets/illustration/confetti-profile.webp" alt="" /></div>
+              <div class="plate"><img src="../../../src/assets/illustration/matsuri-panels.webp" alt="" /></div>
+            </div>
+          </section>
+          <section class="chapter chapter--type">
+            <p class="premise">One song. One typeface.</p>
+            <div class="plates">
+              <div class="plate"><img src="../../../src/assets/case-study/spread-07.webp" alt="" /></div>
+              <div class="plate"><img src="../../../src/assets/case-study/spread-17.webp" alt="" /></div>
+              <div class="plate"><img src="../../../src/assets/case-study/spread-22.webp" alt="" /></div>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <!-- 5 -->
+      <section class="card d5">
+        <div class="card__head"><span class="card__no">05</span><h2 class="card__name">The Atlas Legend</h2></div>
+        <p class="card__note">Anatomy-atlas convention: plates carry numbers, a fixed legend tells you what each is.</p>
+        <div class="stage">
+          <div>
+            <div class="paper-top"><h2>Selected work</h2></div>
+            <section class="chapter">
+              <div class="chapter__rule"><h3>Plates 1–6</h3><span>Illustration</span></div>
+              <div class="plates">
+                <div class="plate" data-n="1."><img src="../../../src/assets/illustration/confetti-profile.webp" alt="" /></div>
+                <div class="plate" data-n="2."><img src="../../../src/assets/illustration/matsuri-panels.webp" alt="" /></div>
+                <div class="plate" data-n="3."><img src="../../../src/assets/illustration/squid-bonnet-collage.webp" alt="" /></div>
+                <div class="plate" data-n="4."><img src="../../../src/assets/illustration/tissue-study-page.webp" alt="" /></div>
+              </div>
+            </section>
+            <section class="chapter chapter--type">
+              <p class="premise">One song. One typeface.</p>
+              <div class="plates">
+                <div class="plate" data-n="10."><img src="../../../src/assets/case-study/spread-07.webp" alt="" /></div>
+                <div class="plate" data-n="11."><img src="../../../src/assets/case-study/spread-17.webp" alt="" /></div>
+                <div class="plate" data-n="12."><img src="../../../src/assets/case-study/spread-22.webp" alt="" /></div>
+              </div>
+            </section>
+          </div>
+          <aside class="legend">
+            <b>1–6 Illustration</b><br />
+            7–9 Animation<br />
+            10–12 Typography<br />
+            13–17 Sketch
+          </aside>
+        </div>
+      </section>
+
+      <!-- 6 -->
+      <section class="card d6">
+        <div class="card__head"><span class="card__no">06</span><h2 class="card__name">Chapter Drawers</h2></div>
+        <p class="card__note">Four bands, one open at a time, so all four headings are always on screen.</p>
+        <div class="stage">
+          <div class="paper-top"><h2>Selected work</h2></div>
+          <details open name="d6">
+            <summary>01 Illustration — 6 works</summary>
+            <div class="chapter">
+              <div class="plates">
+                <div class="plate"><img src="../../../src/assets/illustration/confetti-profile.webp" alt="" /></div>
+                <div class="plate"><img src="../../../src/assets/illustration/matsuri-panels.webp" alt="" /></div>
+              </div>
+            </div>
+          </details>
+          <details name="d6"><summary>02 Animation — 3 clips</summary>
+            <div class="chapter">
+              <div class="plates">
+                <div class="plate"><img src="../../../src/assets/archive/animation/rolling-tumbling-along.webp" alt="" /></div>
+                <div class="plate"><img src="../../../src/assets/archive/animation/rolling-character-sheet.webp" alt="" /></div>
+              </div>
+            </div>
+          </details>
+          <details name="d6"><summary>03 Typography — case study</summary>
+            <div class="chapter chapter--type">
+              <p class="premise">One song. One typeface.</p>
+              <div class="plates">
+                <div class="plate"><img src="../../../src/assets/case-study/spread-07.webp" alt="" /></div>
+                <div class="plate"><img src="../../../src/assets/case-study/spread-17.webp" alt="" /></div>
+                <div class="plate"><img src="../../../src/assets/case-study/spread-22.webp" alt="" /></div>
+              </div>
+            </div>
+          </details>
+          <details name="d6"><summary>04 Sketch — 5 works</summary>
+            <div class="chapter">
+              <div class="plates">
+                <div class="plate"><img src="../../../src/assets/sketch/winged-figure-sketch.webp" alt="" /></div>
+                <div class="plate"><img src="../../../src/assets/sketch/tentacle-field.webp" alt="" /></div>
+              </div>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <!-- 7 -->
+      <section class="card d7">
+        <div class="card__head">
+          <span class="card__no">07</span>
+          <h2 class="card__name">The Running Head</h2>
+          <span class="roll">the roll's pick</span>
+        </div>
+        <p class="card__note">No fixture. The contents reprints at every chapter boundary, on a capillary that deepens as you descend.</p>
+        <div class="stage">
+          <div class="paper-top"><h2>Selected work</h2>
+            <ol class="contents">
+              <li><a href="#"><span class="n">01</span> Illustration</a></li>
+              <li><a href="#"><span class="n">02</span> Animation</a></li>
+              <li><a href="#"><span class="n">03</span> Typography</a></li>
+              <li><a href="#"><span class="n">04</span> Sketch</a></li>
+            </ol>
+          </div>
+          <section class="chapter">
+            <div class="chapter__rule"><h3>01 Illustration</h3><span>6 works</span></div>
+            <div class="plates">
+              <div class="plate"><img src="../../../src/assets/illustration/confetti-profile.webp" alt="" /></div>
+              <div class="plate"><img src="../../../src/assets/illustration/matsuri-panels.webp" alt="" /></div>
+            </div>
+          </section>
+          <nav class="running">
+            <div class="running__vein"></div>
+            <ol><li><a href="#">Illustration</a></li><li><a href="#" data-on>Animation</a></li><li><a href="#">Typography</a></li><li><a href="#">Sketch</a></li></ol>
+          </nav>
+          <section class="chapter">
+            <div class="chapter__rule"><h3>02 Animation</h3><span>3 clips</span></div>
+            <div class="plates">
+              <div class="plate"><img src="../../../src/assets/archive/animation/rolling-tumbling-along.webp" alt="" /></div>
+              <div class="plate"><img src="../../../src/assets/archive/animation/rolling-character-sheet.webp" alt="" /></div>
+            </div>
+          </section>
+          <nav class="running">
+            <div class="running__vein running__vein--deep"></div>
+            <ol><li><a href="#">Illustration</a></li><li><a href="#">Animation</a></li><li><a href="#" data-on>Typography</a></li><li><a href="#">Sketch</a></li></ol>
+          </nav>
+          <section class="chapter chapter--type">
+            <p class="premise">One song.<br />One typeface.<br />Twenty-four spreads.</p>
+            <div class="plates">
+              <div class="plate"><img src="../../../src/assets/case-study/spread-07.webp" alt="" /></div>
+              <div class="plate"><img src="../../../src/assets/case-study/spread-17.webp" alt="" /></div>
+              <div class="plate"><img src="../../../src/assets/case-study/spread-22.webp" alt="" /></div>
+            </div>
+          </section>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>
