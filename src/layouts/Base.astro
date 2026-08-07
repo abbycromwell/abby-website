@@ -3,14 +3,24 @@ import { Image } from 'astro:assets';
 import '../styles/tokens.css';
 import '../styles/global.css';
 import heroWatercolor from '../assets/home/hero-watercolor-veins.png';
+import veinFieldPaper from '../assets/home/vein-field-paper.png';
 
 const {
   title = 'Abby Cromwell — Portfolio',
   description = 'Illustrative art, character design, and storytelling by Abby Cromwell.',
   immersive = false,
   atmospheric = false,
+  ground = 'veins',
   activePage = '',
 } = Astro.props;
+
+/* Which watercolor plate the atmospheric background renders. Named `ground`
+   because `plate` already means a framed artwork on the Work page. */
+const grounds = {
+  veins: heroWatercolor,
+  field: veinFieldPaper,
+};
+const groundName = ground in grounds ? ground : 'veins';
 ---
 
 <!doctype html>
@@ -31,8 +41,8 @@ const {
   <body class:list={{ 'body--atmospheric': atmospheric }}>
     {atmospheric && (
       <Image
-        class="site-watercolor"
-        src={heroWatercolor}
+        class:list={['site-watercolor', `site-watercolor--${groundName}`]}
+        src={grounds[groundName]}
         alt=""
         aria-hidden="true"
         loading="eager"
@@ -46,6 +56,7 @@ const {
         {!immersive && <a href="/" class="nav-name">Abby Cromwell</a>}
         <ul class="nav-links">
           <li><a href="/work/" aria-current={activePage === 'work' ? 'page' : undefined}>Work</a></li>
+          <li><a href="/songbook/" aria-current={activePage === 'songbook' ? 'page' : undefined}>SongBook</a></li>
           <li><a href="/about/" aria-current={activePage === 'about' ? 'page' : undefined}>About</a></li>
         </ul>
       </nav>

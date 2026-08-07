@@ -1,0 +1,621 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import songAnimationClip from '../assets/animation/a10.mp4';
+import spread01 from '../assets/case-study/spread-01.webp';
+import spread03 from '../assets/case-study/spread-03.webp';
+import spread06 from '../assets/case-study/spread-06.webp';
+import spread10 from '../assets/case-study/spread-10.webp';
+import spread11 from '../assets/case-study/spread-11.webp';
+import spread16 from '../assets/case-study/spread-16.webp';
+import spread17 from '../assets/case-study/spread-17.webp';
+import spread24 from '../assets/case-study/spread-24.webp';
+
+/*
+  Seven of the book's twenty-four spreads, each chosen because the writing
+  beside it is about that page. Alt text is copied verbatim from
+  src/components/SongBook.astro so a spread never gets two descriptions.
+  `folio` is the page number printed on the spread itself.
+*/
+const chapters = [
+  {
+    id: 'the-song',
+    title: 'The song',
+    image: spread01,
+    alt: 'Cover: coral watercolor streaks with the song title m@Hφu☆少女。 in red display letters',
+    label: 'Cover',
+    folio: null,
+  },
+  {
+    id: 'the-lyrics',
+    title: 'What the lyrics say',
+    image: spread03,
+    alt: 'Song essay spread: why the song was chosen and why it is set in Futura',
+    label: 'Song essay',
+    folio: 'Pages 4–5',
+  },
+  {
+    id: 'doki',
+    title: 'DOKI, pounding',
+    image: spread17,
+    alt: 'Color studies 27 and 28: red DOKI lyric poster and layered gray glyph field',
+    label: 'Studies 27–28',
+    folio: 'Pages 32–33',
+  },
+  {
+    id: 'bittersweet',
+    title: 'Bittersweet',
+    image: spread16,
+    alt: 'Color studies 25 and 26: chromatic type debris on dark red, white glyphs raining on sky blue',
+    label: 'Studies 25–26',
+    folio: 'Pages 30–31',
+  },
+  {
+    id: 'homogenous',
+    title: 'Homogenous days',
+    image: spread06,
+    alt: 'Black and white studies 1 to 4: stacked text-block grids and tiny centered settings',
+    label: 'Studies 1–4',
+    folio: 'Pages 10–11',
+  },
+  {
+    id: 'flowers-of-evil',
+    title: 'Flowers of Evil',
+    image: spread11,
+    alt: 'Inspirations spread on Shūzō Oshimi’s Flowers of Evil with anime stills and a quote on puberty',
+    label: 'Inspirations',
+    folio: 'Pages 20–21',
+  },
+  {
+    id: 'futura',
+    title: 'Why Futura',
+    image: spread10,
+    alt: 'Black and white studies 17 to 20: octopus of dotted type, umbrella arcs, a monumental 女 character',
+    label: 'Studies 17–20',
+    folio: 'Pages 18–19',
+  },
+  {
+    id: 'colophon',
+    title: 'How it was printed',
+    image: spread24,
+    alt: 'Colophon: typeset in Futura PT, text paper Neenah Royal Sundance brilliant white',
+    label: 'Colophon',
+    folio: 'Page 46',
+  },
+];
+
+/* The cover is a single page, not a spread, so it carries its own widths. */
+const wideWidths = [768, 1280, 2040];
+const coverWidths = [640, 1020];
+const spreadSizes = '(min-width: 75rem) 56vw, 94vw';
+---
+
+<Base
+  title="SongBook: the essay — Abby Cromwell"
+  description="Abby Cromwell's essay from SongBook, a print book studying one song — M@HФU 少女。。 by Mariko Gotou — set entirely in Futura."
+  atmospheric
+  ground="field"
+  activePage="songbook"
+>
+  <div class="essay">
+    <!--
+      THESIS: A student typography book is worth reading, not just flipping. This page
+      refuses the case-study template (problem / process / outcome) and prints Abby's
+      own essay at full length beside the seven spreads it is about.
+      OWN-WORLD: Inherited. Meninges Paper ground under the vein-field wash at 0.3,
+      Jost throughout, Watercolor Edge hairlines, framed plates with square corners,
+      Wet Red kept to interaction only. No new pigment, no new component.
+      STORY: A hiring reader arrives from the Work page, hears a real voice think about
+      a song, understands why the typeface was chosen, and leaves able to flip the book.
+      FIRST VIEWPORT: Kicker, SongBook in compressed Headline caps, a two-line lede,
+      the Role/Medium/Year detail rows on the right, and one quiet link to the
+      flipbook. The first spread's rule sits just below the fold.
+      FORM: Alternating plate / column, pinned by the brief; no concept roll was run
+      because the structure was specified. Seed: none — brief-pinned.
+      FINISH: unreviewed and undocumented is unfinished; this build ends with the finish
+      review, the verdict, and DESIGN.md.
+    -->
+    <header class="essay-intro">
+      <div class="essay-intro__main">
+        <p class="eyebrow">The essay</p>
+        <h1>SongBook</h1>
+        <p class="essay-intro__lede">
+          A print book about one song: “M@HФU 少女。。” by Mariko Gotou. Abby wrote
+          the essay, designed its covers, and set the whole book in
+          Futura.
+        </p>
+        <a class="essay-intro__link text-link" href="/work/#typography">
+          Flip through the book <span aria-hidden="true">→</span>
+        </a>
+      </div>
+
+      {/* the case-study's detail rows, carried over so the two pages read as kin */}
+      <dl class="essay-details">
+        <div><dt class="eyebrow">Role</dt><dd>Design · Illustration · Writing</dd></div>
+        <div><dt class="eyebrow">Medium</dt><dd>Print book, set in Futura PT</dd></div>
+        <div><dt class="eyebrow">Year</dt><dd>2026</dd></div>
+      </dl>
+    </header>
+
+    {chapters.map((chapter, i) => (
+      <>
+      {chapter.id === 'colophon' && (
+    <section class="essay-animation" aria-labelledby="song-animation-title">
+      <div class="chapter__rule chapter__rule--animation">
+        <h2 id="song-animation-title">Song animation</h2>
+        <p>Companion work</p>
+      </div>
+      <p class="essay-animation__note">
+        Made alongside the book, not bound into it: a kinetic-type animation
+        that sets the lyrics flashing over live footage.
+      </p>
+      <video
+        class="essay-animation__clip"
+        src={songAnimationClip}
+        muted
+        loop
+        playsinline
+        preload="metadata"
+        aria-label="Kinetic type animation: Japanese lyrics flashing in white over live concert footage of a band, the frame breaking up into scattered debris"
+      ></video>
+    </section>
+      )}
+      <section
+        id={chapter.id}
+        class:list={['chapter', { 'chapter--flip': i % 2 === 1 }]}
+        aria-labelledby={`${chapter.id}-title`}
+      >
+        <div class="chapter__rule">
+          <h2 id={`${chapter.id}-title`}>{chapter.title}</h2>
+          <p>
+            {chapter.label}
+            {chapter.folio && <span class="chapter__folio">{chapter.folio}</span>}
+          </p>
+        </div>
+
+        <figure class="chapter__plate">
+          <Image
+            src={chapter.image}
+            alt={chapter.alt}
+            widths={i === 0 ? coverWidths : wideWidths}
+            sizes={spreadSizes}
+            loading={i === 0 ? 'eager' : 'lazy'}
+          />
+        </figure>
+
+        <div class="chapter__copy">
+          {chapter.id === 'the-song' && (
+            <>
+              <p>
+                I chose the song “M@HФU 少女。。” by Mariko Gotou, it is written
+                using special characters but the real title is “Mahou Shoujo,”
+                which means magical girl. Mariko Gotou is famous for being in the
+                band Midori, as well as singing the opening song for the anime
+                Flowers of Evil. She’s a performance artist who prioritizes
+                emotional delivery over perfection, clashing genres such as jazz
+                and punk to construct chaotic and manic-like songs. It is the
+                third song in the album 299792458, released in July 2012.
+              </p>
+              <p>
+                I first came across her many years ago when I read the manga
+                Flowers of Evil, which later adapted into an anime. I fell deeply
+                in love with her vocals and started researching her discography.
+              </p>
+            </>
+          )}
+
+          {chapter.id === 'the-lyrics' && (
+            <>
+              <p>
+                The song is sung in Japanese, so my interpretation may not be
+                entirely accurate. The lyrics seem to be about longing for
+                freedom, specifically from societal obligations. Describing
+                desire, love, and sexuality—when determined by society—as a moral
+                violation that needs to be regulated: “killing the sins
+                committed, the system circuits are closing,” conforming to
+                society’s unspoken rules.
+              </p>
+              <p>
+                This is further emphasized when she sings, “She jumps on the
+                Odakyu Line, saying, ‘It’s not a misunderstanding.’” Restricted by
+                the boundaries of traditional love, she questions herself: “I
+                wonder if this is love???”
+              </p>
+            </>
+          )}
+
+          {chapter.id === 'doki' && (
+            <p>
+              Mariko Gotou expresses her distaste for fruitless roles and
+              concepts of love with lines like, “I don’t care, worldly
+              desires☆freedom!!! I crave it.” “Synchronizing, motives,
+              synchronizing, DOKI, pounding.” I absolutely love all of her works,
+              from her songs produced in the now-defunct band Midori to her new
+              music project, DJ510mariko.
+            </p>
+          )}
+
+          {chapter.id === 'bittersweet' && (
+            <>
+              <blockquote>
+                <p>
+                  If I had to summarize the song “M@HФU 少女。。” with one word it
+                  would be—bittersweet. I would describe it as a fleeting moment
+                  filled with emotional release, containing clashing feelings of
+                  joy and grief.
+                </p>
+              </blockquote>
+              <p>
+                It is something I listen to when I have pent-up frustrations;
+                however, I also listen to it casually whenever I’m walking to
+                class to brighten up my day. Her screams aren’t like normal fry
+                screams, which are accomplished via professional technique. Her’s
+                are raw, evoking listeners like me who want to scream alongside
+                her.
+              </p>
+            </>
+          )}
+
+          {chapter.id === 'homogenous' && (
+            <>
+              <p>
+                [I] think this song feels personal to me because I also, as much
+                as possible, desire to escape the disgusting boundaries that
+                society inflicts. To me, normalcy is uncomfortable—I despise
+                being restricted, being perceived, or put inside a box. I grew up
+                privileged in the competitive suburbs, which although they had
+                their perks, felt incredibly dull and confining. All of the days
+                spent there were homogenous.
+              </p>
+              <p>
+                The best way I can describe how isolating the suburbia feels is
+                by comparing it to The Truman Show. The only thing that could
+                help compensate for the mundanity of the suburban lifestyle were
+                the novelty of buying new things and the temporary dopamine
+                stimulation I got from playing video games. Highschool didn’t
+                help either.
+              </p>
+              <p>
+                The toxicity that brewed from the academics made it impossible
+                for me to form genuine friendships, instead, I had ‘filler
+                friends’. People whom I didn’t really treat like real friends, but
+                were enough to make the day go by faster and fulfill that basic
+                need for belonging.
+              </p>
+              <p>
+                At some point, I concluded that I actually would much rather
+                abandon that desire entirely than force myself to hang out with
+                people who repulsed me, so for the majority of junior and senior
+                year, I stuck alone. I felt like, and even still feel like, I am
+                just being tailored by conformity, so I long to discover my own
+                sense of self.
+                Something either physical or formless that completes me, but I
+                realized long ago that those desires won’t be fulfilled by
+                following traditional life’s steps.
+              </p>
+            </>
+          )}
+
+          {chapter.id === 'flowers-of-evil' && (
+            <>
+              <p>
+                This cover was heavily inspired by a panel in the manga, “Flowers
+                of Evil” (惡の華) by mangaka Shūzō Oshimi. The manga is a coming of
+                age story mainly revolving around a slightly pretentious boy and
+                his battles with something the author labels “puberty”. A
+                beautiful moment is shared between two of the main characters: a
+                showcase of total release and anarchy. They mess up an entire
+                classroom with paint and chalk, drowning it in a sea of
+                confessions, both passionately expressing their pure revulsion
+                for the mundane town entrapping them.
+              </p>
+              <p>
+                I knew from the start that I wanted to dedicate atleast one cover
+                to this manga, it’s something I read when I was younger, and ever
+                since then I held it close to me. It is also how I originally
+                discovered Mariko Goto, as she is the lyricist for one of the
+                four openings of the anime adaptation. The overarching themes in
+                her song ‘M@HφU☆少女。。’ are very synonymous with the themes in
+                Shūzō Oshimi’s manga; both are fascinated with the rejection
+                against normalcy.
+              </p>
+            </>
+          )}
+
+          {chapter.id === 'futura' && (
+            <p>
+              I decided to represent the song using Futura, a geometric sans-serif
+              typeface. It’s round, clean, and seemingly has no imperfections. I
+              thought this font would be best to use because of Mariko Gotou’s
+              common juxtaposing themes, her contrasting vocals, the unsettling
+              instrumentals, and her unhinged stage performances. Using this font
+              intentionally clashes with the abnormal song title that uses a
+              combination of languages and characters. It’s visually synonymous
+              with the song’s emotional instability, and reinforces the song’s
+              duality between an idealized life and freedom from conformity.
+            </p>
+          )}
+
+          {chapter.id === 'colophon' && (
+            <p>
+              This book was typeset in Futura PT, a geometric sans-serif typeface
+              designed by Paul Renner and published by ParaType. The body text is
+              set in Futura PT Book. The text paper is Neenah Royal Sundance, in
+              brilliant white.
+            </p>
+          )}
+        </div>
+      </section>
+      </>
+    ))}
+
+
+    <footer class="essay-close">
+      <a class="essay-close__link text-link" href="/work/#typography">
+        Flip through all twenty-four spreads <span aria-hidden="true">→</span>
+      </a>
+    </footer>
+  </div>
+</Base>
+
+<script>
+  /*
+    The clip plays itself while in view, like the gallery's plates — muted and
+    looping, paused off-screen. Reduced motion gets a paused clip with native
+    controls instead of autoplay.
+  */
+  const clip = document.querySelector('.essay-animation__clip');
+  if (clip) {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      clip.controls = true;
+    } else {
+      const watcher = new IntersectionObserver((entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) clip.play().catch(() => {});
+          else clip.pause();
+        }
+      }, { threshold: 0.3 });
+      watcher.observe(clip);
+    }
+  }
+</script>
+
+<style>
+  .essay {
+    max-width: var(--max-width-wide);
+    margin-inline: auto;
+    padding-inline: var(--space-edge);
+  }
+
+  /* Intro */
+
+  .essay-intro {
+    padding-top: var(--space-page-top);
+    padding-bottom: var(--space-section);
+  }
+
+  .essay-details {
+    margin: 0;
+  }
+
+  .essay-details > div {
+    padding-block: var(--space-sm) var(--space-md);
+    border-top: var(--border-thin) solid var(--color-border);
+  }
+
+  .essay-details dt {
+    margin-bottom: var(--space-2xs);
+  }
+
+  .essay-details dd {
+    margin: 0;
+    font-size: var(--text-base);
+    line-height: var(--leading-normal);
+  }
+
+  @media (min-width: 75rem) {
+    .essay-intro {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(14rem, 18rem);
+      gap: var(--space-2xl);
+      align-items: start;
+    }
+
+    .essay-details {
+      /* clears the kicker so the first rule aligns with the title's cap height */
+      margin-top: var(--space-xl);
+    }
+  }
+
+  h1 {
+    margin-bottom: var(--space-lg);
+    font-size: min(var(--text-display), 10.5vw);
+    line-height: var(--leading-display);
+    letter-spacing: var(--tracking-display);
+    text-transform: uppercase;
+  }
+
+  .essay-intro__lede {
+    max-width: var(--max-width-prose);
+    margin-bottom: var(--space-lg);
+    color: var(--color-text-secondary);
+    font-size: var(--text-xl);
+    line-height: var(--leading-tight);
+  }
+
+
+  /* Chapters */
+
+  .chapter {
+    padding-bottom: var(--space-section);
+  }
+
+  /*
+    The rule spans both columns and carries the heading, so a short 2.83:1
+    spread and a tall column of prose start from the same line instead of
+    fighting each other for vertical balance.
+  */
+  .chapter__rule {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-2xs) var(--space-lg);
+    margin-bottom: var(--space-lg);
+    padding-top: var(--space-md);
+    border-top: var(--border-thin) solid var(--color-border);
+  }
+
+  .chapter__rule h2 {
+    margin-bottom: 0;
+    font-size: var(--text-xl);
+    line-height: var(--leading-tight);
+    letter-spacing: var(--tracking-display);
+    text-transform: uppercase;
+  }
+
+  .chapter__rule p {
+    margin-bottom: 0;
+    color: var(--color-text-secondary);
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+  }
+
+  .chapter__folio::before {
+    content: '·';
+    margin-inline: var(--space-xs);
+  }
+
+  /* Plate: the book's own trim, in the site's hairline frame. */
+
+  .chapter__plate {
+    margin: 0 0 var(--space-lg);
+    border: var(--border-thin) solid var(--color-border);
+  }
+
+  .chapter__plate img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .chapter__copy {
+    max-width: var(--max-width-copy);
+    color: var(--color-text);
+    line-height: var(--leading-normal);
+  }
+
+  .chapter__copy p {
+    margin-bottom: var(--space-lg);
+  }
+
+  .chapter__copy > :last-child,
+  .chapter__copy > :last-child p {
+    margin-bottom: 0;
+  }
+
+  .chapter__copy blockquote {
+    max-width: var(--max-width-prose);
+    margin: 0 0 var(--space-lg);
+    padding-left: var(--space-lg);
+    border-left: var(--border-thin) solid var(--color-border);
+    color: var(--color-hero-name);
+    font-size: var(--text-xl);
+    line-height: var(--leading-tight);
+  }
+
+  /* Close */
+
+  /*
+    Inherits the essay's own width and gutters — re-applying them here nested a
+    second inset and pushed this one section 40px right of every rule above it.
+    The chapter rhythm carries the spacing; no extra top margin.
+  */
+  .essay-animation {
+    margin: 0;
+    padding-bottom: var(--space-section);
+  }
+
+  .essay-animation__note {
+    max-width: var(--max-width-prose);
+    margin: 0 0 var(--space-lg);
+    line-height: var(--leading-normal);
+  }
+
+  .essay-animation__clip {
+    display: block;
+    width: min(100%, 56rem);
+    margin-inline: auto;
+    aspect-ratio: 1152 / 648;
+    border: var(--border-thin) solid var(--color-border);
+    background: var(--color-bg-dark);
+  }
+
+  .essay-close {
+    padding-bottom: var(--space-section);
+  }
+
+  .essay-intro__link,
+  .essay-close__link {
+    display: inline-block;
+    color: var(--color-hero-name);
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    transition: color var(--duration-fast) var(--ease-out);
+  }
+
+  .essay-intro__link:hover,
+  .essay-intro__link:focus-visible,
+  .essay-close__link:hover,
+  .essay-close__link:focus-visible {
+    color: var(--color-accent);
+  }
+
+  /*
+    One extra breakpoint above the system's 48rem. Below 1200px a 5-column
+    prose track falls under 50 characters, and the stacked spread is simply
+    larger, so the alternation only starts where both halves still read.
+  */
+  @media (min-width: 75rem) {
+    .chapter {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+      column-gap: var(--space-xl);
+      align-items: start;
+    }
+
+    .chapter__rule {
+      grid-column: 1 / -1;
+    }
+
+    .chapter__plate {
+      grid-column: 1;
+      grid-row: 2;
+      margin-bottom: 0;
+    }
+
+    .chapter__copy {
+      grid-column: 2;
+      grid-row: 2;
+    }
+
+    /*
+      The wide track follows the plate across the flip; without swapping the
+      track sizes too, every other spread would land in the prose column's
+      width and the alternation would read as an accident.
+    */
+    .chapter--flip {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+    }
+
+    .chapter--flip .chapter__plate {
+      grid-column: 2;
+    }
+
+    .chapter--flip .chapter__copy {
+      grid-column: 1;
+    }
+  }
+</style>

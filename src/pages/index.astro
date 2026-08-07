@@ -407,14 +407,23 @@ import { pods } from '../data/home-previews.js';
       The pods hang between roughly 20% and 80% of the field. Pinning the name to
       the top padding left it floating above all of that with dead paper beneath,
       so the left column centres against them instead.
+
+      Two real columns now. The pods used to float in an absolute layer spanning
+      the whole hero, kept off the name by percentages tuned at one window size;
+      anything they overran was cut silently by `overflow: hidden`. Here the type
+      takes a max-content column and the pods get the remainder, so the browser
+      computes the boundary between them and it tracks the type at every width.
     */
     .hero {
       display: grid;
+      grid-template-columns: max-content minmax(0, 1fr);
+      column-gap: var(--space-edge);
       /* 40/60: optically centred sits a little above true centre */
       grid-template-rows: 4fr auto 6fr;
     }
 
     .hero__content {
+      grid-column: 1;
       grid-row: 2;
     }
 
@@ -436,51 +445,90 @@ import { pods } from '../data/home-previews.js';
     }
 
     /*
-      The pods scatter across the right half. Widths shrink harder at the narrow
-      end than they used to so the arrangement survives below 1440 without the
-      Typography pod walking into the name.
+      The pods' field: the second column, full height. Its left edge is wherever
+      the type stopped, its top is the hero's own header clearance, and its right
+      and bottom are the hero's padding. Nothing inside it can reach the name,
+      the discipline line, or the Work/About links, because none of those are in
+      it. The hero's padding is left over as slack for the hover wobble.
     */
     .pods {
       display: block;
-      position: absolute;
-      inset: 0;
+      position: relative;
+      grid-column: 2;
+      grid-row: 1 / -1;
+      /* the scatter would strand itself across 1200px of paper on an ultrawide */
+      justify-self: end;
+      width: min(100%, 60rem);
       margin: 0;
       pointer-events: none;
+
+      /*
+        The field's height as a length. A pod is square, so its height comes from
+        its width — a horizontal percentage — while `top` resolves percentages
+        against the height. Two different bases, so the vertical maths needs a
+        real one. Understating it is the safe direction: the hero is never
+        shorter than 100svh, so a taller hero only seats the pods higher.
+      */
+      --field-h: calc(100svh - var(--space-hero-top) - var(--space-xl));
+      /*
+        One size drives the whole ladder, so whichever bound bites, the
+        18 / 13.5 / 10 ratio survives it. The two caps are the fluidity: a pod
+        can be no taller than the field and no wider than it, which is what the
+        old viewport-width clamps could not promise.
+      */
+      --pod-base: min(clamp(11rem, 25vw, 20.5rem), calc(0.42 * var(--field-h)));
     }
 
     .pod {
       position: absolute;
-      width: auto;
+      /*
+        The percentage term is of the field's width, matching `left` below. 56%
+        is not a round number: below 57.1% of the field the Illustration pod's
+        left edge is always clear of the Typography pod's right edge, and below
+        58.2% Typography clears Animation, whatever the field's proportions. It
+        is the one bound that keeps the three readable as three.
+      */
+      --pod-w: min(calc(var(--pod-k) * var(--pod-base)), calc(var(--pod-k) * 56%));
+      /* the same size as a pure length, for the axis where percentages lie */
+      --pod-h: calc(var(--pod-k) * var(--pod-base));
+      width: var(--pod-w);
+      /*
+        Fractions of the FREE space, not of the field. At 1 the pod sits flush
+        with the field's far edge and at 0 flush with the near one; there is no
+        value in between that puts any part of it outside. The composition is
+        still hand-placed, but it can no longer be hand-placed off the screen.
+      */
+      left: calc(var(--pod-x) * (100% - var(--pod-w)));
+      top: calc(var(--pod-y) * (var(--field-h) - var(--pod-h)));
       margin-inline: 0;
       pointer-events: auto;
     }
 
     /* a clear 18 / 13.5 / 10 ladder — 18 and 17.5 read as the same size */
     .pod--illustration {
-      top: 20%;
-      right: 5%;
-      width: clamp(9rem, 21vw, 20.5rem);
+      --pod-k: 1;
+      --pod-x: 0.92;
+      --pod-y: 0.07;
     }
 
     .pod--animation {
-      top: 62%;
-      right: 9%;
-      width: clamp(7.5rem, 16vw, 15.5rem);
+      --pod-k: 0.84;
+      --pod-x: 0.72;
+      --pod-y: 0.95;
+      /*
+        Measured off the field's floor. `top` works from a length that ignores
+        the width cap, so wherever that cap bites this pod would stop short of
+        its own gap and float the whole composition upward.
+      */
+      top: auto;
+      bottom: calc((1 - var(--pod-y)) * (var(--field-h) - var(--pod-h)));
     }
 
-    /*
-      Anchored off the text column, not a bare percentage. At 38% flat it crossed
-      into "CROMWELL" everywhere below ~1360px.
-    */
+    /* the pod nearest the type; 0.08 buys air off "CROMWELL" at every width */
     .pod--typography {
-      top: 46%;
-      /*
-        max() floors it at 4%. The text-column bound alone goes negative between
-        768 and ~808px — 768 - 23 - 608 - 176 is -39px — which pushed the pod off
-        the right edge and let .hero { overflow: hidden } cut ~40% of it away.
-      */
-      right: max(4%, min(38%, calc(100% - var(--space-edge) - var(--max-width-prose) - 11rem)));
-      width: clamp(5.75rem, 12.5vw, 11.5rem);
+      --pod-k: 0.6;
+      --pod-x: 0.08;
+      --pod-y: 0.48;
     }
   }
 

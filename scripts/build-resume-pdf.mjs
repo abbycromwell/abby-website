@@ -11,16 +11,22 @@ const PORT = 4329;
 const ROOT_DIR = 'dist';
 const OUT_PATH = 'public/abby-cromwell-resume.pdf';
 
-// playwright-core ships no browsers; use the newest cached headless shell.
-function findHeadlessShell() {
+// playwright-core ships no browsers; use the newest cached full Chromium. The
+// headless shell renders the same text but drops the background image, so the
+// watercolor ground would not survive the export.
+function findChromium() {
   const cache = join(homedir(), 'Library/Caches/ms-playwright');
   const versions = readdirSync(cache)
-    .filter((d) => d.startsWith('chromium_headless_shell-'))
-    .sort();
-  if (!versions.length) throw new Error(`no chromium_headless_shell-* in ${cache}`);
+    .filter((d) => /^chromium-\d+$/.test(d))
+    .sort((a, b) => Number(a.slice(9)) - Number(b.slice(9)));
+  if (!versions.length) throw new Error(`no chromium-* in ${cache}`);
   const dir = join(cache, versions.at(-1));
-  const platform = readdirSync(dir).find((d) => d.startsWith('chrome-headless-shell-'));
-  return join(dir, platform, 'chrome-headless-shell');
+  const platform = readdirSync(dir).find((d) => d.startsWith('chrome-mac'));
+  // the bundle is "Chromium.app" on older builds, "Google Chrome for Testing.app" now
+  const bundleDir = join(dir, platform);
+  const bundle = readdirSync(bundleDir).find((d) => d.endsWith('.app'));
+  if (!bundle) throw new Error(`no .app bundle in ${bundleDir}`);
+  return join(bundleDir, bundle, 'Contents/MacOS', bundle.replace(/\.app$/, ''));
 }
 
 const MIME = {
@@ -55,7 +61,7 @@ function startServer(rootDir, port) {
 }
 
 const server = await startServer(ROOT_DIR, PORT);
-const browser = await chromium.launch({ executablePath: findHeadlessShell() });
+const browser = await chromium.launch({ executablePath: findChromium() });
 const page = await browser.newPage();
 
 await page.goto(`http://localhost:${PORT}/resume/`, { waitUntil: 'networkidle' });
@@ -67,7 +73,9 @@ await page.pdf({
   printBackground: true,
   preferCSSPageSize: true,
   tagged: true,
-  margin: { top: '0.5in', right: '0.5in', bottom: '0.5in', left: '0.5in' },
+  // full bleed; the sheet's margin is padding on .resume so the paper colour
+  // and the watercolor ground reach the trim edge
+  margin: { top: '0', right: '0', bottom: '0', left: '0' },
 });
 
 await browser.close();

@@ -11,6 +11,11 @@ html {
   background: var(--color-bg);
   scrollbar-color: var(--color-text-secondary) var(--color-bg);
   scrollbar-width: thin;
+  /*
+    Pages with and without a scrollbar were shifting the centred header a few
+    pixels against each other; the gutter is now always reserved.
+  */
+  scrollbar-gutter: stable;
 }
 
 ::-webkit-scrollbar {
@@ -50,12 +55,24 @@ body {
   opacity: 0.7;
 }
 
-/* The vein field is a paper plate: its blooms crowd the corners, so anchor the
-   pale centre under the reading column and hold it back far enough that body
-   copy keeps WCAG AA over the deepest bloom. */
+/* The vein field crowds its blooms into the corners, so it is centered rather
+   than right-anchored: right-anchoring parks the top-right bloom under the nav.
+   0.3 is the contrast ceiling. The 12px accent-red eyebrow only starts at
+   5.69:1 on bare paper, so any more wash drops it under AA where a filament
+   crosses it (measured worst glyph pixel at 0.3: 4.59:1, at 1280px wide). */
 .site-watercolor--field {
+  /*
+    Fixed, not absolute: the absolute plate is one viewport tall, so a long page
+    scrolls off it onto bare paper mid-essay. Pinned to the viewport it renders
+    at its painted scale and carries the whole scroll — same approach as the
+    Work gallery's ground. 0.3 stays: it is the measured ceiling for the 12px
+    accent kickers that sit on this wash.
+  */
+  position: fixed;
+  height: 100lvh;
+  min-height: 0;
   object-position: center top;
-  opacity: 0.45;
+  opacity: 0.3;
 }
 
 h1,
@@ -83,6 +100,55 @@ a:hover {
   color: var(--color-accent);
 }
 
+/*
+  The standard text link, sitewide: hairline underline in Watercolor Edge, text
+  and underline lifting to Wet Red on approach. Nav links and artwork pods stay
+  bare — this is for links that sit inside prose or act as CTAs.
+*/
+.text-link {
+  display: inline-block;
+  padding-bottom: var(--space-2xs);
+  /*
+    Transparent at rest: the detail rows these mostly live in carry their own
+    hairline, and a second static rule under the label read as a double line.
+    The underline arrives with the hover, in Wet Red, alongside the colour.
+  */
+  border-bottom: var(--border-thin) solid transparent;
+  color: inherit;
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  transition:
+    color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out);
+}
+
+.text-link:hover,
+.text-link:focus-visible {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+/* the arrow leans toward where it is taking you */
+.text-link span {
+  display: inline-block;
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.text-link:hover span,
+.text-link:focus-visible span {
+  transform: translateX(var(--space-2xs));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .text-link span,
+  .text-link:hover span,
+  .text-link:focus-visible span {
+    transform: none;
+    transition: none;
+  }
+}
+
 a:focus-visible {
   color: var(--color-accent);
   outline: var(--border-thin) solid currentColor;
@@ -105,11 +171,20 @@ a:focus-visible {
   transform: translateY(0);
 }
 
+/*
+  Thin, and pinned. It is the only persistent navigation on interior pages, and
+  the padding matches the homepage's overlay header so Work and About sit at the
+  same height on every page.
+*/
 .site-header {
+  position: sticky;
+  z-index: 3;
+  top: 0;
   width: 100%;
-  max-width: var(--max-width-wide);
+  max-width: none;
   margin-inline: auto;
-  padding-inline: var(--space-edge);
+  padding: var(--space-lg) var(--space-edge) var(--space-md);
+  background: var(--color-bg);
 }
 
 .site-header--overlay {
@@ -117,7 +192,7 @@ a:focus-visible {
   z-index: 2;
   inset: 0 0 auto;
   max-width: none;
-  padding-block: var(--space-md);
+  background: none;
 }
 
 .site-header--overlay .site-nav {
@@ -129,7 +204,6 @@ a:focus-visible {
   justify-content: space-between;
   align-items: flex-start;
   gap: var(--space-lg);
-  padding-block: var(--space-edge);
   font-size: var(--text-xs);
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;

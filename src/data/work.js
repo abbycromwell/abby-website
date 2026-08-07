@@ -18,6 +18,7 @@ import mirrorSelfie from '../assets/sketch/mirror-selfie.webp';
 import rollingClip from '../assets/animation/rolling-rolling-tumbling-along.mp4';
 import finalProjectClip from '../assets/animation/final-project-animation.mp4';
 import animationShortClip from '../assets/animation/animation-short.mp4';
+import songAnimationClip from '../assets/animation/a10.mp4';
 
 export const chapters = [
   {
@@ -62,14 +63,23 @@ export const chapters = [
         clip: rollingClip,
         alt: 'Animated short: a sphere rolls and tumbles across a colorful landscape',
         title: 'Rolling Rolling, Tumbling Along',
+        ratio: '1280 / 550',
       },
       {
         clip: finalProjectClip,
         alt: 'Hand-drawn animated short film excerpt',
+        ratio: '640 / 480',
       },
       {
         clip: animationShortClip,
         alt: 'Animated line-drawn figures melting over a warm orange wash',
+        ratio: '640 / 428',
+      },
+      {
+        clip: songAnimationClip,
+        alt: 'Kinetic type animation: Japanese lyrics flashing in white over live concert footage of a band, the frame breaking up into scattered debris',
+        title: 'SongBook — song animation',
+        ratio: '1152 / 648',
       },
     ],
   },
@@ -78,10 +88,10 @@ export const chapters = [
     no: '03',
     title: 'Typography',
     kind: 'case-study',
-    href: '/case-study/',
+    href: '/songbook/',
     /* the book's own subject, set in the book's own manner */
-    display: 'M@HΦU 少女。。',
-    premise: 'One song. One typeface. Twenty-four spreads.',
+    display: 'M@HφU☆少女。。',
+    premise: 'Typeface for the song.',
   },
   {
     slug: 'sketch',

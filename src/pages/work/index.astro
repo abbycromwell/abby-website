@@ -1,18 +1,53 @@
 ---
 import { Image } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
+import SongBook from '../../components/SongBook.astro';
 import { chapters } from '../../data/work.js';
 import galleryField from '../../assets/home/gallery-field.png';
-import songbookCover from '../../assets/case-study/spread-01.webp';
-import songbookGlyphs from '../../assets/case-study/spread-07.webp';
-import songbookDoki from '../../assets/case-study/spread-17.webp';
 
-/* the book speaks with its own pages, not a stand-in */
-const songbookSpreads = [
-  { src: songbookCover, alt: 'SongBook cover: coral watercolor streaks with the song title in red display letters' },
-  { src: songbookGlyphs, alt: 'SongBook page of monumental black Futura glyphs on a salmon ground' },
-  { src: songbookDoki, alt: 'SongBook page: red lyric poster with a monumental 女 character' },
-];
+
+/*
+  One blot per chapter, each a different silhouette and a different grain seed,
+  so the node you are on never looks like the one you just left.
+*/
+const blots = {
+  illustration: {
+    d: 'M49 18 C 61 17, 72 23, 79 34 C 86 45, 85 60, 81 73 C 77 86, 68 97, 56 101 C 43 106, 30 100, 21 90 C 13 80, 12 66, 16 51 C 19 38, 25 27, 36 21 C 40 19, 45 18, 49 18 Z',
+    seed: 11,
+    traces: [
+      'M29 36 C 41 43, 54 54, 68 70',
+      'M23 76 C 36 67, 50 67, 65 82',
+    ],
+    specks: [{ cx: 87, cy: 67, r: 2.5 }, { cx: 94, cy: 72, r: 1.5 }, { cx: 89, cy: 91, r: 3 }],
+  },
+  animation: {
+    d: 'M52 19 C 65 19, 76 27, 81 39 C 86 51, 84 66, 78 79 C 72 91, 62 100, 49 102 C 36 104, 24 96, 18 84 C 12 72, 14 57, 18 45 C 23 32, 32 22, 44 19 C 47 18, 50 18, 52 19 Z',
+    seed: 29,
+    traces: [
+      'M66 35 C 57 47, 53 61, 57 78',
+      'M29 49 C 41 54, 52 65, 67 86',
+    ],
+    specks: [{ cx: 90, cy: 43, r: 2 }, { cx: 95, cy: 49, r: 1.25 }, { cx: 91, cy: 80, r: 3.25 }],
+  },
+  typography: {
+    d: 'M46 18 C 58 16, 70 21, 78 31 C 86 41, 87 55, 83 69 C 80 83, 71 96, 59 101 C 47 107, 33 102, 23 93 C 14 84, 11 70, 14 56 C 16 42, 23 29, 34 22 C 38 20, 42 19, 46 18 Z',
+    seed: 47,
+    traces: [
+      'M34 32 C 45 44, 48 58, 43 77',
+      'M23 67 C 37 61, 53 62, 72 75',
+    ],
+    specks: [{ cx: 87, cy: 64, r: 2.25 }, { cx: 94, cy: 68, r: 1.25 }, { cx: 91, cy: 87, r: 3.5 }],
+  },
+  sketch: {
+    d: 'M50 20 C 62 16, 74 23, 80 35 C 86 47, 84 61, 82 73 C 79 86, 69 96, 57 101 C 44 106, 31 101, 22 92 C 13 83, 12 69, 15 55 C 17 42, 25 29, 36 23 C 40 20, 45 20, 50 20 Z',
+    seed: 71,
+    traces: [
+      'M30 42 C 43 49, 55 61, 70 75',
+      'M27 80 C 39 70, 52 69, 67 82',
+    ],
+    specks: [{ cx: 89, cy: 54, r: 2.75 }, { cx: 96, cy: 60, r: 1.5 }, { cx: 91, cy: 83, r: 2.5 }],
+  },
+};
 ---
 
 <!--
@@ -60,49 +95,130 @@ const songbookSpreads = [
     </nav>
 
     <div class="gallery">
-      <Image
-        class="gallery__wash"
-        src={galleryField}
-        alt=""
-        aria-hidden="true"
-        loading="lazy"
-        widths={[768, 1152, 1536]}
-        sizes="100vw"
-      />
-
       {/*
         The capillary: one vein down the gallery carrying position, branching
         once per chapter. It is the homepage's own filament doing the navigating,
         so the two pages share a mark rather than a widget.
       */}
+      {/*
+        The drawn filament spans the whole gallery, not one viewport — inside the
+        sticky rail it could only ever be a screen tall and started below the
+        ground's top edge. Only the beads stick; the vessel runs the full height.
+
+        Texture and splash come from a turbulence displacement, so the line stays
+        painterly and resolution-independent rather than reading as vector.
+      */}
+      <svg class="gallery__vein" viewBox="0 0 40 1000" preserveAspectRatio="none" aria-hidden="true">
+        <defs>
+          {/*
+            Pigment, not geometry. The displacement roughens the silhouette so it
+            reads as a pooled blot with a torn edge; the blur softens where it
+            bleeds into the ground; the radial fill gives it a denser core.
+          */}
+          <filter id="pigment" x="-25%" y="-15%" width="150%" height="130%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.14" numOctaves="3" seed="11" result="grain" />
+            <feDisplacementMap in="SourceGraphic" in2="grain" scale="4" xChannelSelector="R" yChannelSelector="G" />
+          </filter>
+        </defs>
+        <path
+          class="vein__trunk"
+          d="M20 0 C 9 90, 31 170, 21 260 C 12 340, 33 420, 22 505 C 11 590, 32 665, 20 750 C 9 835, 30 910, 21 1000"
+        />
+        <g class="vein__branches">
+          <path d="M20 74 C 27 84, 31 96, 36 106" />
+          <path d="M36 106 C 38 112, 39 118, 40 126" />
+          <path d="M20 148 C 13 158, 10 170, 6 184" />
+          <path d="M6 184 C 4 190, 3 197, 2 206" />
+          <path d="M20 232 C 28 242, 32 256, 37 272" />
+          <path d="M20 318 C 12 330, 8 344, 4 362" />
+          <path d="M4 362 C 3 370, 2 378, 2 388" />
+          <path d="M20 402 C 29 414, 33 430, 38 448" />
+          <path d="M20 486 C 13 498, 9 514, 5 532" />
+          <path d="M20 566 C 28 578, 33 594, 37 614" />
+          <path d="M37 614 C 39 622, 39 630, 39 640" />
+          <path d="M20 652 C 12 664, 8 680, 4 700" />
+          <path d="M20 734 C 29 746, 33 762, 38 782" />
+          <path d="M20 818 C 13 830, 9 846, 5 866" />
+          <path d="M20 894 C 28 906, 32 922, 36 940" />
+        </g>
+        <g class="vein__splash">
+          <ellipse cx="24" cy="96" rx="0.5" ry="0.7" />
+          <ellipse cx="16" cy="212" rx="0.4" ry="0.5" />
+          <ellipse cx="25" cy="288" rx="0.7" ry="0.5" />
+          <ellipse cx="15" cy="430" rx="0.5" ry="0.6" />
+          <ellipse cx="24" cy="548" rx="0.4" ry="0.6" />
+          <ellipse cx="16" cy="676" rx="0.6" ry="0.4" />
+          <ellipse cx="25" cy="790" rx="0.4" ry="0.5" />
+          <ellipse cx="15" cy="902" rx="0.6" ry="0.5" />
+        </g>
+      </svg>
+
       <nav class="vein" aria-label="Chapters">
-        {/*
-          Authored rather than a straight rule: a vessel wanders. The path is
-          stretched to the rail's height, and the beads sit at the four points
-          where it crosses back through the centre.
-        */}
-        <svg class="vein__line" viewBox="0 0 40 1000" preserveAspectRatio="none" aria-hidden="true">
-          <defs>
-            <linearGradient id="vein-gradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stop-color="var(--color-border)" />
-              <stop offset="1" stop-color="var(--color-accent)" />
-            </linearGradient>
-          </defs>
-          <path
-            d="M20 0
-               C 8 70, 32 130, 20 200
-               C 10 260, 30 320, 20 375
-               C 12 440, 30 500, 20 562
-               C 9 630, 31 690, 20 750
-               C 11 810, 29 880, 20 1000"
-          />
-        </svg>
         <ol>
           {chapters.map((chapter) => (
             <li>
               <a class="vein__node" href={`#${chapter.slug}`} data-vein={chapter.slug}>
-                <span class="vein__no">{chapter.no}</span>
-                <span class="vein__name">{chapter.title}</span>
+                <span class="vein__bead" aria-hidden="true">
+                  <svg class="vein__blot" viewBox="0 0 100 120" preserveAspectRatio="none">
+                    <defs>
+                      {/* A restrained displacement softens the painted edge without making it ragged. */}
+                      <filter id={`grain-${chapter.slug}`} x="-15%" y="-10%" width="130%" height="120%">
+                        <feTurbulence
+                          type="fractalNoise"
+                          baseFrequency="0.025 0.04"
+                          numOctaves="2"
+                          seed={blots[chapter.slug].seed}
+                          result="n"
+                        />
+                        <feDisplacementMap in="SourceGraphic" in2="n" scale="1.1" xChannelSelector="R" yChannelSelector="G" />
+                      </filter>
+                      {/*
+                        Low frequency, two octaves: the density has to vary in
+                        large irregular patches the way pigment pools. At 0.5 and
+                        four octaves it was fine even sandpaper across the whole
+                        shape, which is the opposite of watercolour.
+                      */}
+                      <filter id={`mottle-${chapter.slug}`}>
+                        <feTurbulence
+                          type="fractalNoise"
+                          baseFrequency="0.035"
+                          numOctaves="2"
+                          seed={blots[chapter.slug].seed + 3}
+                          result="grain"
+                        />
+                        <feColorMatrix in="grain" type="saturate" values="0" result="grey" />
+                        <feComponentTransfer in="grey" result="alpha">
+                          <feFuncA type="linear" slope="0.9" intercept="-0.35" />
+                        </feComponentTransfer>
+                        <feComposite in="SourceGraphic" in2="alpha" operator="in" />
+                      </filter>
+                      <clipPath id={`blot-clip-${chapter.slug}`}>
+                        <path d={blots[chapter.slug].d} />
+                      </clipPath>
+                    </defs>
+                    <g class="vein__blot-pigment" filter={`url(#grain-${chapter.slug})`}>
+                      <path class="vein__blot-body" d={blots[chapter.slug].d} />
+                      {/* the same shape again, softly lifted, for pooled pigment variation */}
+                      <path
+                        class="vein__blot-grain"
+                        d={blots[chapter.slug].d}
+                        filter={`url(#mottle-${chapter.slug})`}
+                      />
+                    </g>
+                    <g clip-path={`url(#blot-clip-${chapter.slug})`}>
+                      {blots[chapter.slug].traces.map((d) => <path class="vein__blot-trace" d={d} />)}
+                    </g>
+                    {blots[chapter.slug].specks.map(({ cx, cy, r }) => (
+                      <ellipse class="vein__blot-speck" cx={cx} cy={cy} rx={r} ry={r} />
+                    ))}
+                  </svg>
+                </span>
+                <span class="vein__label">
+                  <span class="vein__name">{chapter.title}</span>
+                  <span class="vein__count">
+                    — {chapter.plates ? `${chapter.plates.length} works` : '01 work'}
+                  </span>
+                </span>
               </a>
             </li>
           ))}
@@ -113,23 +229,17 @@ const songbookSpreads = [
         if (chapter.kind === 'case-study') {
           return (
             <section id={chapter.slug} class="chapter chapter--book" aria-labelledby="ch-typography">
-              <h2 id="ch-typography" class="book__display" lang="ja">{chapter.display}</h2>
+              {/* the same rule every other chapter opens on */}
+              <header class="chapter__rule">
+                <h2 id="ch-typography">{chapter.title}</h2>
+                <p>01 work</p>
+              </header>
+              {/* the book leads; its title and the line about it sit underneath */}
+              <SongBook heading="The book" bare hideHeading />
+              <p class="book__display" lang="ja">{chapter.display}</p>
               <p class="book__premise">{chapter.premise}</p>
-              <ul class="book__spreads">
-                {songbookSpreads.map(({ src, alt }) => (
-                  <li>
-                    <Image
-                      src={src}
-                      alt={alt}
-                      widths={[480, 768, 1152]}
-                      sizes="(min-width: 48rem) 30vw, 90vw"
-                      loading="lazy"
-                    />
-                  </li>
-                ))}
-              </ul>
-              <a class="book__cta" href={chapter.href}>
-                Read SongBook <span aria-hidden="true">→</span>
+              <a class="book__cta text-link" href={chapter.href}>
+                Read more <span aria-hidden="true">→</span>
               </a>
             </section>
           );
@@ -139,10 +249,7 @@ const songbookSpreads = [
         return (
           <section id={chapter.slug} class="chapter" aria-labelledby={`ch-${chapter.slug}`}>
             <header class="chapter__rule">
-              <h2 id={`ch-${chapter.slug}`}>
-                <span class="chapter__no">{chapter.no}</span>
-                {chapter.title}
-              </h2>
+              <h2 id={`ch-${chapter.slug}`}>{chapter.title}</h2>
               <p>{empty ? `${chapter.plates.length} works · forthcoming` : `${chapter.plates.length} works`}</p>
             </header>
             {/* Empty plate grids are decorative; aria-hidden lifts once artwork lands. */}
@@ -150,26 +257,42 @@ const songbookSpreads = [
               {chapter.plates.map((plate) => (
                 <li>
                   {plate?.clip ? (
-                    <figure class="plate plate--filled">
-                      <video
-                        class="plate__clip"
-                        src={plate.clip}
-                        muted
-                        loop
-                        playsinline
-                        preload="metadata"
-                        aria-label={plate.alt}
-                      ></video>
+                    <figure class="plate plate--filled" style={plate.ratio ? `--clip-ratio: ${plate.ratio}` : undefined}>
+                      <button
+                        class="plate__zoom"
+                        type="button"
+                        data-zoom-clip={plate.clip}
+                        data-zoom-alt={plate.alt}
+                      >
+                        <video
+                          class="plate__clip"
+                          src={plate.clip}
+                          muted
+                          loop
+                          playsinline
+                          preload="metadata"
+                          aria-hidden="true"
+                        ></video>
+                        <span class="sr-only">Enlarge: {plate.alt}</span>
+                      </button>
                     </figure>
                   ) : plate ? (
                     <figure class="plate plate--filled">
-                      <Image
-                        src={plate.src}
-                        alt={plate.alt}
-                        widths={[480, 768, 1152]}
-                        sizes="(min-width: 48rem) 45vw, 95vw"
-                        loading="lazy"
-                      />
+                      <button
+                        class="plate__zoom"
+                        type="button"
+                        data-zoom-src={plate.src.src}
+                        data-zoom-alt={plate.alt}
+                      >
+                        <Image
+                          src={plate.src}
+                          alt=""
+                          widths={[480, 768, 1152]}
+                          sizes="(min-width: 48rem) 45vw, 95vw"
+                          loading="lazy"
+                        />
+                        <span class="sr-only">Enlarge: {plate.alt}</span>
+                      </button>
                     </figure>
                   ) : (
                     <div class="plate">
@@ -184,17 +307,37 @@ const songbookSpreads = [
       })}
     </div>
 
-    <aside class="page-close">
-      <p>Illustrative art and character-led storytelling for entertainment worlds.</p>
-      <a href="/about/">About the artist <span aria-hidden="true">→</span></a>
-    </aside>
+    {/*
+      Pooled Dark exists in the palette for exactly this and has been unused
+      since the framed-plate redesign: a wash that lets one plate own the screen
+      while the gallery stays present behind it.
+    */}
+    <dialog class="lightbox" aria-label="Enlarged artwork">
+      <div class="lightbox__stage" data-lightbox-stage></div>
+
+      {/* the artwork speaks for itself; the position is announced, not printed */}
+      <p class="sr-only" aria-live="polite">
+        <span data-lightbox-chapter></span>
+        <span data-lightbox-index>1</span> of <span data-lightbox-total>1</span>
+      </p>
+
+      <button class="lightbox__step lightbox__step--prev" type="button" data-lightbox-prev>
+        <span aria-hidden="true">←</span><span class="sr-only">Previous</span>
+      </button>
+      <button class="lightbox__step lightbox__step--next" type="button" data-lightbox-next>
+        <span aria-hidden="true">→</span><span class="sr-only">Next</span>
+      </button>
+      <button class="lightbox__close" type="button" data-lightbox-close>
+        Close <span aria-hidden="true">✕</span>
+      </button>
+    </dialog>
   </div>
 </Base>
 
-<style>
+<style define:vars={{ galleryField: `url(${galleryField.src})` }}>
+  /* no overflow:hidden here — it disables position:sticky on the vein */
   .inner-page {
     min-height: 100vh;
-    overflow: hidden;
   }
 
   .plate-index {
@@ -272,12 +415,17 @@ const songbookSpreads = [
   .gallery {
     position: relative;
     isolation: isolate;
-    overflow: hidden;
     margin-top: var(--space-section);
     min-height: 100svh;
     padding-block: var(--space-xl) var(--space-section);
     color: var(--color-text-on-dark);
-    background: var(--color-bg-dark);
+    /*
+      Pinned to the viewport, not stretched over the section. As an <img> covering
+      a 2400px-tall gallery, a 1024px-tall plate scaled 2.3x and every feature in
+      it tripled and softened — one branch became a blurred mass across the page.
+      Fixed attachment renders it at the scale it was painted.
+    */
+    background: var(--color-bg-dark) var(--galleryField) center / cover fixed;
   }
 
   /*
@@ -286,14 +434,25 @@ const songbookSpreads = [
     pigment; this plate is already dark, so it carries the wash at full strength
     with the deep colour intact.
   */
-  .gallery__wash {
+  /* runs the full height of the gallery, edge to edge, behind everything */
+  /*
+    height:100% is load-bearing. An <svg> carries an intrinsic ratio from its
+    viewBox, so at 96px wide it resolved to exactly 2400px tall and ignored
+    bottom:0 — the vessel stopped dead partway down a 4261px gallery.
+  */
+  .gallery__vein {
+    display: none;
     position: absolute;
-    z-index: -1;
-    inset: 0;
-    width: 100%;
+    z-index: 0;
+    top: 0;
+    left: var(--space-edge);
+    width: var(--space-2xl);
     height: 100%;
-    object-fit: cover;
-    object-position: center top;
+  }
+
+  .vein__splash {
+    fill: var(--color-accent);
+    opacity: 0.75;
   }
 
   /* ─── the capillary ─── */
@@ -306,11 +465,16 @@ const songbookSpreads = [
     max-width: var(--max-width-wide);
     margin-inline: auto;
     padding-inline: var(--space-edge);
-    scroll-margin-top: var(--space-xl);
+    /* clears the sticky header, which was cropping every chapter heading */
+    scroll-margin-top: calc(var(--header-height) + var(--space-lg));
   }
 
+  /*
+    --space-section is the between-page-blocks rhythm and was far too much here:
+    chapters are movements of one gallery, not separate sections.
+  */
   .chapter + .chapter {
-    margin-top: var(--space-section);
+    margin-top: var(--space-xl);
   }
 
   .chapter__rule {
@@ -332,14 +496,11 @@ const songbookSpreads = [
     text-transform: uppercase;
   }
 
-  .chapter__no {
-    margin-right: var(--space-sm);
-    font-size: var(--text-xs);
-    letter-spacing: var(--tracking-label);
-  }
 
   .chapter__rule p {
     margin: 0;
+    /* was inheriting Watercolor Edge, which reads muddy against the wash */
+    color: var(--color-text-on-dark);
     font-size: var(--text-xs);
     letter-spacing: var(--tracking-label);
     text-transform: uppercase;
@@ -460,37 +621,6 @@ const songbookSpreads = [
 
   /* Close */
 
-  .page-close {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: var(--space-lg);
-    max-width: var(--max-width-wide);
-    margin-inline: auto;
-    padding: var(--space-section) var(--space-edge);
-  }
-
-  .page-close p {
-    max-width: var(--max-width-prose);
-    margin: 0;
-    color: var(--color-text-secondary);
-    font-size: var(--text-lg);
-  }
-
-  .page-close a {
-    color: var(--color-hero-name);
-    font-size: var(--text-xs);
-    letter-spacing: var(--tracking-label);
-    text-transform: uppercase;
-    white-space: nowrap;
-    transition: color var(--duration-fast) var(--ease-out);
-  }
-
-  .page-close a:hover,
-  .page-close a:focus-visible {
-    color: var(--color-accent);
-  }
 
 
   /* ─── the book ─── */
@@ -500,19 +630,36 @@ const songbookSpreads = [
     changes the ground. Everything else keeps a quiet numbered rule; if all four
     shouted, none of them would.
   */
+  /*
+    No ground of its own. It sits on the same washed field as every other
+    chapter — a solid Name Red slab read as a band pasted over the painting, and
+    would have been a seventh pigment besides. What sets the book apart is the
+    scale of its type and the width it takes, not a colour change.
+  */
   .chapter--book {
     max-width: none;
-    margin-block: var(--space-section);
-    padding-block: var(--space-section);
-    padding-inline: var(--space-edge);
-    background: var(--color-hero-name);
+    margin-block: var(--space-xl);
+    padding-block: 0;
+    /*
+      Symmetric. The chapters carry 96px right padding for the gallery margin,
+      which pushed this chapter's "centre" 96px left of where the eye puts it.
+    */
+    padding-inline: var(--space-2xl);
     text-align: center;
+  }
+
+  /* the chapter's own rule stays left, on the same edge as every other section */
+  .chapter--book .chapter__rule {
+    margin-left: calc(-1 * var(--space-2xl));
+    text-align: left;
   }
 
   .book__display {
     max-width: 18ch;
-    margin: 0 auto var(--space-md);
-    color: var(--color-bg);
+    font-family: var(--font-sans);
+    text-transform: none;
+    margin: var(--space-xl) auto var(--space-sm);
+    color: var(--color-border);
     font-size: var(--text-display);
     font-weight: var(--weight-light);
     line-height: var(--leading-hero);
@@ -520,45 +667,156 @@ const songbookSpreads = [
   }
 
   .book__premise {
-    margin: 0 0 var(--space-xl);
+    margin: 0 0 var(--space-lg);
     color: var(--color-border);
     font-size: var(--text-xs);
     letter-spacing: var(--tracking-label);
     text-transform: uppercase;
   }
 
-  .book__spreads {
-    display: grid;
-    gap: var(--space-xs);
-    max-width: var(--max-width-wide);
-    margin: 0 auto var(--space-xl);
-    padding: 0;
-    list-style: none;
-  }
-
-  .book__spreads img {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border: var(--border-thin) solid var(--color-border);
-  }
 
   .book__cta {
     display: inline-block;
-    padding-bottom: var(--space-2xs);
-    border-bottom: var(--border-thin) solid var(--color-border);
-    color: var(--color-bg);
-    font-size: var(--text-xs);
-    letter-spacing: var(--tracking-label);
-    text-decoration: none;
-    text-transform: uppercase;
-    transition: color var(--duration-fast) var(--ease-out);
   }
 
-  .book__cta:hover,
-  .book__cta:focus-visible {
+  /* ─── lightbox ─── */
+
+  /*
+    A flex row, so the arrows sit beside the artwork instead of at the viewport
+    edges. Pinned to the edges they were a screen apart from the thing they page.
+  */
+  /*
+    Scoped to [open]. A bare `display: flex` here overrides the UA's
+    `dialog:not([open]) { display: none }` — author styles win over UA styles
+    whatever the specificity — so the closed dialog painted its arrows over
+    the gallery.
+  */
+  .lightbox[open] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm);
+  }
+
+  .lightbox {
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    max-height: none;
+    margin: 0;
+    padding: var(--space-edge);
+    border: 0;
+    color: var(--color-text-on-dark);
+    background: var(--color-dark-overlay);
+  }
+
+  .lightbox::backdrop {
+    background: var(--color-dark-overlay);
+  }
+
+
+  .lightbox__stage {
+    order: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+    min-height: 0;
+  }
+
+  .lightbox__stage :global(img),
+  .lightbox__stage :global(video) {
+    display: block;
+    max-width: 100%;
+    max-height: 78vh;
+    object-fit: contain;
+  }
+
+
+  /* arrows sit at the edges, clear of the artwork */
+  .lightbox__step {
+    flex: 0 0 auto;
+    padding: var(--space-sm);
+    border: 0;
     color: var(--color-border);
+    background: none;
+    font-family: var(--font-sans);
+    font-size: calc(var(--text-xl) * 1.75);
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .lightbox__step--prev { order: 1; }
+  .lightbox__step--next { order: 3; }
+
+  /*
+    The arrows are absent until the pointer is actually in the overlay, and go
+    again once it stops moving — nothing sits on the artwork while you look at
+    it. Keyboard focus overrides, or the control would be unreachable.
+  */
+  .lightbox__step {
+    opacity: 0;
+    transition:
+      opacity var(--duration-standard) var(--ease-out),
+      color var(--duration-fast) var(--ease-out);
+  }
+
+  .lightbox--pointing .lightbox__step,
+  .lightbox--pointing .lightbox__close,
+  .lightbox__step:focus-visible,
+  .lightbox__close:focus-visible {
+    opacity: 1;
+  }
+
+  .lightbox__step:hover:not(:disabled),
+  .lightbox__step:focus-visible:not(:disabled) {
+    color: var(--color-accent);
+  }
+
+  .lightbox__step:disabled {
+    opacity: 0.3;
+    cursor: default;
+  }
+
+  .lightbox__close {
+    position: absolute;
+    top: var(--space-edge);
+    right: var(--space-edge);
+    padding: 0;
+    border: 0;
+    color: var(--color-border);
+    background: none;
+    font-family: var(--font-sans);
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    cursor: pointer;
+    /* absent until the pointer is in the overlay, like the arrows */
+    opacity: 0;
+    transition:
+      opacity var(--duration-standard) var(--ease-out),
+      color var(--duration-fast) var(--ease-out);
+  }
+
+  .lightbox__close:hover,
+  .lightbox__close:focus-visible {
+    color: var(--color-accent);
+  }
+
+  /* the plate is the trigger; it must not look like a control */
+  .plate__zoom {
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: zoom-in;
+  }
+
+  .plate__zoom:focus-visible {
+    outline: var(--border-thin) solid var(--color-accent);
+    outline-offset: var(--space-2xs);
   }
 
   @media (min-width: 48rem) {
@@ -573,7 +831,7 @@ const songbookSpreads = [
     */
     .gallery {
       display: grid;
-      grid-template-columns: calc(var(--space-edge) + var(--space-2xl) + var(--space-2xl)) minmax(0, 1fr);
+      grid-template-columns: calc(var(--space-edge) + var(--space-2xl) * 2 + var(--space-2xl)) minmax(0, 1fr);
     }
 
     /*
@@ -589,30 +847,42 @@ const songbookSpreads = [
       margin-top: 0;
     }
 
+    .gallery__vein {
+      display: block;
+    }
+
     .vein {
       display: block;
       position: sticky;
-      top: 0;
+      /* clears the pinned header */
+      top: var(--space-2xl);
       grid-column: 1;
       grid-row: 1 / -1;
       align-self: start;
-      height: 100svh;
+      height: calc(100svh - var(--space-2xl));
       padding-left: var(--space-edge);
       pointer-events: none;
     }
 
-    .vein__line {
-      position: absolute;
-      inset: 0 auto 0 var(--space-edge);
-      width: var(--space-2xl);
-      height: 100%;
+
+    /* the trunk thickens and reddens as the pigment dries downward */
+    .vein__trunk {
+      fill: none;
+      stroke: var(--color-accent);
+      stroke-width: 3;
+      vector-effect: non-scaling-stroke;
     }
 
-    /* the filament thickens and reddens as the pigment dries downward */
-    .vein__line path {
+    /*
+      A vessel is not a line. The branches leave the trunk between the beads,
+      taper, and fade out into the ground the way a capillary bed does.
+    */
+    .vein__branches path {
       fill: none;
-      stroke: url(#vein-gradient);
-      stroke-width: 2;
+      stroke: var(--color-accent);
+      stroke-width: 1;
+      stroke-linecap: round;
+      opacity: 0.8;
       vector-effect: non-scaling-stroke;
     }
 
@@ -630,53 +900,109 @@ const songbookSpreads = [
     .vein__node {
       display: flex;
       align-items: center;
-      gap: var(--space-xs);
+      gap: var(--space-sm);
       /* centres the bead on the wandering path, not on the gutter */
       margin-left: calc(var(--space-2xl) / 2 - var(--space-sm) / 2);
       color: var(--color-border);
-      font-size: var(--text-xs);
-      letter-spacing: var(--tracking-label);
       text-decoration: none;
-      text-transform: uppercase;
       white-space: nowrap;
       pointer-events: auto;
       transition: color var(--duration-fast) var(--ease-out);
     }
 
-    /* the node is a bead on the filament, in the pods' own silhouette */
-    .vein__no {
+    /* pale tan on the vessel, the way a node sits on a capillary */
+    .vein__bead {
+      position: relative;
       flex: 0 0 auto;
+      transform: translateX(var(--bead-shift, 0px));
       width: var(--space-sm);
       height: var(--space-sm);
-      border-radius: 58% 42% 47% 53% / 45% 52% 48% 55%;
+      border-radius: 50%;
       background: var(--color-border);
-      font-size: 0;
       transition:
-        background var(--duration-fast) var(--ease-out),
-        transform var(--duration-standard) var(--ease-out);
+        width var(--duration-standard) var(--ease-out),
+        height var(--duration-standard) var(--ease-out),
+        background var(--duration-fast) var(--ease-out);
     }
 
-    .vein__name {
+    /* the painted blot, only for the chapter you are in */
+    .vein__blot {
+      position: absolute;
+      inset: 50% auto auto 50%;
+      width: calc(var(--space-xl) * 0.66);
+      height: var(--space-xl);
+      overflow: visible;
       opacity: 0;
-      transition: opacity var(--duration-standard) var(--ease-out);
+      transform: translate(-50%, -50%) scale(0.7);
+      transition:
+        opacity var(--duration-standard) var(--ease-out),
+        transform var(--duration-slow) var(--ease-out);
     }
 
+    .vein__blot-body,
+    .vein__blot-speck {
+      fill: var(--color-accent);
+    }
+
+    /* pale mottling keeps the accent saturated instead of drying it to maroon */
+    .vein__blot-grain {
+      fill: var(--color-border);
+      opacity: 0.2;
+    }
+
+    .vein__blot-trace {
+      fill: none;
+      stroke: var(--color-border);
+      stroke-width: 0.8;
+      stroke-linecap: round;
+      opacity: 0.12;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .vein__blot-speck {
+      opacity: 0.9;
+    }
+
+    .vein__label {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2xs);
+      font-size: var(--text-xs);
+      letter-spacing: var(--tracking-label);
+      text-transform: uppercase;
+    }
+
+    .vein__count {
+      opacity: 0.8;
+    }
+
+    /* rests on the tan, lightens to paper on approach, and stays there when current */
     .vein__node:hover,
-    .vein__node:focus-visible,
+    .vein__node:focus-visible {
+      color: var(--color-text-on-dark);
+    }
+
+    /*
+      The current chapter is not a bigger dot. It swells into a vessel — the same
+      organic silhouette the homepage pods use — so the vein reads as anatomy
+      rather than as a progress indicator.
+    */
     .vein__node[aria-current='true'] {
-      color: var(--color-accent);
+      color: var(--color-text-on-dark);
     }
 
-    .vein__node:hover .vein__name,
-    .vein__node:focus-visible .vein__name,
-    .vein__node[aria-current='true'] .vein__name {
+    /*
+      The current node stops being a dot and becomes the blot. The CSS circle is
+      hidden rather than grown — a border-radius ellipse is a perfect shape with
+      a hard edge, and no radius value makes it read as pigment.
+    */
+    .vein__node[aria-current='true'] .vein__bead {
+      background: none;
+    }
+
+    .vein__node[aria-current='true'] .vein__blot {
       opacity: 1;
-    }
-
-    /* the current chapter swells, the way a pod does under the pointer */
-    .vein__node[aria-current='true'] .vein__no {
-      background: var(--color-accent);
-      transform: scale(1.8);
+      transform: translate(-50%, -50%) scale(1);
     }
 
     .vein__node:focus-visible {
@@ -684,20 +1010,45 @@ const songbookSpreads = [
       outline-offset: var(--space-xs);
     }
 
+
     .chapter {
       grid-column: 2;
+      /* the 1440 cap boxed a 30-inch display to a narrow column of large plates */
+      max-width: none;
       margin-inline: 0;
       padding-left: 0;
+      /* the rail holds a wide gutter on the left; the right needs weight to answer it */
+      padding-right: var(--space-2xl);
     }
 
-    /* the book is the one thing that crosses the rail's track, full width */
+    /*
+      The book stays in the content column like every other chapter. Spanning the
+      rail's track ran its spreads underneath the vein and its labels. What sets
+      it apart is the scale of its type, not the width it steals.
+
+      Padding is symmetric here, unlike the other chapters: their 96px right
+      margin pushed this chapter's centre 96px left of where the eye puts it.
+    */
     .chapter--book {
-      grid-column: 1 / -1;
-      padding-left: var(--space-edge);
+      grid-column: 2;
+      padding-inline: var(--space-2xl);
     }
 
-    .book__spreads {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+
+    /*
+      Plates are sized from viewport HEIGHT, not width. Three columns is the
+      composition; the problem was that two rows of them did not fit the screen,
+      so a chapter of six always hid half of itself. Capping each column at half
+      the usable height means both rows land inside one viewport at any size.
+    */
+    /*
+      Columns fill the row; HEIGHT is what gets capped. Capping the column width
+      instead left the grid stopping halfway across a wide screen with a dead
+      field beside it. Plates give up their square ratio here and crop to fill,
+      which is what lets a chapter both span the width and fit two rows on screen.
+    */
+    .chapter__grid {
+      --plate-max: calc((100svh - var(--space-2xl) * 3) / 2);
     }
 
     .chapter__grid--trio {
@@ -708,9 +1059,58 @@ const songbookSpreads = [
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .chapter__grid--wide li:first-child {
-      grid-column: span 2;
+    .chapter__grid--trio .plate,
+    .chapter__grid--dense .plate {
+      aspect-ratio: auto;
+      height: var(--plate-max);
     }
+
+    /*
+      Clip frames hug their footage. Uniform 16:9 frames left every non-16:9
+      clip letterboxed inside its own border, each with different leftovers —
+      DESIGN.md says never crop animation, so instead the frame takes the
+      clip's shape: one shared height, widths as the footage dictates, rows
+      centred.
+    */
+    .chapter__grid--wide {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-md);
+      justify-content: center;
+    }
+
+    .chapter__grid--wide li {
+      flex: 0 1 auto;
+      min-width: 0;
+    }
+
+    /*
+      Each frame takes its clip's true ratio from the data — sizing off the
+      video's own metadata raced preload="metadata" and collapsed to nothing.
+      Shared height, width from the footage, no letterbox inside the frame.
+    */
+    .chapter__grid--wide .plate {
+      aspect-ratio: var(--clip-ratio, 16 / 9);
+      width: auto;
+      height: var(--plate-max);
+    }
+
+    .chapter__grid--wide .plate__zoom {
+      width: 100%;
+      height: 100%;
+    }
+
+    .chapter__grid--wide .plate__clip {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .chapter__grid--dense li:first-child .plate {
+      height: var(--plate-max);
+    }
+
+
 
     .chapter__grid--wide li:first-child .plate {
       aspect-ratio: 2.25 / 1;
@@ -727,6 +1127,105 @@ const songbookSpreads = [
     The vein tracks position. IntersectionObserver rather than a scroll handler,
     so this costs nothing while the page sits still.
   */
+  /*
+    Native <dialog> so Escape, the focus trap and inertness come from the
+    platform rather than from hand-rolled key handling.
+  */
+  const lightbox = document.querySelector('.lightbox');
+  const stage = document.querySelector('[data-lightbox-stage]');
+
+  if (lightbox && stage) {
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const prevBtn = document.querySelector('[data-lightbox-prev]');
+    const nextBtn = document.querySelector('[data-lightbox-next]');
+    const indexOut = document.querySelector('[data-lightbox-index]');
+    const totalOut = document.querySelector('[data-lightbox-total]');
+    const chapterOut = document.querySelector('[data-lightbox-chapter]');
+
+    /*
+      Paging stays inside the chapter you opened from. Ranging over the whole
+      gallery would walk you from an illustration into a video clip with no
+      signal that the subject changed.
+    */
+    let group = [];
+    let at = 0;
+
+    const show = (i) => {
+      at = (i + group.length) % group.length;
+      const trigger = group[at];
+      const { zoomSrc, zoomClip, zoomAlt } = trigger.dataset;
+      stage.replaceChildren();
+
+      if (zoomClip) {
+        const video = document.createElement('video');
+        video.src = zoomClip;
+        video.controls = true;
+        video.loop = true;
+        video.muted = true;
+        video.playsInline = true;
+        video.setAttribute('aria-label', zoomAlt ?? '');
+        stage.append(video);
+        if (!reduced.matches) video.play().catch(() => {});
+      } else if (zoomSrc) {
+        const img = document.createElement('img');
+        img.src = zoomSrc;
+        img.alt = zoomAlt ?? '';
+        stage.append(img);
+      }
+
+      indexOut.textContent = String(at + 1);
+      totalOut.textContent = String(group.length);
+      prevBtn.disabled = group.length < 2;
+      nextBtn.disabled = group.length < 2;
+    };
+
+    for (const trigger of document.querySelectorAll('.plate__zoom')) {
+      trigger.addEventListener('click', () => {
+        const chapter = trigger.closest('.chapter');
+        group = [...chapter.querySelectorAll('.plate__zoom')];
+        chapterOut.textContent = chapter.querySelector('h2')?.textContent?.trim() ?? '';
+        show(group.indexOf(trigger));
+        lightbox.showModal();
+      });
+    }
+
+    /* arrows follow the pointer's presence, not the dialog's */
+    let idle;
+    const wake = () => {
+      lightbox.classList.add('lightbox--pointing');
+      clearTimeout(idle);
+      idle = setTimeout(() => lightbox.classList.remove('lightbox--pointing'), 2000);
+    };
+
+    lightbox.addEventListener('pointermove', wake, { passive: true });
+    lightbox.addEventListener('pointerleave', () => {
+      clearTimeout(idle);
+      lightbox.classList.remove('lightbox--pointing');
+    }, { passive: true });
+    lightbox.addEventListener('close', () => {
+      clearTimeout(idle);
+      lightbox.classList.remove('lightbox--pointing');
+    });
+
+    prevBtn?.addEventListener('click', () => show(at - 1));
+    nextBtn?.addEventListener('click', () => show(at + 1));
+
+    lightbox.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowRight') { event.preventDefault(); show(at + 1); }
+      if (event.key === 'ArrowLeft') { event.preventDefault(); show(at - 1); }
+    });
+
+    document.querySelector('[data-lightbox-close]')?.addEventListener('click', () => lightbox.close());
+
+    /* clicking the wash around the plate closes; the plate itself does not */
+    lightbox.addEventListener('click', (event) => {
+      if (event.target === lightbox) lightbox.close();
+    });
+
+    /* a loaded clip must not keep playing behind a closed dialog */
+    lightbox.addEventListener('close', () => stage.replaceChildren());
+  }
+
   const nodes = document.querySelectorAll('.vein__node');
   const sections = document.querySelectorAll('.gallery .chapter');
 

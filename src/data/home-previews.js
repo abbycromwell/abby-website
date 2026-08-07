@@ -46,7 +46,7 @@ export const pods = [
   {
     slug: 'typography',
     title: 'Typography',
-    href: '/case-study/',
+    href: '/songbook/',
     src: songbookGlyphs,
     alt: 'SongBook page of monumental black Futura glyphs on a salmon ground',
     sizes: '(min-width: 48rem) 14rem, 78vw',
