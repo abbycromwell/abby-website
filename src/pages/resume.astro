@@ -10,7 +10,7 @@ const experience = [
   },
   {
     org: 'UCLA ACM',
-    role: 'Design Intern',
+    role: 'Design Officer',
     dates: 'August 2025 – Present',
     note: "Support ACM's internal and cross-organization projects by creating visual assets, maintaining design consistency, and collaborating with designers and developers across UCLA's largest computing community.",
   },
@@ -33,7 +33,7 @@ const education = [
     org: 'UCLA Design Media Arts',
     role: 'Sophomore',
     dates: 'September 2025 – Present',
-    note: 'Courses taken: Video and Motion, Design Culture, Typography, Media History, Creative Coding and Generative AI, Digital Cultures and Societies.',
+    note: 'Courses taken: Video and Motion, Design Culture, Typography, American Film History, Digital Image, Media History, Digital Cultures and Societies.',
   },
   {
     org: 'Palo Alto High School',
@@ -44,7 +44,7 @@ const education = [
   {
     org: 'Summer and Pre-College Art Programs',
     role: '',
-    dates: '2021 – Present',
+    dates: '2021 – June 2025',
     note: 'Huntington Fine Arts (portfolio development), CalArts Extended Studies (visual storytelling), School of Visual Arts Pre-College (animation), RISD Advanced Online Program (design exploration), California College of the Arts (figure drawing; comics and visual storytelling), SAIC Early College Program Summer Institute (figure drawing, merit scholarship), and The Oxbow Art School (honors studio arts).',
   },
 ];
@@ -52,25 +52,23 @@ const education = [
 const awards = [
   { title: 'Scholastic Art and Writing, 2025', detail: '4 Gold Keys, 1 Silver Key, 3 Honorable Mentions' },
   { title: 'Scholastic Art and Writing, 2024', detail: '1 Gold Key, 1 Honorable Mention' },
-  { title: 'SAIC Early College Program Summer Institute, 2023', detail: 'Merit Scholarship' },
-  { title: 'Scholastic Art and Writing, 2023', detail: '4 Honorable Mentions' },
-  {
-    title: "President's Service Award (Gold), 2022 and 2024",
-    detail: 'More than 200 hours of community service: Palo Alto Art Center, Youth Community Service, Heart and Home Collaborative',
-  },
-  { title: 'AP Scholar Award, 2024', detail: '' },
 ];
 
 const exhibitions = [
   { title: 'Youth Art Exhibition, 2024', detail: 'Untitled (watercolor)' },
   { title: 'Changing the Narrative juried international exhibition, 2024', detail: 'The Setting (encaustic monotype)' },
   { title: 'Huntington Fine Arts, 2023–2024', detail: 'Various pieces' },
-  { title: 'Oxbow, Napa, 2022', detail: 'Distracting Myself' },
+];
+
+const design = [
+  'Brand Design, Illustration, Character Design',
+  'Animation, AI Native Design, Game Design',
 ];
 
 const software = [
   'Figma, Procreate, Procreate Dreams',
   'Adobe Animate, Illustrator, Photoshop, After Effects',
+  'Codex, Claude, Vercel',
 ];
 ---
 
@@ -78,18 +76,20 @@ const software = [
   title="Resume — Abby Cromwell"
   description="Resume of Abby Cromwell, Design Media Arts student at UCLA."
   atmospheric
+  ground="field"
 >
   <div class="resume-page">
     <section class="resume" aria-labelledby="resume-title">
-      <p class="eyebrow">Abby Cromwell</p>
-      <h1 id="resume-title">Resume</h1>
-      <p class="resume__lede">
-        Sophomore at UCLA Design Media Arts, passionate about art, design,
-        animals, and Japanese culture.
-      </p>
-      <p class="resume__contact">
-        <a href="mailto:abbycromwell@ucla.edu">abbycromwell at ucla dot edu</a>
-      </p>
+      {/*
+        The page opens straight onto the content, so the heading stays clipped
+        for AT. The printed sheet has no site header to carry the name, so the
+        same h1 unclips in print and swaps its text: one heading, two voices,
+        and no second h1 competing with it in the outline.
+      */}
+      <h1 id="resume-title" class="sr-only resume__masthead">
+        <span class="screen-only">Resume</span>
+        <span class="print-only" aria-hidden="true">Abby Cromwell</span>
+      </h1>
 
       <div class="resume__grid">
         <div class="resume__main">
@@ -124,8 +124,42 @@ const software = [
         </div>
 
         <aside class="resume__side">
+          {/* the same detail rows SongBook and About carry */}
+          <dl class="resume-details">
+            <div>
+              <dt class="eyebrow">Contact</dt>
+              {/*
+                Screen keeps the obfuscated address; paper gets the real one, so
+                it can be read off a printed sheet and typed. The print rows are
+                display:none on screen, so AT never reaches them, and aria-hidden
+                says so a second time rather than relying on that alone.
+              */}
+              <dd class="screen-only"><a class="text-link" href="mailto:abbycromwell@ucla.edu">abbycromwell at ucla dot edu</a></dd>
+              <dd class="print-only" aria-hidden="true"><a class="text-link text-link--plain" href="mailto:abbycromwell@ucla.edu">abbycromwell@ucla.edu</a></dd>
+              <dd class="print-only" aria-hidden="true"><a class="text-link text-link--plain" href="https://abbycromwell.com">abbycromwell.com</a></dd>
+            </div>
+            {/* the printed resume IS this PDF; the row drops out of the export */}
+            <div class="resume-details__download">
+              <dt class="eyebrow">Resume</dt>
+              <dd><a class="text-link" href="/abby-cromwell-resume.pdf">Download the PDF <span aria-hidden="true">→</span></a></dd>
+            </div>
+            <div>
+              <dt class="eyebrow">LinkedIn</dt>
+              <dd><a class="text-link" href="https://www.linkedin.com/in/abbycromwell/" rel="me">abbycromwell <span aria-hidden="true">→</span></a></dd>
+            </div>
+          </dl>
+
+          <section class="resume-section" aria-labelledby="design-title">
+            <h2 class="eyebrow" id="design-title">Design</h2>
+            <ul class="resume-list">
+              {design.map((item) => (
+                <li>{item}</li>
+              ))}
+            </ul>
+          </section>
+
           <section class="resume-section" aria-labelledby="software-title">
-            <h2 class="eyebrow" id="software-title">Software</h2>
+            <h2 class="eyebrow" id="software-title">Tools</h2>
             <ul class="resume-list">
               {software.map((item) => <li>{item}</li>)}
             </ul>
@@ -158,20 +192,6 @@ const software = [
         </aside>
       </div>
 
-      <footer class="resume__close">
-        <div>
-          <p class="eyebrow">Contact</p>
-          <p><a href="mailto:abbycromwell@ucla.edu">abbycromwell at ucla dot edu</a></p>
-        </div>
-        <div>
-          <p class="eyebrow">Work</p>
-          <a href="/work/">View the work</a>
-        </div>
-        <div>
-          <p class="eyebrow">Download</p>
-          <a href="/abby-cromwell-resume.pdf">Resume PDF</a>
-        </div>
-      </footer>
     </section>
   </div>
 </Base>
@@ -180,7 +200,8 @@ const software = [
   .resume {
     max-width: var(--max-width-wide);
     margin-inline: auto;
-    padding: var(--space-page-top) var(--space-edge) var(--space-section);
+    /* the hero is gone; page-top padding left a dead half-screen above the grid */
+    padding: var(--space-2xl) var(--space-edge) var(--space-section);
   }
 
   h1 {
@@ -192,27 +213,15 @@ const software = [
     text-transform: uppercase;
   }
 
-  .resume__lede {
-    max-width: var(--max-width-prose);
-    margin-bottom: var(--space-md);
-    color: var(--color-text-secondary);
-    font-size: var(--text-xl);
-    line-height: var(--leading-tight);
-  }
 
-  .resume__contact {
-    margin-bottom: 0;
-    color: var(--color-text-secondary);
-  }
 
-  .resume__contact a {
-    border-bottom: var(--border-thin) solid currentColor;
-  }
 
   .resume__grid {
     display: grid;
     gap: var(--space-2xl);
-    margin-top: var(--space-section);
+    /* the section's own padding is the beat; --space-section on top of it was a
+       dead half-screen once the hero came out */
+    margin-top: 0;
   }
 
   .resume__main,
@@ -222,10 +231,13 @@ const software = [
     align-content: start;
   }
 
+  /*
+    No wash card. The Paper Wash panel read as nothing on this ground but its
+    24px padding silently knocked the whole sidebar out of alignment with the
+    main column's rules and labels.
+  */
   .resume__side {
     gap: var(--space-xl);
-    padding: var(--space-lg);
-    background: var(--color-paper-overlay);
   }
 
   .resume-section {
@@ -290,63 +302,88 @@ const software = [
     font-weight: var(--weight-medium);
   }
 
-  .resume__close {
-    display: grid;
-    gap: var(--space-xl);
-    max-width: var(--max-width-copy);
-    margin-top: var(--space-section);
-    border-top: var(--border-thin) solid var(--color-border);
-    padding-top: var(--space-lg);
-    color: var(--color-text-secondary);
-  }
 
-  .resume__close p {
-    margin-bottom: 0;
-  }
-
-  .resume__close a {
-    border-bottom: var(--border-thin) solid currentColor;
-  }
 
   @media (min-width: 48rem) {
     .resume__grid {
       grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
       column-gap: var(--space-2xl);
     }
-
-    .resume__close {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
   }
-</style>
+  /* the sidebar's own grid gap is the beat; a margin here doubled it */
+  .resume-details {
+    margin: 0;
+  }
 
-<style is:global>
-  /* Print / PDF export: clean paper, no site chrome, two columns forced
-     (print width sits below the 48rem screen breakpoint). */
+  .resume-details > div {
+    padding-block: 0 var(--space-md);
+  }
+
+  /* label first, hairline under it — the idiom every section on this page uses */
+  .resume-details dt {
+    margin-bottom: var(--space-sm);
+    padding-bottom: var(--space-2xs);
+    border-bottom: var(--border-thin) solid var(--color-border);
+  }
+
+  .resume-details dd {
+    margin: 0;
+    font-size: var(--text-base);
+    line-height: var(--leading-normal);
+  }
+
+  /* the two media get different words in the same slots; neither ever sees both */
+  .print-only {
+    display: none;
+  }
+
+  /*
+    Print overrides for this page's own selectors live in the scoped block, not
+    the global one below: Astro emits the global block ahead of the token
+    stylesheet link, so a bare `.resume` there loses to the scoped rules above
+    on both specificity and order. Scoped, they land.
+  */
   @media print {
-    @page {
-      size: letter;
-      margin: 0.5in;
+    .print-only {
+      display: revert;
     }
 
-    * {
-      -webkit-print-color-adjust: exact !important;
-      print-color-adjust: exact !important;
+    .screen-only {
+      display: none;
     }
 
-    .site-header,
-    .skip-link,
-    .site-watercolor,
-    .resume__close {
-      display: none !important;
+    /*
+      The h1 is .sr-only on screen, so it unclips here rather than a second h1
+      being introduced. Sized off --text-xl: --text-display is a 9vw clamp that
+      lands at ~73px on an 816px sheet, which would eat a third of the page.
+    */
+    .resume__masthead {
+      position: static;
+      width: auto;
+      height: auto;
+      overflow: visible;
+      clip-path: none;
+      white-space: normal;
+      margin-bottom: var(--space-lg);
+      font-size: var(--text-xl);
+      line-height: var(--leading-tight);
     }
 
+    /* an address is not a label: it reads as written, not shouted in caps */
+    .text-link--plain {
+      font-size: var(--text-sm);
+      letter-spacing: normal;
+      text-transform: none;
+    }
+
+    /* @page margin is 0 for full bleed, so the sheet's margin is padding here */
     .resume {
-      padding: var(--space-lg) 0 0;
+      max-width: none;
+      padding: 0.5in 0.5in 0.4in;
     }
 
     .resume__grid {
-      margin-top: var(--space-xl);
+      margin-top: 0;
       grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
       column-gap: var(--space-xl);
     }
@@ -356,10 +393,98 @@ const software = [
       gap: var(--space-xl);
     }
 
+    /* the note's screen measure is narrower than the printed main column */
+    .resume-entry__note {
+      max-width: none;
+    }
+
+    /* a PDF should not offer a link to downloading itself */
+    .resume-details__download {
+      display: none;
+    }
+
     .resume-entry,
-    .resume-list li {
+    .resume-list li,
+    .resume-details > div {
       break-inside: avoid;
       page-break-inside: avoid;
+    }
+  }
+</style>
+
+<style is:global>
+  /* Print / PDF export: the page's own paper and wash, edge to edge, no site
+     chrome, two columns forced (print width sits below the 48rem breakpoint). */
+  @media print {
+    @page {
+      size: letter;
+      /* full bleed: the sheet's margin lives on .resume so the paper colour and
+         the wash run to the trim edge instead of stopping at a white border */
+      margin: 0;
+    }
+
+    * {
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+
+    /*
+      Print type is a step down from screen: the sheet is 816px wide where the
+      layout was drawn for a desktop viewport, so the screen ramp reads oversized
+      on paper. Overriding the tokens keeps every rule on var(--*).
+      `html:root` rather than `:root`: this block is emitted ahead of the token
+      stylesheet, so a matching-specificity `:root` would lose on order.
+    */
+    html:root {
+      --text-xs: 0.62rem;
+      --text-sm: 0.7rem;
+      --text-base: 0.8rem;
+      --text-lg: 0.98rem;
+
+      --space-2xs: 3px;
+      --space-xs: 5px;
+      --space-sm: 8px;
+      --space-md: 10px;
+      --space-lg: 14px;
+      --space-xl: 22px;
+      --space-2xl: 28px;
+    }
+
+    html,
+    body {
+      background: var(--color-bg) !important;
+    }
+
+    .site-header,
+    .skip-link {
+      display: none !important;
+    }
+
+    /*
+      The wash is the page's ground, so it prints. Fixed, not absolute: an
+      absolute plate ends at the document height and leaves the tail of the last
+      sheet on bare paper, where a fixed one repaints per sheet.
+    */
+    .site-watercolor,
+    .site-watercolor--field {
+      display: block !important;
+      position: fixed !important;
+      inset: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      min-height: 0 !important;
+      object-fit: cover !important;
+      object-position: center top !important;
+      opacity: 0.3 !important;
+    }
+
+    /* the arrow is a hover affordance; on paper it is a stray glyph */
+    .text-link span {
+      display: none !important;
+    }
+
+    .text-link {
+      padding-bottom: 0 !important;
     }
   }
 </style>

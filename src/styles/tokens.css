@@ -57,6 +57,8 @@
   --space-section: clamp(4rem, 9vw, 9rem);
   --space-hero-top: clamp(5.5rem, 14vh, 8rem);
   --space-page-top: clamp(6rem, 12vw, 12rem);
+  /* the sticky interior header's height; anchors clear it */
+  --header-height: calc(var(--space-lg) + var(--space-md) + var(--space-lg));
 
   /* borders */
   --border-thin: 1px;

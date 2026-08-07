@@ -1,6 +1,20 @@
 ---
 import { Image } from 'astro:assets';
-import Base from '../layouts/Base.astro';
+
+interface Props {
+  /* Visible section heading. */
+  heading?: string;
+  /* Optional id for the section, for anchor links. */
+  id?: string;
+}
+
+/*
+  `bare` drops the component's own dark ground and vertical padding, for hosts
+  that already provide a ground — the Work page gallery carries a painted wash a
+  solid band would cut straight through.
+*/
+const { heading = 'Read the book', id, bare = false, hideHeading = false } = Astro.props;
+const headingId = `${id ?? 'songbook'}-heading`;
 
 /*
   The 24 book spreads, in the PDF's export order: cover, contents, essay,
@@ -44,222 +58,75 @@ const spreads = Object.keys(spreadImages)
   .map((path, i) => ({ src: spreadImages[path], alt: spreadAlts[i] ?? 'SongBook spread' }));
 ---
 
-<Base
-  title="SongBook — Abby Cromwell"
-  description="SongBook: a typographic study of one song, M@HΦU 少女。。 by Mariko Gotou, set entirely in Futura."
-  atmospheric
->
-  <div class="case-study">
-    <header class="case-header">
-      <p class="eyebrow">Case study · Typography</p>
-      <h1>SongBook</h1>
-      <p>
-        A print book that studies one song — “M@HΦU 少女。。” by Mariko Gotou —
-        through essays, reviews, and chapter after chapter of type experiments,
-        set entirely in Futura.
+<section class:list={['case-reader', { 'case-reader--bare': bare }]} data-songbook id={id} aria-labelledby={headingId}>
+  <div class="case-reader__rule">
+    <h2 id={headingId} class:list={{ 'sr-only': hideHeading }}>{heading}</h2>
+    <div class="case-reader__controls">
+      <button type="button" data-book-prev aria-label="Previous spread">
+        <span aria-hidden="true">←</span> Prev
+      </button>
+      <p aria-live="polite">
+        <span data-spread-count>1</span> / {spreads.length}
+        <span class="case-reader__sr" data-spread-alt></span>
       </p>
-    </header>
-
-    <section class="case-notes" aria-label="Project details">
-      <div><p class="eyebrow">Role</p><p>Design · Illustration · Writing</p></div>
-      <div><p class="eyebrow">Medium</p><p>Print book, set in Futura PT</p></div>
-      <div><p class="eyebrow">Year</p><p>2026</p></div>
-    </section>
-
-    <section class="case-premise" aria-labelledby="premise-title">
-      <h2 id="premise-title">One song, one typeface</h2>
-      <p>
-        The book opens with a song essay: what “M@HΦU 少女。。” (“Mahou Shoujo” —
-        magical girl) is, and why it stuck. From the essay:
-      </p>
-      <blockquote>
-        <p>
-          “If I had to summarize the song with one word it would be — bittersweet.
-          A fleeting moment filled with emotional release, containing clashing
-          feelings of joy and grief.”
-        </p>
-      </blockquote>
-      <p>
-        Every study that follows is set in Futura — round, clean, seemingly
-        without imperfections — chosen so the typeface intentionally clashes
-        with the song’s unruly, multi-script title and its duality between an
-        idealized life and freedom from conformity.
-      </p>
-    </section>
-
-    <section class="case-reader" aria-labelledby="reader-title">
-      <div class="case-reader__rule">
-        <h2 id="reader-title">Read the book</h2>
-        <div class="case-reader__controls">
-          <button type="button" data-book-prev aria-label="Previous spread">
-            <span aria-hidden="true">←</span> Prev
-          </button>
-          <p aria-live="polite">
-            <span data-spread-count>1</span> / {spreads.length}
-            <span class="case-reader__sr" data-spread-alt></span>
-          </p>
-          <button type="button" data-book-next aria-label="Next spread">
-            Next <span aria-hidden="true">→</span>
-          </button>
-        </div>
-      </div>
-      <div class="case-reader__stage">
-        <div
-          class="book"
-          data-book
-          tabindex="0"
-          role="region"
-          aria-roledescription="book"
-          aria-label="SongBook spreads. Use the arrow keys to turn pages."
-        >
-          <ul>
-            {spreads.map((spread, i) => (
-              <li>
-                <Image
-                  src={spread.src}
-                  alt={spread.alt}
-                  widths={[768, 1152, 2040]}
-                  sizes="(min-width: 48rem) 88vw, 95vw"
-                  loading={i < 3 ? 'eager' : 'lazy'}
-                />
-              </li>
-            ))}
-          </ul>
-          <div class="book__leaf" data-leaf hidden>
-            <div class="book__face book__face--front"></div>
-            <div class="book__face book__face--back"></div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="case-animation" aria-labelledby="animation-title">
-      <div class="case-animation__inner">
-        <h2 id="animation-title">Song animation</h2>
-        <p>
-          The book closes its argument in motion: a kinetic-type animation that
-          sets the lyrics flashing over live footage. Its stills close the
-          spreads above; the clip itself lands here once it is found.
-        </p>
-        <div class="case-animation__placeholder">
-          <span>Clip forthcoming</span>
-        </div>
-      </div>
-    </section>
-
-    <aside class="case-close">
-      <p>
-        Typeset in Futura PT. Text paper: Neenah Royal Sundance, brilliant white.
-      </p>
-      <a href="/work/#typography">Typography in the gallery <span aria-hidden="true">→</span></a>
-    </aside>
+      <button type="button" data-book-next aria-label="Next spread">
+        Next <span aria-hidden="true">→</span>
+      </button>
+    </div>
   </div>
-</Base>
+  <div class="case-reader__stage">
+    <div
+      class="book"
+      data-book
+      tabindex="0"
+      role="region"
+      aria-roledescription="book"
+      aria-label="SongBook spreads. Use the arrow keys to turn pages."
+    >
+      <ul>
+        {spreads.map((spread, i) => (
+          <li>
+            <Image
+              src={spread.src}
+              alt={spread.alt}
+              widths={[768, 1152, 2040]}
+              sizes="(min-width: 48rem) 88vw, 95vw"
+              loading={i < 3 ? 'eager' : 'lazy'}
+            />
+          </li>
+        ))}
+      </ul>
+      <div class="book__leaf" data-leaf hidden>
+        <div class="book__face book__face--front"></div>
+        <div class="book__face book__face--back"></div>
+      </div>
+    </div>
+  </div>
+</section>
 
 <style>
-  .case-study {
-    overflow: hidden;
-  }
-
-  .case-header,
-  .case-notes {
-    max-width: var(--max-width-wide);
-    margin-inline: auto;
-    padding-inline: var(--space-edge);
-  }
-
-  .case-header {
-    padding-top: var(--space-page-top);
-    padding-bottom: var(--space-xl);
-  }
-
-  h1 {
-    margin-bottom: var(--space-lg);
-    font-size: min(var(--text-display), 10.5vw);
-    line-height: var(--leading-display);
-    letter-spacing: var(--tracking-display);
-    text-transform: uppercase;
-  }
-
-  .case-header > p:last-child {
-    max-width: var(--max-width-prose);
-    margin-bottom: 0;
-    color: var(--color-text-secondary);
-    font-size: var(--text-lg);
-    line-height: var(--leading-normal);
-  }
-
-  .case-notes {
-    display: grid;
-    gap: var(--space-lg);
-    padding-top: var(--space-section);
-    padding-bottom: var(--space-section);
-  }
-
-  .case-notes > div {
-    border-top: var(--border-thin) solid var(--color-border);
-    padding-top: var(--space-md);
-  }
-
-  .case-notes > div > p:last-child {
-    margin-bottom: 0;
-    color: var(--color-text-secondary);
-    font-size: var(--text-lg);
-  }
-
-  /* Premise */
-
-  .case-premise {
-    max-width: var(--max-width-wide);
-    margin-inline: auto;
-    padding-inline: var(--space-edge);
-    padding-bottom: var(--space-section);
-  }
-
-  .case-premise h2,
-  .case-reader__rule h2,
-  .case-animation h2 {
-    margin-bottom: var(--space-lg);
-    color: var(--color-accent);
-    font-size: var(--text-xl);
-    letter-spacing: var(--tracking-display);
-    text-transform: uppercase;
-  }
-
-  .case-premise p {
-    max-width: var(--max-width-prose);
-    color: var(--color-text-secondary);
-    line-height: var(--leading-normal);
-  }
-
-  .case-premise blockquote {
-    max-width: var(--max-width-copy);
-    margin: var(--space-xl) 0;
-    padding-left: var(--space-lg);
-    border-left: var(--border-thin) solid var(--color-border);
-  }
-
-  .case-premise blockquote p {
-    max-width: none;
-    margin: 0;
-    color: var(--color-hero-name);
-    font-size: var(--text-xl);
-    line-height: var(--leading-tight);
-  }
-
-  /* Reader strip */
-
   .case-reader {
     padding-block: var(--space-xl) var(--space-section);
     color: var(--color-text-on-dark);
     background: var(--color-bg-dark);
   }
 
+  .case-reader--bare {
+    padding-block: 0;
+    background: none;
+  }
+
+  /*
+    With the heading hidden the controls were the only in-flow child, so
+    space-between parked them on the left. flex-end keeps them right whether the
+    heading shows or not.
+  */
   .case-reader__rule {
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
-    justify-content: space-between;
+    justify-content: flex-end;
+    gap: var(--space-2xs) var(--space-lg);
     gap: var(--space-2xs) var(--space-lg);
     max-width: var(--max-width-wide);
     margin-inline: auto;
@@ -267,9 +134,16 @@ const spreads = Object.keys(spreadImages)
     padding-inline: var(--space-edge);
   }
 
+  .case-reader__rule h2:not(.sr-only) {
+    margin-right: auto;
+  }
+
   .case-reader__rule h2 {
     margin-bottom: 0;
     color: var(--color-text-on-dark);
+    font-size: var(--text-xl);
+    letter-spacing: var(--tracking-display);
+    text-transform: uppercase;
   }
 
   .case-reader__controls {
@@ -435,7 +309,7 @@ const spreads = Object.keys(spreadImages)
     width: 200%;
     max-width: none;
     height: 100%;
-  }
+    }
 
   .book__face--front img {
     left: -100%;
@@ -454,93 +328,27 @@ const spreads = Object.keys(spreadImages)
       transition: none;
     }
   }
-
-  /* Song animation */
-
-  .case-animation {
-    padding-block: var(--space-section) 0;
-    background: var(--color-bg);
-  }
-
-  .case-animation__inner {
-    max-width: var(--max-width-wide);
-    margin-inline: auto;
-    padding-inline: var(--space-edge);
-  }
-
-  .case-animation p {
-    max-width: var(--max-width-prose);
-    margin-bottom: var(--space-xl);
-    color: var(--color-text-secondary);
-  }
-
-  .case-animation__placeholder {
-    display: grid;
-    min-height: min(40vw, 24rem);
-    place-items: center;
-    border-block: var(--border-thin) solid var(--color-border);
-    color: var(--color-text-secondary);
-    background: var(--color-paper-overlay);
-  }
-
-  .case-animation__placeholder span {
-    font-size: var(--text-xs);
-    letter-spacing: var(--tracking-label);
-    text-transform: uppercase;
-  }
-
-  /* Close */
-
-  .case-close {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: var(--space-lg);
-    max-width: var(--max-width-wide);
-    margin-inline: auto;
-    padding: var(--space-section) var(--space-edge);
-  }
-
-  .case-close p {
-    max-width: var(--max-width-prose);
-    margin: 0;
-    color: var(--color-text-secondary);
-  }
-
-  .case-close a {
-    color: var(--color-hero-name);
-    font-size: var(--text-xs);
-    letter-spacing: var(--tracking-label);
-    text-transform: uppercase;
-    white-space: nowrap;
-    transition: color var(--duration-fast) var(--ease-out);
-  }
-
-  .case-close a:hover,
-  .case-close a:focus-visible {
-    color: var(--color-accent);
-  }
-
-  @media (min-width: 48rem) {
-    .spread {
-      width: min(72vw, 60rem);
-    }
-  }
 </style>
 
 <script>
-  const book = document.querySelector('[data-book]');
-  if (book) {
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const TURN_MS = 640;
+  const TURN_MS_MIN = 380;
+  // px/ms at which a swipe counts as a full-speed flick
+  const FLICK = 1.1;
+
+  /* Every reader on the page gets its own state; nothing is shared. */
+  document.querySelectorAll('[data-songbook]').forEach((reader) => {
+    const book = reader.querySelector('[data-book]');
+    if (!book) return;
     const pages = [...book.querySelectorAll('ul > li')];
     const leaf = book.querySelector('[data-leaf]');
     const front = leaf.querySelector('.book__face--front');
     const back = leaf.querySelector('.book__face--back');
-    const counter = document.querySelector('[data-spread-count]');
-    const altOut = document.querySelector('[data-spread-alt]');
-    const prevBtn = document.querySelector('[data-book-prev]');
-    const nextBtn = document.querySelector('[data-book-next]');
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const counter = reader.querySelector('[data-spread-count]');
+    const altOut = reader.querySelector('[data-spread-alt]');
+    const prevBtn = reader.querySelector('[data-book-prev]');
+    const nextBtn = reader.querySelector('[data-book-next]');
     let current = 0;
     let busy = false;
 
@@ -565,12 +373,16 @@ const spreads = Object.keys(spreadImages)
       return img;
     };
 
-    const TURN_MS = 640;
-    const TURN_MS_MIN = 380;
+    let queued = null;
 
     const turn = (dir, speed = 0) => {
+      if (busy) {
+        /* remember the latest intent; dropping it is what felt unresponsive */
+        queued = { dir, speed };
+        return;
+      }
       const target = current + dir;
-      if (busy || target < 0 || target >= pages.length) return;
+      if (target < 0 || target >= pages.length) return;
       if (reduceMotion) {
         current = target;
         show(current);
@@ -593,9 +405,28 @@ const spreads = Object.keys(spreadImages)
       leaf.style.transition = '';
       leaf.style.transform = dir > 0 ? 'rotateY(-180deg)' : 'rotateY(0deg)';
       let fallback = 0;
+      let settled = false;
+
       const done = () => {
-        if (!busy) return;
+        /*
+          Two races lived here.
+
+          The listener was `{ once: true }`, which only detaches when it FIRES.
+          When the fallback timer won instead, the listener stayed attached and
+          the next turn's transitionend ran this stale closure — clearing the new
+          turn's timer and setting `current` to the previous turn's target. That
+          is the page refusing to advance, or going backwards.
+
+          And `transitionend` bubbles, so a transition on any descendant of the
+          leaf ended the turn early.
+
+          `settled` makes the handler idempotent per turn, and the listener is
+          removed explicitly rather than relying on `once`.
+        */
+        if (settled) return;
+        settled = true;
         clearTimeout(fallback);
+        leaf.removeEventListener('transitionend', onEnd);
         busy = false;
         leaf.hidden = true;
         leaf.style.removeProperty('--turn-ms');
@@ -603,12 +434,20 @@ const spreads = Object.keys(spreadImages)
         pages[b].classList.remove('is-under');
         current = target;
         show(current);
+        /* a turn requested mid-flight runs now rather than being dropped */
+        if (queued) {
+          const next = queued;
+          queued = null;
+          turn(next.dir, next.speed);
+        }
       };
-      leaf.addEventListener('transitionend', done, { once: true });
-      /*
-        Cleared in done(). Left running, a finished turn's timer fires during the
-        NEXT turn, sees that turn's busy flag, and rolls the reader back a page.
-      */
+
+      const onEnd = (event) => {
+        if (event.target !== leaf || event.propertyName !== 'transform') return;
+        done();
+      };
+
+      leaf.addEventListener('transitionend', onEnd);
       fallback = setTimeout(done, ms + 260);
     };
 
@@ -623,8 +462,6 @@ const spreads = Object.keys(spreadImages)
     let downX = null;
     let downY = null;
     let downAt = 0;
-    // px/ms at which a swipe counts as a full-speed flick
-    const FLICK = 1.1;
     book.addEventListener('pointerdown', (e) => {
       downX = e.clientX;
       downY = e.clientY;
@@ -647,6 +484,7 @@ const spreads = Object.keys(spreadImages)
       }
     });
 
+
     show(0);
-  }
+  });
 </script>

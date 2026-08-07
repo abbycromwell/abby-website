@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Work page — seven directions</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../../../src/styles/tokens.css" />
+    <style>
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        padding: var(--space-xl) var(--space-edge) var(--space-2xl);
+        color: var(--color-text);
+        background: var(--color-bg);
+        font-family: var(--font-sans);
+      }
+
+      header {
+        max-width: var(--max-width-prose);
+        margin-bottom: var(--space-xl);
+      }
+
+      h1 {
+        margin: 0 0 var(--space-sm);
+        font-size: var(--text-xl);
+        font-weight: var(--weight-light);
+        letter-spacing: var(--tracking-label);
+        text-transform: uppercase;
+      }
+
+      header p {
+        margin: 0;
+        color: var(--color-text-secondary);
+        font-size: var(--text-sm);
+        line-height: var(--leading-normal);
+      }
+
+      .sheet {
+        display: grid;
+        gap: var(--space-2xl);
+        max-width: 100rem;
+      }
+
+      @media (min-width: 90rem) {
+        .sheet { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      }
+
+      figure { margin: 0; }
+
+      figure img {
+        display: block;
+        width: 100%;
+        border: var(--border-thin) solid var(--color-border);
+      }
+
+      figcaption {
+        display: flex;
+        align-items: baseline;
+        gap: var(--space-sm);
+        margin-top: var(--space-sm);
+      }
+
+      .n {
+        color: var(--color-accent);
+        font-size: var(--text-xs);
+        font-weight: var(--weight-medium);
+        letter-spacing: var(--tracking-label);
+      }
+
+      .name {
+        font-size: var(--text-base);
+        letter-spacing: var(--tracking-display);
+        text-transform: uppercase;
+      }
+
+      .note {
+        flex: 1 1 100%;
+        margin: var(--space-2xs) 0 0;
+        color: var(--color-text-secondary);
+        font-size: var(--text-xs);
+        line-height: var(--leading-normal);
+      }
+
+      .roll {
+        padding: 2px var(--space-2xs);
+        border: var(--border-thin) solid var(--color-accent);
+        color: var(--color-accent);
+        font-size: var(--text-xs);
+        letter-spacing: var(--tracking-label);
+        text-transform: uppercase;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Work page — seven directions</h1>
+      <p>
+        Same world in every comp: paper header, deep oxblood gallery, framed square plates,
+        and a Typography chapter that breaks the ground. Only the navigation differs. The
+        plates are abstract stand-ins, not Abby's work.
+      </p>
+    </header>
+
+    <div class="sheet">
+      <figure>
+        <img src="01-capillary-rail.png" alt="Capillary rail direction" />
+        <figcaption>
+          <span class="n">01</span><span class="name">The Capillary Rail</span>
+          <p class="note">A vein down the edge, branching once per chapter. The active node swells wet red.</p>
+        </figcaption>
+      </figure>
+
+      <figure>
+        <img src="02-chapter-as-viewport.png" alt="Chapter as viewport direction" />
+        <figcaption>
+          <span class="n">02</span><span class="name">Chapter as Viewport</span>
+          <p class="note">One chapter fills the screen, plates running horizontally off the right edge.</p>
+        </figcaption>
+      </figure>
+
+      <figure>
+        <img src="03-fore-edge.png" alt="Fore-edge direction" />
+        <figcaption>
+          <span class="n">03</span><span class="name">The Fore-Edge</span>
+          <p class="note">Chapter names rotated down the outer margin, like type on a book's fore-edge.</p>
+        </figcaption>
+      </figure>
+
+      <figure>
+        <img src="04-specimen-sheet.png" alt="Specimen sheet direction" />
+        <figcaption>
+          <span class="n">04</span><span class="name">The Specimen Sheet</span>
+          <p class="note">Every piece as a tiny plate on one sheet that never leaves. The sheet is the map.</p>
+        </figcaption>
+      </figure>
+
+      <figure>
+        <img src="05-atlas-legend.png" alt="Atlas legend direction" />
+        <figcaption>
+          <span class="n">05</span><span class="name">The Atlas Legend</span>
+          <p class="note">Plates carry numerals; a fixed legend says what each number is. Anatomy-atlas convention.</p>
+        </figcaption>
+      </figure>
+
+      <figure>
+        <img src="06-chapter-drawers.png" alt="Chapter drawers direction" />
+        <figcaption>
+          <span class="n">06</span><span class="name">Chapter Drawers</span>
+          <p class="note">Four bands, one open at a time, so all four headings stay on screen.</p>
+        </figcaption>
+      </figure>
+
+      <figure>
+        <img src="07-running-head.png" alt="Running head direction" />
+        <figcaption>
+          <span class="n">07</span><span class="name">The Running Head</span>
+          <span class="roll">the roll's pick</span>
+          <p class="note">No fixture. Contents reprints between chapters on a capillary that deepens as you descend.</p>
+        </figcaption>
+      </figure>
+
+      <figure>
+        <img src="08-rail.png" alt="Capillary rail, second render" />
+        <figcaption>
+          <span class="n">08</span><span class="name">The Capillary Rail</span>
+          <p class="note">Direction 01 rendered again, alongside the new set for a fair comparison.</p>
+        </figcaption>
+      </figure>
+
+      <figure>
+        <img src="09-hybrid.png" alt="Hybrid direction" />
+        <figcaption>
+          <span class="n">09</span><span class="name">Hybrid — rail plus running head</span>
+          <p class="note">The vein carries position continuously; the reprinted row carries jumps. Neither sits on the artwork.</p>
+        </figcaption>
+      </figure>
+
+      <figure>
+        <img src="10-wash-through.png" alt="Wash bleeding through the dark ground" />
+        <figcaption>
+          <span class="n">10</span><span class="name">Softening — wash bleeds through</span>
+          <p class="note">The dark is the homepage wash concentrated, veins still visible, rather than a flat dark room.</p>
+        </figcaption>
+      </figure>
+
+      <figure>
+        <img src="11-gradual-descent.png" alt="Gradual descent from paper to dark" />
+        <figcaption>
+          <span class="n">11</span><span class="name">Softening — gradual descent</span>
+          <p class="note">Paper at the top reaching deep brown-red only at the very bottom. Most of the page is mid-tone. Closest to Abby's "begin lighter, transition toward dark as the viewer scrolls."</p>
+        </figcaption>
+      </figure>
+
+      <figure>
+        <img src="12-paper-gutters.png" alt="Dark panels inset into paper" />
+        <figcaption>
+          <span class="n">12</span><span class="name">Softening — paper gutters</span>
+          <p class="note">Ground stays paper; the gallery is dark panels inset with wide pale margins. Artwork on paper, not a dark page.</p>
+        </figcaption>
+      </figure>
+
+      <figure>
+        <img src="13-pooled-dark.png" alt="Soft-edged pools of dark on paper" />
+        <figcaption>
+          <span class="n">13</span><span class="name">Softening — pooled dark</span>
+          <p class="note">Darkness only as soft-edged pools bleeding behind each chapter, feathered like the homepage pods.</p>
+        </figcaption>
+      </figure>
+    </div>
+  </body>
+</html>
