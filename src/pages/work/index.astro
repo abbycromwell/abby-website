@@ -2,23 +2,33 @@
 import { Image } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
 import { chapters } from '../../data/work.js';
+import heroWatercolor from '../../assets/home/hero-watercolor-veins.png';
 import songbookCover from '../../assets/case-study/spread-01.webp';
+import songbookGlyphs from '../../assets/case-study/spread-07.webp';
+import songbookDoki from '../../assets/case-study/spread-17.webp';
 
-const featured = chapters.find((chapter) => chapter.kind === 'case-study');
-const galleryChapters = chapters.filter((chapter) => chapter.plates);
+/* the book speaks with its own pages, not a stand-in */
+const songbookSpreads = [
+  { src: songbookCover, alt: 'SongBook cover: coral watercolor streaks with the song title in red display letters' },
+  { src: songbookGlyphs, alt: 'SongBook page of monumental black Futura glyphs on a salmon ground' },
+  { src: songbookDoki, alt: 'SongBook page: red lyric poster with a monumental 女 character' },
+];
 ---
 
 <!--
-  THESIS: The work page is the contents leaf of a printed folio — typography
-  carries the room and the plates carry the art; refuses the thumbnail-grid archive.
-  OWN-WORLD: Meninges paper and deep brown-red gallery, coral hairline seams,
-  translucent membrane placeholders, compressed Jost uppercase, wet-red interaction points.
-  STORY: An employer reads four large contents rows, jumps to a chapter or walks
-  the gallery, watches the clips play, opens the typography case study, leaves toward About.
-  FIRST VIEWPORT: Kicker and three-line compressed headline anchor left; the
-  contents table begins beneath, its first rule visible as the invitation to scroll.
-  FORM: Table of Plates — candidate 3 of 7 grounded structures, seed a15b54c4.
-  Staging: animation clips play only while in view; nothing moves position.
+  THESIS: The gallery is the homepage's watercolor at full concentration, and a
+  capillary carries you through it; refuses both the thumbnail-grid archive and
+  the flat dark room.
+  OWN-WORLD: Deep brown-red ground with the hero wash pooled inside it, fine red
+  vein filaments still crossing, framed plates on coral hairlines, compressed Jost
+  uppercase, wet-red interaction points.
+  STORY: An employer reads four contents rows, descends into the gallery with the
+  vein tracking position, meets the book at full width, leaves toward About.
+  FIRST VIEWPORT: Compressed headline anchors left over paper; the contents table
+  begins beneath, its first rule the invitation to scroll.
+  FORM: The Capillary Rail over a washed-through ground — candidate 1 of 7 grounded
+  structures with ground variant 10, chosen by Vivian against seed bb0fdb07, which
+  assigned candidate 7. Staging: clips play only while in view; nothing moves position.
 -->
 <Base
   title="Work — Abby Cromwell"
@@ -48,29 +58,60 @@ const galleryChapters = chapters.filter((chapter) => chapter.plates);
     </nav>
 
     <div class="gallery">
-      {featured && (
-        <section id={featured.slug} class="chapter" aria-labelledby="ch-typography">
-          <header class="chapter__rule">
-            <h2 id="ch-typography">
-              <span class="chapter__no">{featured.no}</span>
-              {featured.title}
-            </h2>
-            <p>Case study · SongBook</p>
-          </header>
-          <a class="case-plate" href={featured.href} aria-label="Open the SongBook case study">
-            <Image
-              src={songbookCover}
-              alt="SongBook cover spread: coral watercolor streaks with the song title m@HΦu 少女 in red display letters"
-              widths={[768, 1152, 2040]}
-              sizes="(min-width: 48rem) 92vw, 95vw"
-              loading="eager"
-            />
-            <small class="case-plate__cta">Open case study <span aria-hidden="true">→</span></small>
-          </a>
-        </section>
-      )}
+      <Image
+        class="gallery__wash"
+        src={heroWatercolor}
+        alt=""
+        aria-hidden="true"
+        loading="lazy"
+        widths={[768, 1152, 1536]}
+        sizes="100vw"
+      />
 
-      {galleryChapters.map((chapter) => {
+      {/*
+        The capillary: one vein down the gallery carrying position, branching
+        once per chapter. It is the homepage's own filament doing the navigating,
+        so the two pages share a mark rather than a widget.
+      */}
+      <nav class="vein" aria-label="Chapters">
+        <ol>
+          {chapters.map((chapter) => (
+            <li>
+              <a class="vein__node" href={`#${chapter.slug}`} data-vein={chapter.slug}>
+                <span class="vein__no">{chapter.no}</span>
+                <span class="vein__name">{chapter.title}</span>
+              </a>
+            </li>
+          ))}
+        </ol>
+      </nav>
+
+      {chapters.map((chapter) => {
+        if (chapter.kind === 'case-study') {
+          return (
+            <section id={chapter.slug} class="chapter chapter--book" aria-labelledby="ch-typography">
+              <h2 id="ch-typography" class="book__display" lang="ja">{chapter.display}</h2>
+              <p class="book__premise">{chapter.premise}</p>
+              <ul class="book__spreads">
+                {songbookSpreads.map(({ src, alt }) => (
+                  <li>
+                    <Image
+                      src={src}
+                      alt={alt}
+                      widths={[480, 768, 1152]}
+                      sizes="(min-width: 48rem) 30vw, 90vw"
+                      loading="lazy"
+                    />
+                  </li>
+                ))}
+              </ul>
+              <a class="book__cta" href={chapter.href}>
+                Read SongBook <span aria-hidden="true">→</span>
+              </a>
+            </section>
+          );
+        }
+
         const empty = chapter.plates.every((plate) => !plate);
         return (
           <section id={chapter.slug} class="chapter" aria-labelledby={`ch-${chapter.slug}`}>
@@ -208,10 +249,36 @@ const galleryChapters = chapters.filter((chapter) => chapter.plates);
   /* Gallery */
 
   .gallery {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
     margin-top: var(--space-section);
     padding-block: var(--space-xl) var(--space-section);
     color: var(--color-text-on-dark);
     background: var(--color-bg-dark);
+  }
+
+  /*
+    The dark is the homepage's wash at full concentration, not a different
+    material. Screen lets the coral and its vein filaments surface through the
+    oxblood as pooled pigment, so the ground is never a flat dark room and the
+    two pages stay recognisably the same watercolor.
+  */
+  .gallery__wash {
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    mix-blend-mode: screen;
+    opacity: 0.22;
+  }
+
+  /* ─── the capillary ─── */
+
+  .vein {
+    display: none;
   }
 
   .chapter {
@@ -404,7 +471,174 @@ const galleryChapters = chapters.filter((chapter) => chapter.plates);
     color: var(--color-accent);
   }
 
+
+  /* ─── the book ─── */
+
+  /*
+    The one chapter that is a project rather than a collection, so the one that
+    changes the ground. Everything else keeps a quiet numbered rule; if all four
+    shouted, none of them would.
+  */
+  .chapter--book {
+    max-width: none;
+    margin-block: var(--space-section);
+    padding-block: var(--space-section);
+    padding-inline: var(--space-edge);
+    background: var(--color-hero-name);
+    text-align: center;
+  }
+
+  .book__display {
+    max-width: 18ch;
+    margin: 0 auto var(--space-md);
+    color: var(--color-bg);
+    font-size: var(--text-display);
+    font-weight: var(--weight-light);
+    line-height: var(--leading-hero);
+    letter-spacing: var(--tracking-label);
+  }
+
+  .book__premise {
+    margin: 0 0 var(--space-xl);
+    color: var(--color-border);
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+  }
+
+  .book__spreads {
+    display: grid;
+    gap: var(--space-xs);
+    max-width: var(--max-width-wide);
+    margin: 0 auto var(--space-xl);
+    padding: 0;
+    list-style: none;
+  }
+
+  .book__spreads img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border: var(--border-thin) solid var(--color-border);
+  }
+
+  .book__cta {
+    display: inline-block;
+    padding-bottom: var(--space-2xs);
+    border-bottom: var(--border-thin) solid var(--color-border);
+    color: var(--color-bg);
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-label);
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: color var(--duration-fast) var(--ease-out);
+  }
+
+  .book__cta:hover,
+  .book__cta:focus-visible {
+    color: var(--color-border);
+  }
+
   @media (min-width: 48rem) {
+    /*
+      The vein only exists where there is margin to hold it. Below 48rem the
+      contents table at the top is the whole navigation, as it was.
+    */
+    .vein {
+      display: block;
+      position: sticky;
+      top: 0;
+      float: left;
+      width: 0;
+      height: 100svh;
+      margin-left: var(--space-edge);
+      pointer-events: none;
+    }
+
+    .vein ol {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-evenly;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      /* the filament itself, thickening as the pigment dries downward */
+      background:
+        linear-gradient(var(--color-border), var(--color-accent)) center / var(--border-thin) 100%
+        no-repeat;
+    }
+
+    .vein__node {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+      margin-left: calc(var(--space-xs) * -1);
+      color: var(--color-border);
+      font-size: var(--text-xs);
+      letter-spacing: var(--tracking-label);
+      text-decoration: none;
+      text-transform: uppercase;
+      white-space: nowrap;
+      pointer-events: auto;
+      transition: color var(--duration-fast) var(--ease-out);
+    }
+
+    /* the node is a bead on the filament, in the pods' own silhouette */
+    .vein__no {
+      flex: 0 0 auto;
+      width: var(--space-sm);
+      height: var(--space-sm);
+      border-radius: 58% 42% 47% 53% / 45% 52% 48% 55%;
+      background: var(--color-border);
+      font-size: 0;
+      transition:
+        background var(--duration-fast) var(--ease-out),
+        transform var(--duration-standard) var(--ease-out);
+    }
+
+    .vein__name {
+      opacity: 0;
+      transition: opacity var(--duration-standard) var(--ease-out);
+    }
+
+    .vein__node:hover,
+    .vein__node:focus-visible,
+    .vein__node[aria-current='true'] {
+      color: var(--color-accent);
+    }
+
+    .vein__node:hover .vein__name,
+    .vein__node:focus-visible .vein__name,
+    .vein__node[aria-current='true'] .vein__name {
+      opacity: 1;
+    }
+
+    /* the current chapter swells, the way a pod does under the pointer */
+    .vein__node[aria-current='true'] .vein__no {
+      background: var(--color-accent);
+      transform: scale(1.8);
+    }
+
+    .vein__node:focus-visible {
+      outline: var(--border-thin) solid var(--color-accent);
+      outline-offset: var(--space-xs);
+    }
+
+    .chapter {
+      /* clear of the vein so no plate sits under it */
+      padding-left: calc(var(--space-edge) + var(--space-2xl));
+    }
+
+    .chapter--book {
+      padding-left: var(--space-edge);
+    }
+
+    .book__spreads {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
     .chapter__grid--trio {
       grid-template-columns: repeat(3, minmax(0, 1fr));
     }
@@ -428,6 +662,41 @@ const galleryChapters = chapters.filter((chapter) => chapter.plates);
 </style>
 
 <script>
+  /*
+    The vein tracks position. IntersectionObserver rather than a scroll handler,
+    so this costs nothing while the page sits still.
+  */
+  const nodes = document.querySelectorAll('.vein__node');
+  const sections = document.querySelectorAll('.gallery .chapter');
+
+  if (nodes.length && sections.length) {
+    const mark = (slug) => {
+      for (const node of nodes) {
+        node.toggleAttribute('aria-current', node.dataset.vein === slug);
+        if (node.dataset.vein === slug) node.setAttribute('aria-current', 'true');
+      }
+    };
+
+    const seen = new Map();
+    const spy = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) seen.set(entry.target, entry.intersectionRatio);
+        let best = null;
+        let bestRatio = 0;
+        for (const [section, ratio] of seen) {
+          if (ratio > bestRatio) {
+            bestRatio = ratio;
+            best = section;
+          }
+        }
+        if (best) mark(best.id);
+      },
+      { threshold: [0, 0.15, 0.35, 0.6, 0.9] },
+    );
+
+    for (const section of sections) spy.observe(section);
+  }
+
   const clips = document.querySelectorAll('.plate__clip');
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (reduceMotion || !('IntersectionObserver' in window)) {

@@ -21,15 +21,8 @@ import animationShortClip from '../assets/animation/animation-short.mp4';
 
 export const chapters = [
   {
-    slug: 'typography',
-    no: '01',
-    title: 'Typography',
-    kind: 'case-study',
-    href: '/case-study/',
-  },
-  {
     slug: 'illustration',
-    no: '02',
+    no: '01',
     title: 'Illustration',
     layout: 'trio',
     plates: [
@@ -61,7 +54,7 @@ export const chapters = [
   },
   {
     slug: 'animation',
-    no: '03',
+    no: '02',
     title: 'Animation',
     layout: 'wide',
     plates: [
@@ -79,6 +72,16 @@ export const chapters = [
         alt: 'Animated line-drawn figures melting over a warm orange wash',
       },
     ],
+  },
+  {
+    slug: 'typography',
+    no: '03',
+    title: 'Typography',
+    kind: 'case-study',
+    href: '/case-study/',
+    /* the book's own subject, set in the book's own manner */
+    display: 'M@HΦU 少女。。',
+    premise: 'One song. One typeface. Twenty-four spreads.',
   },
   {
     slug: 'sketch',
