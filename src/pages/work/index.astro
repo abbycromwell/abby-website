@@ -2,7 +2,7 @@
 import { Image } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
 import { chapters } from '../../data/work.js';
-import heroWatercolor from '../../assets/home/hero-watercolor-veins.png';
+import galleryField from '../../assets/home/gallery-field.png';
 import songbookCover from '../../assets/case-study/spread-01.webp';
 import songbookGlyphs from '../../assets/case-study/spread-07.webp';
 import songbookDoki from '../../assets/case-study/spread-17.webp';
@@ -37,10 +37,12 @@ const songbookSpreads = [
   atmospheric
 >
   <div class="inner-page">
-    <header class="page-intro">
-      <h1>Selected work</h1>
-    </header>
+    <h1 class="sr-only">Selected work</h1>
 
+    {/*
+      Below 48rem only. Where the vein cannot fit, the contents table is the
+      navigation; where it can, two indexes would compete for the same job.
+    */}
     <nav class="plate-index" aria-label="Contents">
       <ol>
         {chapters.map((chapter) => (
@@ -60,7 +62,7 @@ const songbookSpreads = [
     <div class="gallery">
       <Image
         class="gallery__wash"
-        src={heroWatercolor}
+        src={galleryField}
         alt=""
         aria-hidden="true"
         loading="lazy"
@@ -74,6 +76,27 @@ const songbookSpreads = [
         so the two pages share a mark rather than a widget.
       */}
       <nav class="vein" aria-label="Chapters">
+        {/*
+          Authored rather than a straight rule: a vessel wanders. The path is
+          stretched to the rail's height, and the beads sit at the four points
+          where it crosses back through the centre.
+        */}
+        <svg class="vein__line" viewBox="0 0 40 1000" preserveAspectRatio="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="vein-gradient" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="var(--color-border)" />
+              <stop offset="1" stop-color="var(--color-accent)" />
+            </linearGradient>
+          </defs>
+          <path
+            d="M20 0
+               C 8 70, 32 130, 20 200
+               C 10 260, 30 320, 20 375
+               C 12 440, 30 500, 20 562
+               C 9 630, 31 690, 20 750
+               C 11 810, 29 880, 20 1000"
+          />
+        </svg>
         <ol>
           {chapters.map((chapter) => (
             <li>
@@ -174,10 +197,8 @@ const songbookSpreads = [
     overflow: hidden;
   }
 
-  .page-intro {
-    max-width: var(--max-width-wide);
-    margin-inline: auto;
-    padding: var(--space-page-top) var(--space-edge) var(--space-xl);
+  .plate-index {
+    padding-top: var(--space-page-top);
   }
 
   /* Matches the homepage hero name: light, wide-tracked, Name Red */
@@ -253,16 +274,17 @@ const songbookSpreads = [
     isolation: isolate;
     overflow: hidden;
     margin-top: var(--space-section);
+    min-height: 100svh;
     padding-block: var(--space-xl) var(--space-section);
     color: var(--color-text-on-dark);
     background: var(--color-bg-dark);
   }
 
   /*
-    The dark is the homepage's wash at full concentration, not a different
-    material. Screen lets the coral and its vein filaments surface through the
-    oxblood as pooled pigment, so the ground is never a flat dark room and the
-    two pages stay recognisably the same watercolor.
+    The ground is a painted field, not a tint. Screening the pale hero plate over
+    the oxblood lifted the whole gallery to a flat grey-brown and lost the
+    pigment; this plate is already dark, so it carries the wash at full strength
+    with the deep colour intact.
   */
   .gallery__wash {
     position: absolute;
@@ -271,8 +293,7 @@ const songbookSpreads = [
     width: 100%;
     height: 100%;
     object-fit: cover;
-    mix-blend-mode: screen;
-    opacity: 0.22;
+    object-position: center top;
   }
 
   /* ─── the capillary ─── */
@@ -552,7 +573,20 @@ const songbookSpreads = [
     */
     .gallery {
       display: grid;
-      grid-template-columns: calc(var(--space-edge) + var(--space-2xl)) minmax(0, 1fr);
+      grid-template-columns: calc(var(--space-edge) + var(--space-2xl) + var(--space-2xl)) minmax(0, 1fr);
+    }
+
+    /*
+      The work leads from the first viewport. The contents table and its
+      monumental heading pushed the entire gallery 900px below the fold, and the
+      vein already does what the table did.
+    */
+    .plate-index {
+      display: none;
+    }
+
+    .gallery {
+      margin-top: 0;
     }
 
     .vein {
@@ -567,25 +601,38 @@ const songbookSpreads = [
       pointer-events: none;
     }
 
+    .vein__line {
+      position: absolute;
+      inset: 0 auto 0 var(--space-edge);
+      width: var(--space-2xl);
+      height: 100%;
+    }
+
+    /* the filament thickens and reddens as the pigment dries downward */
+    .vein__line path {
+      fill: none;
+      stroke: url(#vein-gradient);
+      stroke-width: 2;
+      vector-effect: non-scaling-stroke;
+    }
+
     .vein ol {
       display: flex;
       flex-direction: column;
       justify-content: space-evenly;
+      position: relative;
       height: 100%;
       margin: 0;
       padding: 0;
       list-style: none;
-      /* the filament itself, thickening as the pigment dries downward */
-      background:
-        linear-gradient(var(--color-border), var(--color-accent)) center / var(--border-thin) 100%
-        no-repeat;
     }
 
     .vein__node {
       display: flex;
       align-items: center;
       gap: var(--space-xs);
-      margin-left: calc(var(--space-xs) * -1);
+      /* centres the bead on the wandering path, not on the gutter */
+      margin-left: calc(var(--space-2xl) / 2 - var(--space-sm) / 2);
       color: var(--color-border);
       font-size: var(--text-xs);
       letter-spacing: var(--tracking-label);

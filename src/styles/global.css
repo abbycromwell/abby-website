@@ -50,6 +50,14 @@ body {
   opacity: 0.7;
 }
 
+/* The vein field is a paper plate: its blooms crowd the corners, so anchor the
+   pale centre under the reading column and hold it back far enough that body
+   copy keeps WCAG AA over the deepest bloom. */
+.site-watercolor--field {
+  object-position: center top;
+  opacity: 0.45;
+}
+
 h1,
 h2,
 h3,
@@ -158,6 +166,16 @@ a:focus-visible {
 
 .nav-links [aria-current="page"] {
   color: var(--color-accent);
+}
+
+/* visually hidden, still announced — the Work page's heading, showcase's table headers */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 .eyebrow {
