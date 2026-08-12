@@ -215,18 +215,28 @@ const spreads = Object.keys(spreadImages)
   }
 
   /*
-    The book. Without JS the spreads stack vertically; with JS the list
-    becomes one open spread and a turning leaf, hinged at the spine.
+    The book. Without JS the spreads stack vertically; with JS the list is
+    hidden and the page-flip surface takes over. The fallback is the source of
+    truth — the half-pages are built from these very <img>s at runtime, so the
+    two can never describe different books.
   */
   .book {
     position: relative;
-    border: var(--border-thin) solid var(--color-border);
-    perspective: 2400px;
   }
 
   .book:focus-visible {
     outline: var(--border-thin) solid var(--color-accent);
     outline-offset: var(--space-2xs);
+  }
+
+  /*
+    Explicit, because `display: grid` below outranks the UA's own
+    `[hidden] { display: none }` — author declarations win over the UA sheet
+    whatever the specificity. Without this the fallback stack stays on screen
+    under the book: 24 spreads, roughly 7700px of it.
+  */
+  .book ul[hidden] {
+    display: none;
   }
 
   .book ul {
@@ -243,248 +253,313 @@ const spreads = Object.keys(spreadImages)
     height: auto;
   }
 
-  .book--active {
-    aspect-ratio: 1224 / 432;
-  }
+  /*
+    Everything below is :global and scoped under .book by hand. The pages and
+    their images are built in the script, so they never carry Astro's scoping
+    attribute and a plain `.book__page` selector matches nothing at all — the
+    page keeps `overflow: visible` and the image stays `static`, which reads as
+    both halves showing the same uncropped crop.
+  */
 
-  .book--active ul {
-    display: block;
-  }
-
-  .book--active li {
-    position: absolute;
-    inset: 0;
-    visibility: hidden;
-  }
-
-  .book--active li img {
-    height: 100%;
-  }
-
-  .book--active li.is-current {
-    z-index: 2;
-    visibility: visible;
-  }
-
-  .book--active li.is-under {
-    z-index: 1;
-    visibility: visible;
-  }
-
-  .book--active li.is-turn-top {
-    z-index: 2;
-    visibility: visible;
-    clip-path: inset(0 50% 0 0);
-  }
-
-  .book__leaf {
-    position: absolute;
-    z-index: 3;
-    top: 0;
-    left: 50%;
-    width: 50%;
-    height: 100%;
-    transform-origin: left center;
-    transform-style: preserve-3d;
-    will-change: transform;
-    /*
-      640ms is the authored page-turn beat. --turn-ms lets a fast swipe shorten it,
-      so a flick lands quicker than a deliberate button press; the script sets it
-      per turn and clears it after.
-    */
-    transition: transform var(--turn-ms, var(--duration-slow)) var(--ease-in-out);
-  }
-
-  .book__face {
-    position: absolute;
-    inset: 0;
+  /*
+    The turning surface. StPageFlip positions and sizes the pages itself, so it
+    only needs a box to live in; everything below is the paper, not the hinge.
+  */
+  /*
+    The book is clipped to its own footprint. A turning page is positioned in 3D
+    and its projection reaches well outside the block — during a corner peel or
+    a soft turn whole pages were landing on the title underneath. In this
+    projection a page's arc never needs to leave the spread, so the clip costs
+    nothing and is the only thing that reliably contains it.
+  */
+  .book :global(.book__pages) {
+    margin-inline: auto;
     overflow: hidden;
-    backface-visibility: hidden;
+  }
+
+  /*
+    No `position` here on purpose. The stylesheet imported by the script sets
+    `.stf__item { position: absolute }`, which is both what keeps a turning page
+    out of normal flow and what makes each page the containing block for the
+    half-spread image inside it. Declaring `relative` here outranks that and
+    puts the pages back in flow.
+  */
+  .book :global(.book__page) {
+    overflow: hidden;
     background: var(--color-bg);
   }
 
-  .book__face img {
+  /*
+    Each source file is a whole two-page spread, so a page shows half of one:
+    the image is laid in at double width and slid left by its own width for the
+    recto. The back of a verso is the next spread's recto, which is what a real
+    book does and what a single hinged leaf could not express.
+  */
+  .book :global(.book__page img) {
     position: absolute;
     top: 0;
     width: 200%;
     max-width: none;
     height: 100%;
-    }
-
-  .book__face--front img {
-    left: -100%;
+    user-select: none;
   }
 
-  .book__face--back {
-    transform: rotateY(180deg);
-  }
-
-  .book__face--back img {
+  .book :global(.book__page--left img) {
     left: 0;
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .book__leaf {
-      transition: none;
-    }
+  .book :global(.book__page--right img) {
+    left: -100%;
   }
+
+  /* the library paints the fold and the lift; the border is the book's edge */
+  .book :global(.book__page--left) {
+    border-left: var(--border-thin) solid var(--color-border);
+  }
+
+  .book :global(.book__page--right) {
+    border-right: var(--border-thin) solid var(--color-border);
+  }
+
 </style>
 
 <script>
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const TURN_MS = 640;
-  const TURN_MS_MIN = 380;
-  // px/ms at which a swipe counts as a full-speed flick
-  const FLICK = 1.1;
+  import { PageFlip } from 'page-flip/dist/js/page-flip.module.js';
+  /*
+    Required, not optional. It carries `.stf__item { position: absolute }`, and
+    without it every turning page falls into normal flow and hangs below the
+    book — up to 476px of it, over the title underneath.
+  */
+  import 'page-flip/src/Style/stPageFlip.css';
 
-  /* Every reader on the page gets its own state; nothing is shared. */
-  document.querySelectorAll('[data-songbook]').forEach((reader) => {
+  /*
+    Each source image is a complete spread, so it is cut into a verso and a recto
+    and the book is twice as many pages as there are files. The halves are built
+    from the no-JS list rather than rendered twice on the server: same <img>, same
+    srcset Astro generated for it, no second copy of the book in the HTML.
+  */
+  for (const reader of document.querySelectorAll('[data-songbook]')) {
     const book = reader.querySelector('[data-book]');
-    if (!book) return;
-    const pages = [...book.querySelectorAll('ul > li')];
-    const leaf = book.querySelector('[data-leaf]');
-    const front = leaf.querySelector('.book__face--front');
-    const back = leaf.querySelector('.book__face--back');
-    const counter = reader.querySelector('[data-spread-count]');
-    const altOut = reader.querySelector('[data-spread-alt]');
-    const prevBtn = reader.querySelector('[data-book-prev]');
-    const nextBtn = reader.querySelector('[data-book-next]');
-    let current = 0;
-    let busy = false;
+    const list = book?.querySelector('ul');
+    const spreads = list ? [...list.querySelectorAll('img')] : [];
+    if (!book || spreads.length < 2) continue;
 
-    book.classList.add('book--active');
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const holder = document.createElement('div');
+    holder.className = 'book__pages';
+    /* held by reference: loadFromHTML moves these out of holder into its own block */
+    const pages = [];
 
-    const show = (i) => {
-      pages.forEach((li, n) => {
-        li.classList.toggle('is-current', n === i);
-        li.setAttribute('aria-hidden', n === i ? 'false' : 'true');
-      });
-      counter.textContent = String(i + 1);
-      altOut.textContent = ' — ' + (pages[i].querySelector('img')?.alt ?? '');
-      prevBtn.disabled = i === 0;
-      nextBtn.disabled = i === pages.length - 1;
-    };
-
-    const half = (i) => {
-      const img = pages[i].querySelector('img').cloneNode(true);
-      img.loading = 'eager';
-      img.removeAttribute('aria-hidden');
-      img.alt = '';
-      return img;
-    };
-
-    let queued = null;
-
-    const turn = (dir, speed = 0) => {
-      if (busy) {
-        /* remember the latest intent; dropping it is what felt unresponsive */
-        queued = { dir, speed };
-        return;
-      }
-      const target = current + dir;
-      if (target < 0 || target >= pages.length) return;
-      if (reduceMotion) {
-        current = target;
-        show(current);
-        return;
-      }
-      busy = true;
-      /* a flick carries its speed into the turn; a click keeps the full beat */
-      const ms = Math.round(TURN_MS - (TURN_MS - TURN_MS_MIN) * Math.min(speed, 1));
-      leaf.style.setProperty('--turn-ms', `${ms}ms`);
-      const a = dir > 0 ? current : target;
-      const b = dir > 0 ? target : current;
-      pages[a].classList.add('is-turn-top');
-      pages[b].classList.add('is-under');
-      front.replaceChildren(half(a));
-      back.replaceChildren(half(b));
-      leaf.hidden = false;
-      leaf.style.transition = 'none';
-      leaf.style.transform = dir > 0 ? 'rotateY(0deg)' : 'rotateY(-180deg)';
-      leaf.getBoundingClientRect();
-      leaf.style.transition = '';
-      leaf.style.transform = dir > 0 ? 'rotateY(-180deg)' : 'rotateY(0deg)';
-      let fallback = 0;
-      let settled = false;
-
-      const done = () => {
+    spreads.forEach((source, i) => {
+      for (const side of ['left', 'right']) {
         /*
-          Two races lived here.
-
-          The listener was `{ once: true }`, which only detaches when it FIRES.
-          When the fallback timer won instead, the listener stayed attached and
-          the next turn's transitionend ran this stale closure — clearing the new
-          turn's timer and setting `current` to the previous turn's target. That
-          is the page refusing to advance, or going backwards.
-
-          And `transitionend` bubbles, so a transition on any descendant of the
-          leaf ended the turn early.
-
-          `settled` makes the handler idempotent per turn, and the listener is
-          removed explicitly rather than relying on `once`.
+          Every page soft, including the first and last. Marking those `hard`
+          made them flip rigidly, and the opening turn stopped matching every
+          other turn in the book. A hard page models board; these spreads are
+          printed on the same stock as the rest, and the cover here is a designed
+          spread rather than a physical case.
         */
-        if (settled) return;
-        settled = true;
-        clearTimeout(fallback);
-        leaf.removeEventListener('transitionend', onEnd);
-        busy = false;
-        leaf.hidden = true;
-        leaf.style.removeProperty('--turn-ms');
-        pages[a].classList.remove('is-turn-top');
-        pages[b].classList.remove('is-under');
-        current = target;
-        show(current);
-        /* a turn requested mid-flight runs now rather than being dropped */
-        if (queued) {
-          const next = queued;
-          queued = null;
-          turn(next.dir, next.speed);
+        const page = document.createElement('div');
+        page.className = `book__page book__page--${side}`;
+
+        const half = document.createElement('img');
+        half.src = source.currentSrc || source.src;
+        if (source.srcset) half.srcset = source.srcset;
+        if (source.sizes) half.sizes = source.sizes;
+        /*
+          The alt describes the whole spread, so it belongs to the verso only.
+          On the recto it would be read a second time for the same picture.
+        */
+        half.alt = side === 'left' ? source.alt : '';
+        half.loading = i < 2 ? 'eager' : 'lazy';
+        half.draggable = false;
+        page.append(half);
+        holder.append(page);
+        pages.push(page);
+      }
+    });
+
+    book.append(holder);
+    list.hidden = true;
+
+    const flip = new PageFlip(holder, {
+      width: 1020,
+      height: 720,
+      size: 'stretch',
+      /*
+        Per page, and they hold the 1020:720 ratio so the floor cannot squash a
+        spread. 240 was too high: two of them plus the fold made a 480px book on
+        a 390px phone, which overflowed the screen sideways.
+      */
+      minWidth: 90,
+      maxWidth: 1600,
+      minHeight: 64,
+      maxHeight: 1130,
+      /* the lighting that was missing: a lifting page darkens and casts */
+      drawShadow: !reduced.matches,
+      maxShadowOpacity: 0.5,
+      /*
+        Not the felt duration. The library derives that from pixel distance,
+        `(travel / 1000) * flippingTime`, and a turn crosses the whole book. On
+        an 829px book that lands near 580ms, which is the beat we want. The same
+        arithmetic is why the corner hint has to borrow a slower setting: it
+        travels 50px, so on this one it would be over in 35ms.
+      */
+      flippingTime: reduced.matches ? 1 : 700,
+      /*
+        Never. A page here is half of a composition that was laid out across the
+        fold, so showing one alone shows half a picture. Portrait mode is right
+        for a book of single pages; this is a book of spreads, and it scales the
+        whole spread down instead.
+      */
+      usePortrait: false,
+      /* the corner lifts under the pointer, which is the affordance to grab it */
+      showPageCorners: !reduced.matches,
+      mobileScrollSupport: true,
+      showCover: false,
+    });
+
+    flip.loadFromHTML(holder.querySelectorAll('.book__page'));
+
+    /* a no-op unless the hint is running, so the turn paths need no branch */
+    let releaseBeforeTurn = (turn) => turn();
+
+    const prev = reader.querySelector('[data-book-prev]');
+    const next = reader.querySelector('[data-book-next]');
+    const countOut = reader.querySelector('[data-spread-count]');
+    const altOut = reader.querySelector('[data-spread-alt]');
+
+    /* the reader counts spreads; the library counts pages, two to a spread */
+    const sync = () => {
+      const spread = Math.floor(flip.getCurrentPageIndex() / 2);
+      if (countOut) countOut.textContent = String(spread + 1);
+      if (altOut) altOut.textContent = spreads[spread]?.alt ?? '';
+      if (prev) prev.disabled = spread === 0;
+      if (next) next.disabled = spread >= spreads.length - 1;
+
+      /*
+        Warm the neighbours. The halves are lazy and the library keeps every page
+        but the current spread hidden, so a turn could reveal one with its file
+        still on the wire. Switching the attribute starts the fetch, and both
+        halves of a spread share a file, so it costs one request each way.
+      */
+      for (const offset of [-1, 1]) {
+        const at = spread + offset;
+        if (at < 0 || at >= spreads.length) continue;
+        for (const page of [pages[at * 2], pages[at * 2 + 1]]) {
+          const half = page?.firstElementChild;
+          if (half) half.loading = 'eager';
+        }
+      }
+    };
+
+    flip.on('flip', sync);
+    sync();
+
+    /*
+      One corner lift when the book arrives, so it reads as something you turn
+      rather than a picture of a book. Deliberately not a flip: a page that
+      turns itself has read the first spread on the visitor's behalf and moved
+      them off it. This is the library's own peel, the same gesture the pointer
+      makes, run once and released.
+
+      Coordinates are relative to the book, which is what showCorner expects,
+      and the corner has to be inside its hit zone or the call is ignored.
+    */
+    if (!reduced.matches) {
+      const baseFlippingTime = flip.getSettings().flippingTime;
+      let pending = [];
+      /*
+        No timer takes the fold back down. A dwell long enough to be certain of
+        being seen is also long enough to look stuck, and a shorter one can be
+        missed entirely — so it holds until the visitor does something, which is
+        the moment it has stopped being useful. It is released rather than left
+        folded for good: the corner sits over the bottom of the artwork, and the
+        library treats a folded corner as a state it is passing through.
+      */
+      let dismissed = false;
+      let hintObserver = null;
+
+      /*
+        `smooth` for a pointer arriving, which is a change of mind and can take
+        its time; instant for a turn, which is not. The library refuses to start
+        a flip while a corner is folded, so a leisurely release would swallow the
+        visitor's first click entirely — restoring the shared duration before
+        letting go puts the corner down in about 35ms and the turn follows.
+      */
+      const dismiss = (smooth) => {
+        if (dismissed) return;
+        dismissed = true;
+        /* it can no longer do anything useful, and it outlives the page otherwise */
+        hintObserver?.disconnect();
+        for (const id of pending) clearTimeout(id);
+        pending = [];
+        if (!smooth) flip.getSettings().flippingTime = baseFlippingTime;
+        if (flip.getState() === 'fold_corner') flip.getFlipController().stopMove();
+        if (smooth) {
+          setTimeout(() => {
+            flip.getSettings().flippingTime = baseFlippingTime;
+          }, 400);
         }
       };
 
-      const onEnd = (event) => {
-        if (event.target !== leaf || event.propertyName !== 'transform') return;
-        done();
+      /* the corner is down before the turn starts, so the turn is never lost */
+      releaseBeforeTurn = (turn) => {
+        if (dismissed) return turn();
+        dismiss(false);
+        setTimeout(turn, 60);
       };
 
-      leaf.addEventListener('transitionend', onEnd);
-      fallback = setTimeout(done, ms + 260);
-    };
+      book.addEventListener('pointerenter', () => dismiss(true), { once: true, passive: true });
 
-    prevBtn.addEventListener('click', () => turn(-1));
-    nextBtn.addEventListener('click', () => turn(1));
+      /*
+        The book has to settle in the viewport before the corner moves. Firing on
+        the intersection itself puts the lift under a page that is still
+        travelling, where it is both hard to see and easy to mistake for the
+        scroll; and someone flicking straight past should not spend the hint at
+        all. So arriving only starts a clock, leaving stops it, and the corner
+        lifts a second after the book has actually come to rest on screen.
+      */
+      const SETTLE = 1000;
+      let settling = null;
 
-    book.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowRight') { e.preventDefault(); turn(1); }
-      if (e.key === 'ArrowLeft') { e.preventDefault(); turn(-1); }
+      hintObserver = new IntersectionObserver(
+        (entries, observer) => {
+          for (const entry of entries) {
+            if (!entry.isIntersecting) {
+              clearTimeout(settling);
+              settling = null;
+              continue;
+            }
+            if (settling !== null || dismissed) continue;
+
+            settling = setTimeout(() => {
+              observer.disconnect();
+              if (dismissed || flip.getState() !== 'read') return;
+              /*
+                The hint travels 50px, so on the shared setting it would lift and
+                drop in under a tenth of a second and read as a glitch. The
+                settings object is live, so it borrows a much slower one and
+                hands it back — a pointer peel should still answer immediately.
+              */
+              flip.getSettings().flippingTime = 6400;
+              const rect = flip.getBoundsRect();
+              flip.getFlipController().showCorner({ x: rect.width - 1, y: rect.height - 1 });
+            }, SETTLE);
+            pending.push(settling);
+          }
+        },
+        { threshold: 0.5 },
+      );
+      hintObserver.observe(holder);
+    }
+
+    prev?.addEventListener('click', () => releaseBeforeTurn(() => flip.flipPrev()));
+    next?.addEventListener('click', () => releaseBeforeTurn(() => flip.flipNext()));
+
+    book.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowRight') { event.preventDefault(); releaseBeforeTurn(() => flip.flipNext()); }
+      if (event.key === 'ArrowLeft') { event.preventDefault(); releaseBeforeTurn(() => flip.flipPrev()); }
     });
-
-    let downX = null;
-    let downY = null;
-    let downAt = 0;
-    book.addEventListener('pointerdown', (e) => {
-      downX = e.clientX;
-      downY = e.clientY;
-      downAt = e.timeStamp;
-    });
-    book.addEventListener('pointerup', (e) => {
-      if (downX === null) return;
-      const dx = e.clientX - downX;
-      const dy = e.clientY - downY;
-      const elapsed = Math.max(e.timeStamp - downAt, 1);
-      downX = null;
-      downY = null;
-      // A mostly-vertical gesture is a scroll, never a page turn
-      if (Math.abs(dy) > 30 && Math.abs(dy) > Math.abs(dx)) return;
-      if (Math.abs(dx) > 40) {
-        turn(dx < 0 ? 1 : -1, Math.abs(dx) / elapsed / FLICK);
-      } else {
-        const mid = book.getBoundingClientRect();
-        turn(e.clientX > mid.left + mid.width / 2 ? 1 : -1);
-      }
-    });
-
-
-    show(0);
-  });
+  }
 </script>

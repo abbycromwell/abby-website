@@ -241,17 +241,18 @@ holds everywhere else on the site.
 ## Components
 
 Motion across all components is quiet: color fades at 150ms, image zooms and
-wash fades at 240ms, both on an exponential ease-out
-(cubic-bezier(0.16, 1, 0.3, 1)). Nothing moves position, with three authored
-exceptions native to their content: the case-study flipbook page turn (640ms
-ease-in-out leaf rotation around the spine), animation clips that play muted
-while in view and pause when scrolled away, and the homepage pods, which drift
-and deform under the pointer. Looping motion uses `--ease-in-out`
-(cubic-bezier(0.45, 0, 0.55, 1)) rather than `--ease-out`, which lurches where a
-loop wraps. Under `prefers-reduced-motion` all movement is removed; color fades
-remain, the flipbook swaps spreads instantly, clips wait with native controls
-except the homepage pod, whose clip sits inside a link and so holds a still
-frame instead, and the pods hold their resting shape.
+wash fades at 240ms, both on an exponential ease-out (cubic-bezier(0.16, 1, 0.3,
+1)). Nothing moves position, with three authored exceptions native to their
+content: the case-study flipbook page turn (a soft page curl of roughly 600ms,
+its duration scaled to the width of the book, with the corner lifting once when
+the book settles into view and holding until the reader engages), animation
+clips that play muted while in view and pause when scrolled away, and the
+homepage pods, which drift and deform under the pointer. Looping motion uses
+`--ease-in-out` (cubic-bezier(0.45, 0, 0.55, 1)) rather than `--ease-out`, which
+lurches where a loop wraps. Under `prefers-reduced-motion` all movement is
+removed; color fades remain, the flipbook swaps spreads instantly, clips wait
+with native controls except the homepage pod, whose clip sits inside a link and
+so holds a still frame instead, and the pods hold their resting shape.
 
 ### Navigation
 
