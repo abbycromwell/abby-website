@@ -24,7 +24,7 @@ import { pods } from '../data/home-previews.js';
     />
 
     <div class="hero__content">
-      <h1 id="hero-title">Abby<br /><span class="h1__second">Cromwell</span></h1>
+      <h1 id="hero-title"><span class="h1__line">Abby</span><br /><span class="h1__line h1__second">Cromwell</span></h1>
       <p class="hero__discipline">
         Illustrative art <span aria-hidden="true">·</span> Character design
         <span aria-hidden="true">·</span> Storytelling
@@ -118,13 +118,49 @@ import { pods } from '../data/home-previews.js';
     text-transform: uppercase;
   }
 
+  /*
+    The name arrived unannounced while the pods beside it were choreographed over
+    1.4s, which reads backwards. It rises rather than wipes: a hard clip edge is
+    the wrong vocabulary beside feathered masks, and at --leading-hero 1.05 it
+    would sit on the caps anyway.
+
+    inline-block because transform does not apply to a non-replaced inline box.
+    The <br> still owns the line break, so both lines stay where they were.
+
+    Two animations rather than one keyframe holding opacity at an intermediate
+    stop: a timing function is applied per interval, so that would ease the rise
+    twice and kink it mid-travel. Split, the ink is painted at 240ms while the
+    rise runs its full 640ms.
+  */
+  .h1__line {
+    display: inline-block;
+    animation:
+      name-rise var(--duration-slow) var(--ease-out) both,
+      name-fade var(--duration-standard) var(--ease-out) both;
+  }
+
+  @keyframes name-rise {
+    from {
+      transform: translateY(0.14em);
+    }
+  }
+
+  @keyframes name-fade {
+    from {
+      opacity: 0;
+    }
+  }
+
   /* optical: pull C flush with the A apex and the label axis below */
   .h1__second {
     margin-left: -0.07em;
+    /* close enough to read as one gesture, far enough to be two */
+    animation-delay: 90ms;
   }
 
   /* the 4px inset sits the label axis under the A's stem, not the glyph edge */
   .hero__discipline {
+    animation: name-fade var(--duration-standard) var(--ease-out) 180ms both;
     max-width: var(--max-width-prose);
     margin-left: var(--space-2xs);
     color: var(--color-text-secondary);
@@ -222,6 +258,17 @@ import { pods } from '../data/home-previews.js';
       opacity var(--duration-standard) var(--ease-out),
       transform var(--duration-standard) var(--ease-out);
     animation: pod-wake var(--duration-wake) var(--ease-in-out) both;
+    /*
+      Held until the pod is on screen; the waker in the script releases it.
+      Pausing rather than withholding keeps the stagger delays and the
+      reduced-motion override on this one declaration, and 0% is the resting
+      shape at scale(1), so a held pod is pixel-identical to a still one.
+    */
+    animation-play-state: paused;
+  }
+
+  .pod.is-visible .pod__skin {
+    animation-play-state: running;
   }
 
   /*
@@ -533,6 +580,12 @@ import { pods } from '../data/home-previews.js';
   }
 
   @media (prefers-reduced-motion: reduce) {
+    /* the arrival still happens, it just stops travelling */
+    .h1__line,
+    .hero__discipline {
+      animation: name-fade var(--duration-standard) var(--ease-out) both;
+    }
+
     .pod__skin {
       transition: opacity var(--duration-standard) var(--ease-out);
       animation: none;
@@ -682,8 +735,27 @@ import { pods } from '../data/home-previews.js';
     pod.addEventListener('pointercancel', release, { passive: true });
   }
 
+  /*
+    The wake says the pods are objects and not part of the wash, and it runs
+    once. Firing all three at load spent that on paper nobody was looking at:
+    below 48rem they stack down a hero taller than the viewport, so two of the
+    three breathed off-screen. Above 48rem all three are already in frame, this
+    resolves on the first pass, and the 180/360ms ladder reads as it did.
+  */
+  const waker = new IntersectionObserver(
+    (entries, observer) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        entry.target.classList.add('is-visible');
+        observer.unobserve(entry.target);
+      }
+    },
+    { threshold: 0.35 },
+  );
+
   for (const pod of document.querySelectorAll('.pod')) {
     wireDrag(pod);
+    waker.observe(pod);
     pod
       .querySelector('.pod__skin')
       ?.addEventListener('animationend', () => pod.classList.add('is-awake'), { once: true });

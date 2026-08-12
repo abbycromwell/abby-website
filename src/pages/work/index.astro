@@ -714,6 +714,91 @@ const blots = {
     background: var(--color-dark-overlay);
   }
 
+  /*
+    The dialog teleported: a full-viewport wash and a plate at full size landing
+    in one frame over a gallery that had been still, and vanishing the same way.
+    The platform handles it with no script. `display` and `overlay` need
+    allow-discrete or the exit is never seen — the element leaves the top layer
+    the instant [open] drops — and @starting-style supplies the frame before
+    entry that a newly shown element does not otherwise have.
+
+    Where allow-discrete is missing the dialog cuts in and out exactly as it does
+    today, so the fallback is the current behaviour rather than a broken one.
+  */
+  @supports (transition-behavior: allow-discrete) {
+    @media (prefers-reduced-motion: no-preference) {
+      .lightbox,
+      .lightbox::backdrop {
+        opacity: 0;
+        transition:
+          opacity var(--duration-standard) var(--ease-out),
+          display var(--duration-standard) allow-discrete,
+          overlay var(--duration-standard) allow-discrete;
+      }
+
+      .lightbox[open],
+      .lightbox[open]::backdrop {
+        opacity: 1;
+      }
+
+      @starting-style {
+        .lightbox[open],
+        .lightbox[open]::backdrop {
+          opacity: 0;
+        }
+      }
+
+      /* the plate grows out of the gallery instead of replacing it */
+      .lightbox__stage {
+        transform: scale(0.97);
+        transition: transform var(--duration-standard) var(--ease-out);
+      }
+
+      .lightbox[open] .lightbox__stage {
+        transform: scale(1);
+      }
+
+      @starting-style {
+        .lightbox[open] .lightbox__stage {
+          transform: scale(0.97);
+        }
+      }
+    }
+  }
+
+  /*
+    Paging was a hard cut: the node is destroyed and another inserted, so nothing
+    told you which way you had moved. The new plate now arrives from the side you
+    stepped toward — a hint at --space-md rather than a slide.
+
+    :global because the stage's children are built in the script and never carry
+    the scoping attribute, matching how the plate's own img/video are reached
+    further down. The direction sits on the stage, which is server-rendered, and
+    the custom property inherits to whichever node was just inserted.
+  */
+  .lightbox__stage[data-from='prev'] {
+    --step-from: calc(var(--space-md) * -1);
+  }
+
+  .lightbox__stage[data-from] :global(img),
+  .lightbox__stage[data-from] :global(video) {
+    animation: plate-step var(--duration-fast) var(--ease-out) both;
+  }
+
+  @keyframes plate-step {
+    from {
+      opacity: 0;
+      transform: translateX(var(--step-from, var(--space-md)));
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .lightbox__stage :global(img),
+    .lightbox__stage :global(video) {
+      animation: none;
+    }
+  }
+
 
   .lightbox__stage {
     order: 2;
@@ -1150,11 +1235,17 @@ const blots = {
     let group = [];
     let at = 0;
 
-    const show = (i) => {
+    /*
+      `from` is the direction stepped, and only paging passes it — opening has
+      the dialog's own entrance and does not need a second gesture on top.
+    */
+    const show = (i, from) => {
       at = (i + group.length) % group.length;
       const trigger = group[at];
       const { zoomSrc, zoomClip, zoomAlt } = trigger.dataset;
       stage.replaceChildren();
+      if (from) stage.dataset.from = from;
+      else delete stage.dataset.from;
 
       if (zoomClip) {
         const video = document.createElement('video');
@@ -1177,6 +1268,16 @@ const blots = {
       totalOut.textContent = String(group.length);
       prevBtn.disabled = group.length < 2;
       nextBtn.disabled = group.length < 2;
+
+      /*
+        Warm both neighbours. Nothing was preloaded, so a step could fade a plate
+        in over an empty stage while its file was still on the wire — the fade
+        makes that gap easier to see, not harder.
+      */
+      for (const offset of [-1, 1]) {
+        const next = group[(at + offset + group.length) % group.length];
+        if (next?.dataset.zoomSrc) new Image().src = next.dataset.zoomSrc;
+      }
     };
 
     for (const trigger of document.querySelectorAll('.plate__zoom')) {
@@ -1207,12 +1308,12 @@ const blots = {
       lightbox.classList.remove('lightbox--pointing');
     });
 
-    prevBtn?.addEventListener('click', () => show(at - 1));
-    nextBtn?.addEventListener('click', () => show(at + 1));
+    prevBtn?.addEventListener('click', () => show(at - 1, 'prev'));
+    nextBtn?.addEventListener('click', () => show(at + 1, 'next'));
 
     lightbox.addEventListener('keydown', (event) => {
-      if (event.key === 'ArrowRight') { event.preventDefault(); show(at + 1); }
-      if (event.key === 'ArrowLeft') { event.preventDefault(); show(at - 1); }
+      if (event.key === 'ArrowRight') { event.preventDefault(); show(at + 1, 'next'); }
+      if (event.key === 'ArrowLeft') { event.preventDefault(); show(at - 1, 'prev'); }
     });
 
     document.querySelector('[data-lightbox-close]')?.addEventListener('click', () => lightbox.close());
