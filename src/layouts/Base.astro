@@ -32,6 +32,22 @@ const groundName = ground in grounds ? ground : 'veins';
     <title>{title}</title>
     <meta name="description" content={description} />
     {/*
+      The mark is Abby's initial: the Jost A, taken as an outline from the same
+      woff2 the masthead is set in, knocked out of a Name Red disc.
+
+      Two artworks, because the platforms want different things. The tab icon keeps
+      transparent corners so it reads as a disc. The touch and manifest icons carry
+      paper corners instead, because iOS and Android composite a transparent icon
+      onto black, which would sit the warm palette on a cold ground.
+
+      SVG first for browsers that take it, .ico behind it for those that do not.
+    */}
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/favicon-96x96.png" type="image/png" sizes="96x96" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    {/*
       The @font-face rules live in global.css, which is inlined into this
       document, so the font is discoverable the moment the head is parsed. The
       preload starts the download before the parser even reaches the style block.
