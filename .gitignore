@@ -9,3 +9,6 @@ design/inspiration/
 
 # impeccable tool caches (the critique snapshots are worth keeping)
 .impeccable/hook.cache.json
+
+# playwright-mcp scratch: console logs and page dumps, regenerated per run
+.playwright-mcp/
