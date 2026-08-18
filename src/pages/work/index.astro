@@ -254,10 +254,16 @@ const blots = {
             </header>
             {/* Empty plate grids are decorative; aria-hidden lifts once artwork lands. */}
             <ul class={`chapter__grid chapter__grid--${chapter.layout}`} aria-hidden={empty ? 'true' : undefined}>
+              {/*
+                The clip's ratio is set on the <li>, not the frame inside it. The
+                frame reads it by inheritance either way, but the flex item is what
+                has to be capped against the row — a frame sized from viewport
+                height alone overshoots a tall, narrow window.
+              */}
               {chapter.plates.map((plate) => (
-                <li>
+                <li style={plate?.ratio ? `--clip-ratio: ${plate.ratio}` : undefined}>
                   {plate?.clip ? (
-                    <figure class="plate plate--filled" style={plate.ratio ? `--clip-ratio: ${plate.ratio}` : undefined}>
+                    <figure class="plate plate--filled">
                       <button
                         class="plate__zoom"
                         type="button"
@@ -591,8 +597,17 @@ const blots = {
     aspect-ratio: 4 / 5;
   }
 
+  /*
+    The lead plate keeps its own ratio where the other dense plates take `auto`,
+    and above 48rem it is also given a fixed height. Ratio times a height derived
+    from the viewport's height is a width that ignores the viewport's width, so it
+    overran its column on tall narrow windows. Capped to the column; where the
+    column can afford the full size nothing about this changes.
+  */
   .chapter__grid--dense li:first-child .plate {
     aspect-ratio: 1.63 / 1;
+    width: min(100%, calc(var(--plate-max, 100%) * 1.63));
+    height: auto;
   }
 
   .plate--filled img,
@@ -1172,9 +1187,22 @@ const blots = {
       justify-content: center;
     }
 
+    /*
+      The frame wants to be `--plate-max` tall and as wide as its footage makes it.
+      That width is derived from viewport HEIGHT and knew nothing about viewport
+      WIDTH, so on anything tall and narrow it overshot the screen: at 769px wide
+      by 1024 tall the widest clip asked for 828px and the whole page scrolled
+      sideways, from 770px right through to 1150px.
+
+      min() keeps the wanted width where the row can afford it and clamps it to the
+      row where it cannot. Height comes off the aspect ratio rather than being
+      pinned, so a clamped frame gets shorter instead of letterboxing its footage,
+      which is what DESIGN.md forbids for animation.
+    */
     .chapter__grid--wide li {
       flex: 0 1 auto;
       min-width: 0;
+      width: min(100%, calc(var(--plate-max) * var(--clip-ratio, 16 / 9)));
     }
 
     /*
@@ -1184,8 +1212,8 @@ const blots = {
     */
     .chapter__grid--wide .plate {
       aspect-ratio: var(--clip-ratio, 16 / 9);
-      width: auto;
-      height: var(--plate-max);
+      width: 100%;
+      height: auto;
     }
 
     .chapter__grid--wide .plate__zoom {
@@ -1207,6 +1235,15 @@ const blots = {
 
     .chapter__grid--wide li:first-child .plate {
       aspect-ratio: 2.25 / 1;
+    }
+
+    /*
+      The lead frame overrides the ratio above, so its item has to be measured
+      against the same number — sized from --clip-ratio it would ask for a width
+      the frame never fills, and the first plate would drift taller than the rest.
+    */
+    .chapter__grid--wide li:first-child {
+      width: min(100%, calc(var(--plate-max) * 2.25));
     }
 
     .chapter__grid--dense {
