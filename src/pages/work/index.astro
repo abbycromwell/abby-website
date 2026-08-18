@@ -1090,9 +1090,17 @@ const blots = {
       transform: translate(-50%, -50%) scale(1);
     }
 
+    /*
+      Two-tone, matching the homepage pods. A 1px Wet Red ring measured 2.79:1
+      against this ground's flat dark and 1.28:1 where a red bloom sits behind
+      it — under the 3:1 non-text floor, and invisible in practice. Two tones
+      carry each other: the paper ring is what reads on the dark ground here,
+      the same way Name Red is what reads on paper.
+    */
     .vein__node:focus-visible {
-      outline: var(--border-thin) solid var(--color-accent);
-      outline-offset: var(--space-xs);
+      outline: 2px solid var(--color-hero-name);
+      outline-offset: var(--space-2xs);
+      box-shadow: 0 0 0 4px var(--color-bg);
     }
 
 

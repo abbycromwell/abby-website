@@ -210,6 +210,17 @@ a:focus-visible {
   outline-offset: var(--space-2xs);
 }
 
+/*
+  Making <main> focusable gives it a UA focus ring, which would draw a box around
+  the entire page the moment the skip link fires. Suppressing it here is not the
+  usual sin of hiding a control's focus: <main> is a scroll destination, not an
+  interactive element, it is off the tab sequence at -1, and the visitor's own
+  next Tab lands on a real control that still shows its ring.
+*/
+main[tabindex="-1"]:focus {
+  outline: none;
+}
+
 .skip-link {
   position: fixed;
   top: var(--space-md);

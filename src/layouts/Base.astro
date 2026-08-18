@@ -70,7 +70,13 @@ const groundName = ground in grounds ? ground : 'veins';
         </ul>
       </nav>
     </header>
-    <main id="main" class:list={['page', { 'page--immersive': immersive }]}>
+    {/*
+      tabindex="-1" is what makes the skip link actually skip. <main> is not
+      focusable on its own, so activating the link scrolled the viewport but left
+      focus back at the top of the document — the next Tab returned the visitor to
+      the nav they had just asked to bypass. -1 keeps it off the tab sequence.
+    */}
+    <main id="main" tabindex="-1" class:list={['page', { 'page--immersive': immersive }]}>
       <slot />
     </main>
   </body>
