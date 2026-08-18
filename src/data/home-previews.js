@@ -11,6 +11,9 @@
 import { chapters } from './work.js';
 import confettiProfile from '../assets/illustration/confetti-profile.webp';
 import rollingClip from '../assets/animation/rolling-rolling-tumbling-along.mp4';
+/* frame 0 of the clip, so the pod at rest looks the same as it did when the
+   browser was preloading the file's metadata to show that frame itself */
+import rollingPoster from '../assets/animation/rolling-rolling-tumbling-along-poster.png';
 import songbookGlyphs from '../assets/case-study/spread-07.webp';
 
 function plateFor(slug, asset, key) {
@@ -41,6 +44,7 @@ export const pods = [
     title: 'Animation',
     href: '/work/#animation',
     clip: animation.clip,
+    poster: rollingPoster,
     alt: animation.alt,
   },
   {

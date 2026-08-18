@@ -1,8 +1,36 @@
 ---
-import { Image } from 'astro:assets';
+import { Image, getImage } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import heroWatercolor from '../assets/home/hero-watercolor-veins.png';
 import { pods } from '../data/home-previews.js';
+
+/*
+  The pod colour sampler reads the wash through a CSS custom property, and
+  `heroWatercolor.src` hands back the untouched 2.3MB PNG — every desktop visitor
+  was downloading it to tint three bubbles. Nothing about a 50%-opacity colour
+  blend depends on resolution, so the sampler gets the narrowest variant.
+*/
+const heroWashSampler = await getImage({
+  src: heroWatercolor,
+  width: 768,
+  format: 'webp',
+});
+
+/*
+  With preload="none" the browser has no frame to show until the clip plays, so
+  every clip pod needs a poster. Resolved here rather than in the data file
+  because getImage is what turns the source frame into the webp browsers get.
+*/
+const posters = new Map(
+  await Promise.all(
+    pods
+      .filter((pod) => pod.poster)
+      .map(async ({ slug, poster }) => [
+        slug,
+        (await getImage({ src: poster, width: 640, format: 'webp' })).src,
+      ]),
+  ),
+);
 ---
 
 <!--
@@ -32,26 +60,39 @@ import { pods } from '../data/home-previews.js';
     </div>
 
     <ul class="pods" aria-label="Work by category">
-      {pods.map(({ slug, title, href, src, alt, clip, sizes }) => (
+      {pods.map(({ slug, title, href, src, alt, clip, sizes }, index) => (
         <li class={`pod pod--${slug}`}>
           <a class="pod__link" href={href}>
             <span class="pod__drag">
               <span class="pod__skin">
                 {clip ? (
+                  /*
+                    preload="none", not "metadata". Metadata opened a request
+                    against a 5MB file and held it for 439ms during the load, to
+                    fetch a first frame the poster now supplies for 12kB. The
+                    file itself is still only pulled when the pod is scrolled to.
+                  */
                   <video
                     class="pod__clip"
                     src={clip}
+                    poster={posters.get(slug)}
                     aria-label={alt}
                     muted
                     loop
                     playsinline
-                    preload="metadata"
+                    preload="none"
                   />
                 ) : (
+                  /*
+                    The first pod is the page's LCP element — the wash behind it
+                    is too low-entropy for Chrome to count. Without the hint it
+                    is fetched at the same priority as the pods below the fold.
+                  */
                   <Image
                     src={src}
                     alt={alt}
                     loading="eager"
+                    fetchpriority={index === 0 ? 'high' : undefined}
                     widths={[288, 432, 576]}
                     sizes={sizes}
                   />
@@ -66,7 +107,7 @@ import { pods } from '../data/home-previews.js';
   </section>
 </Base>
 
-<style define:vars={{ heroWash: `url(${heroWatercolor.src})` }}>
+<style define:vars={{ heroWash: `url(${heroWashSampler.src})` }}>
   /*
     Each pod animates its own edge feather, so the radial-gradient stop has to be
     a registered property. Without @property it would snap instead of bleed.
