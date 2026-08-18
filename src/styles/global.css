@@ -161,7 +161,10 @@ a:hover {
   bare — this is for links that sit inside prose or act as CTAs.
 */
 .text-link {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  /* 23px without this — one pixel under WCAG 2.5.8's 24px target floor */
+  min-height: 24px;
   padding-bottom: var(--space-2xs);
   /*
     Transparent at rest: the detail rows these mostly live in carry their own
@@ -275,8 +278,15 @@ main[tabindex="-1"]:focus {
   text-transform: uppercase;
 }
 
+/*
+  Same 24px floor the nav links got, for the same reason — this one sits outside
+  .nav-links, so the rule below never reached it and it measured 18px tall.
+*/
 .nav-name {
   flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
   font-family: var(--font-sans);
   font-weight: var(--weight-medium);
 }
