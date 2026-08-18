@@ -319,9 +319,27 @@ const spreads = Object.keys(spreadImages)
     left: -100%;
   }
 
+  /*
+    The cover is already one page wide, so it is laid in whole rather than being
+    treated as half of a spread. Its facing page carries no image at all: the
+    inside of a cover is blank paper, which is what the book opens onto.
+  */
+  .book :global(.book__page--cover img) {
+    width: 100%;
+    left: 0;
+  }
+
   /* the library paints the fold and the lift; the border is the book's edge */
   .book :global(.book__page--left) {
     border-left: var(--border-thin) solid var(--color-border);
+    /*
+      The gutter, and an inset shadow rather than a border: a border would eat a
+      pixel of the page box, and each page lays its image in at 200% width, so a
+      1px narrower box narrows the half by 2px and the two halves stop meeting
+      cleanly on spreads whose artwork crosses the fold. An inset shadow paints
+      the same line and changes no geometry at all.
+    */
+    box-shadow: inset calc(var(--border-thin) * -1) 0 0 var(--color-border);
   }
 
   .book :global(.book__page--right) {
@@ -358,7 +376,24 @@ const spreads = Object.keys(spreadImages)
     const pages = [];
 
     spreads.forEach((source, i) => {
+      /*
+        The first file is the cover: one page, not a spread, and half the width of
+        every other file — songbook.astro says the same thing and gives it its own
+        widths. Split like a spread it was reconstructed across two pages, which
+        stretched it to exactly twice its width. It gets a blank verso and keeps
+        its own proportions on the recto, which is also how the book opens.
+      */
+      const cover = i === 0;
+
       for (const side of ['left', 'right']) {
+        if (cover && side === 'left') {
+          const blank = document.createElement('div');
+          blank.className = 'book__page book__page--left book__page--blank';
+          holder.append(blank);
+          pages.push(blank);
+          continue;
+        }
+
         /*
           Every page soft, including the first and last. Marking those `hard`
           made them flip rigidly, and the opening turn stopped matching every
@@ -367,7 +402,7 @@ const spreads = Object.keys(spreadImages)
           spread rather than a physical case.
         */
         const page = document.createElement('div');
-        page.className = `book__page book__page--${side}`;
+        page.className = `book__page book__page--${side}${cover ? ' book__page--cover' : ''}`;
 
         const half = document.createElement('img');
         half.src = source.currentSrc || source.src;
