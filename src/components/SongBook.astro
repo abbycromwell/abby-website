@@ -6,14 +6,20 @@ interface Props {
   heading?: string;
   /* Optional id for the section, for anchor links. */
   id?: string;
+  bare?: boolean;
+  hideHeading?: boolean;
+  /* Hairlines above and below the pages as well as beside them. */
+  framed?: boolean;
 }
 
 /*
-  `bare` drops the component's own dark ground and vertical padding, for hosts
-  that already provide a ground — the Work page gallery carries a painted wash a
-  solid band would cut straight through.
+  `bare` drops the component's own dark ground, vertical padding, and text
+  colour, for hosts that already provide a ground — the Work page gallery
+  carries a painted wash a solid band would cut straight through, and the
+  essay page is paper, where the reader's own paper-coloured controls would
+  vanish. The controls take the host's text colour instead.
 */
-const { heading = 'Read the book', id, bare = false, hideHeading = false } = Astro.props;
+const { heading = 'Read the book', id, bare = false, hideHeading = false, framed = false } = Astro.props;
 const headingId = `${id ?? 'songbook'}-heading`;
 
 /*
@@ -58,7 +64,7 @@ const spreads = Object.keys(spreadImages)
   .map((path, i) => ({ src: spreadImages[path], alt: spreadAlts[i] ?? 'SongBook spread' }));
 ---
 
-<section class:list={['case-reader', { 'case-reader--bare': bare }]} data-songbook id={id} aria-labelledby={headingId}>
+<section class:list={['case-reader', { 'case-reader--bare': bare, 'case-reader--framed': framed }]} data-songbook id={id} aria-labelledby={headingId}>
   <div class="case-reader__rule">
     <h2 id={headingId} class:list={{ 'sr-only': hideHeading }}>{heading}</h2>
     <div class="case-reader__controls">
@@ -113,6 +119,7 @@ const spreads = Object.keys(spreadImages)
 
   .case-reader--bare {
     padding-block: 0;
+    color: inherit;
     background: none;
   }
 
@@ -127,7 +134,6 @@ const spreads = Object.keys(spreadImages)
     align-items: baseline;
     justify-content: flex-end;
     gap: var(--space-2xs) var(--space-lg);
-    gap: var(--space-2xs) var(--space-lg);
     max-width: var(--max-width-wide);
     margin-inline: auto;
     margin-bottom: var(--space-lg);
@@ -140,7 +146,6 @@ const spreads = Object.keys(spreadImages)
 
   .case-reader__rule h2 {
     margin-bottom: 0;
-    color: var(--color-text-on-dark);
     font-size: var(--text-xl);
     letter-spacing: var(--tracking-display);
     text-transform: uppercase;
@@ -165,7 +170,7 @@ const spreads = Object.keys(spreadImages)
     padding: var(--space-xs) var(--space-sm);
     border: 0;
     background: none;
-    color: var(--color-text-on-dark);
+    color: inherit;
     font-family: var(--font-sans);
     font-size: var(--text-xs);
     letter-spacing: var(--tracking-label);
@@ -339,11 +344,29 @@ const spreads = Object.keys(spreadImages)
       cleanly on spreads whose artwork crosses the fold. An inset shadow paints
       the same line and changes no geometry at all.
     */
-    box-shadow: inset calc(var(--border-thin) * -1) 0 0 var(--color-border);
+    --gutter: inset calc(var(--border-thin) * -1) 0 0 var(--color-border);
+    box-shadow: var(--gutter);
   }
 
   .book :global(.book__page--right) {
     border-right: var(--border-thin) solid var(--color-border);
+  }
+
+  /*
+    On a paper ground a page is paper on paper, and the cover's blank facing
+    page was reading as a bare left edge with nothing attached to it. The top
+    and bottom hairlines close the rectangle so it reads as a page. Inset
+    shadows again, for the same reason as the gutter: no geometry changes.
+  */
+  .case-reader--framed .book :global(.book__page) {
+    --frame:
+      inset 0 var(--border-thin) 0 var(--color-border),
+      inset 0 calc(var(--border-thin) * -1) 0 var(--color-border);
+    box-shadow: var(--frame);
+  }
+
+  .case-reader--framed .book :global(.book__page--left) {
+    box-shadow: var(--frame), var(--gutter);
   }
 
 </style>

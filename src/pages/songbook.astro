@@ -1,6 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
+import SongBook from '../components/SongBook.astro';
 import songAnimationClip from '../assets/animation/a10.mp4';
 import spread01 from '../assets/case-study/spread-01.webp';
 import spread03 from '../assets/case-study/spread-03.webp';
@@ -84,8 +85,12 @@ const chapters = [
   },
 ];
 
-/* The cover is a single page, not a spread, so it carries its own widths. */
-const wideWidths = [768, 1280, 2040];
+/*
+  The cover is a single page, not a spread, so it carries its own widths. The
+  spread widths match the flipbook's, so a file the book already fetched is
+  the same file the essay asks for.
+*/
+const wideWidths = [768, 1152, 2040];
 const coverWidths = [640, 1020];
 const spreadSizes = '(min-width: 75rem) 56vw, 94vw';
 ---
@@ -97,24 +102,25 @@ const spreadSizes = '(min-width: 75rem) 56vw, 94vw';
   ground="field"
   activePage="songbook"
 >
+  <!--
+    THESIS: A student typography book is worth reading, not just flipping. This page
+    refuses the case-study template (problem / process / outcome) and prints Abby's
+    own essay at full length beside the seven spreads it is about.
+    OWN-WORLD: Inherited. Meninges Paper ground under the vein-field wash at 0.3,
+    Jost throughout, Watercolor Edge hairlines, framed plates with square corners,
+    Wet Red kept to interaction only. No new pigment, no new component.
+    STORY: A hiring reader arrives from the nav or the Work page, reads what the
+    book is, flips the whole thing, then hears a real voice think about a song and
+    understands why the typeface was chosen.
+    FIRST VIEWPORT: Kicker, SongBook in compressed Headline caps, a two-line lede,
+    the Role/Medium/Year detail rows on the right, and the top of the book with
+    its Prev / N / 24 / Next controls at the fold. The essay's chapters follow it.
+    FORM: Alternating plate / column, pinned by the brief; no concept roll was run
+    because the structure was specified. Seed: none — brief-pinned.
+    FINISH: unreviewed and undocumented is unfinished; this build ends with the finish
+    review, the verdict, and DESIGN.md.
+  -->
   <div class="essay">
-    <!--
-      THESIS: A student typography book is worth reading, not just flipping. This page
-      refuses the case-study template (problem / process / outcome) and prints Abby's
-      own essay at full length beside the seven spreads it is about.
-      OWN-WORLD: Inherited. Meninges Paper ground under the vein-field wash at 0.3,
-      Jost throughout, Watercolor Edge hairlines, framed plates with square corners,
-      Wet Red kept to interaction only. No new pigment, no new component.
-      STORY: A hiring reader arrives from the Work page, hears a real voice think about
-      a song, understands why the typeface was chosen, and leaves able to flip the book.
-      FIRST VIEWPORT: Kicker, SongBook in compressed Headline caps, a two-line lede,
-      the Role/Medium/Year detail rows on the right, and one quiet link to the
-      flipbook. The first spread's rule sits just below the fold.
-      FORM: Alternating plate / column, pinned by the brief; no concept roll was run
-      because the structure was specified. Seed: none — brief-pinned.
-      FINISH: unreviewed and undocumented is unfinished; this build ends with the finish
-      review, the verdict, and DESIGN.md.
-    -->
     <header class="essay-intro">
       <div class="essay-intro__main">
         <p class="eyebrow">The essay</p>
@@ -124,9 +130,6 @@ const spreadSizes = '(min-width: 75rem) 56vw, 94vw';
           the essay, designed its covers, and set the whole book in
           Futura.
         </p>
-        <a class="essay-intro__link text-link" href="/work/#typography">
-          Flip through the book <span aria-hidden="true">→</span>
-        </a>
       </div>
 
       {/* the case-study's detail rows, carried over so the two pages read as kin */}
@@ -136,7 +139,18 @@ const spreadSizes = '(min-width: 75rem) 56vw, 94vw';
         <div><dt class="eyebrow">Year</dt><dd>2026</dd></div>
       </dl>
     </header>
+  </div>
 
+  {/*
+    Between the two halves of the essay rather than inside either: the reader
+    carries the same wide max-width and edge padding itself, and nesting it
+    would inset it twice.
+  */}
+  <div class="essay-book" id="the-book">
+    <SongBook heading="The book" bare framed hideHeading />
+  </div>
+
+  <div class="essay">
     {chapters.map((chapter, i) => (
       <>
       {chapter.id === 'colophon' && (
@@ -179,7 +193,7 @@ const spreadSizes = '(min-width: 75rem) 56vw, 94vw';
             alt={chapter.alt}
             widths={i === 0 ? coverWidths : wideWidths}
             sizes={spreadSizes}
-            loading={i === 0 ? 'eager' : 'lazy'}
+            loading="lazy"
           />
         </figure>
 
@@ -351,8 +365,8 @@ const spreadSizes = '(min-width: 75rem) 56vw, 94vw';
 
 
     <footer class="essay-close">
-      <a class="essay-close__link text-link" href="/work/#typography">
-        Flip through all twenty-four spreads <span aria-hidden="true">→</span>
+      <a class="essay-close__link text-link" href="#the-book">
+        Flip through all twenty-four spreads <span aria-hidden="true">↑</span>
       </a>
     </footer>
   </div>
@@ -392,6 +406,17 @@ const spreadSizes = '(min-width: 75rem) 56vw, 94vw';
   .essay-intro {
     padding-top: var(--space-page-top);
     padding-bottom: var(--space-section);
+  }
+
+  /* The book */
+
+  /*
+    Keeps the chapter rhythm below it. The scroll margin clears the sticky
+    header for the jump back up from the foot of the essay.
+  */
+  .essay-book {
+    padding-bottom: var(--space-section);
+    scroll-margin-top: calc(var(--header-height) + var(--space-lg));
   }
 
   .essay-details {
@@ -556,7 +581,6 @@ const spreadSizes = '(min-width: 75rem) 56vw, 94vw';
     padding-bottom: var(--space-section);
   }
 
-  .essay-intro__link,
   .essay-close__link {
     display: inline-block;
     color: var(--color-hero-name);
@@ -566,8 +590,6 @@ const spreadSizes = '(min-width: 75rem) 56vw, 94vw';
     transition: color var(--duration-fast) var(--ease-out);
   }
 
-  .essay-intro__link:hover,
-  .essay-intro__link:focus-visible,
   .essay-close__link:hover,
   .essay-close__link:focus-visible {
     color: var(--color-accent);

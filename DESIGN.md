@@ -315,14 +315,16 @@ study, with a small corner cta. Animation plates hold muted looping clips that
 play in view (letterboxed, never cropped); a plate awaiting artwork shows the
 translucent Paper Wash membrane with a small "Forthcoming" label.
 
-### Case study — SongBook
+### SongBook — the essay
 
-The case study opens with detail rows (Role, Medium, Year: Watercolor Edge top
-rule, kicker, large value), a premise section quoting the book's own essay,
-then the flipbook: one open spread inside a hairline frame, pages turning
-around the spine via buttons, arrow keys, edge clicks, or swipe, with a
-tabular "N / 24" counter. Content still to come (the song-animation clip)
-keeps the labeled Paper Wash placeholder treatment.
+The SongBook page opens with the kicker, the SongBook title, a lede, and the
+detail rows (Role, Medium, Year: Watercolor Edge top rule, kicker, value).
+Then the book itself: the whole flipbook on the paper field, every page in a
+hairline frame, pages turning around the spine via buttons, arrow keys,
+corner peels, or swipe, with a tabular "N / 24" counter in the page's own
+ink above it. Then Abby's essay at full length, each chapter beside the
+spread it is about, the song-animation clip before the colophon, and a jump
+back up to the book at the foot.
 
 ## Do's and Don'ts
 
