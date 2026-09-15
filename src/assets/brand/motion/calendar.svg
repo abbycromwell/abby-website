@@ -1,0 +1,19 @@
+<svg viewBox="0 0 300 190" role="presentation" focusable="false">
+            <defs><clipPath id="daywin"><rect x="111" y="77" width="78" height="60"/></clipPath></defs>
+            <path class="binder" d="M 131 57 v -9"/><path class="binder" d="M 169 57 v -9"/>
+            <rect class="cal" x="111" y="53" width="78" height="84" rx="4"/>
+            <line class="bar" x1="111" y1="77" x2="189" y2="77"/>
+            <text class="daylab" x="150" y="70">DAY</text>
+            <g clip-path="url(#daywin)"><g class="days">
+              <text class="daynum" x="150" y="118">1</text>
+              <text class="daynum" x="150" y="178">2</text>
+              <text class="daynum" x="150" y="238">3</text>
+              <text class="daynum" x="150" y="298">4</text>
+              <text class="daynum" x="150" y="358">5</text>
+              <text class="daynum" x="150" y="418">6</text>
+              <text class="daynum" x="150" y="478">7</text>
+              <text class="daynum" x="150" y="538">8</text>
+              <text class="daynum" x="150" y="598">9</text>
+              <text class="daynum" x="150" y="658">10</text>
+            </g></g>
+          </svg>

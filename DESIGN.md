@@ -79,11 +79,11 @@ slightly uncanny without becoming clinical or gory. Abby's real work supplies
 the detail and color; the interface remains restrained enough to frame it.
 
 The homepage is one continuous paper field and nothing else: a coral watercolor
-wash carries a monumental left-anchored name, and three artwork pods hang in the
-right half as the entrances to Illustration, Animation, and Typography. The deep
-dried-oxblood gallery lives on the Work page, where framed artwork hangs on
-the dark ground beneath a large-type contents table. The Case Study page holds
-the SongBook flipbook; About shares the quieter paper field.
+wash carries a monumental left-anchored name, and four pods hang in the right
+half as the entrances to Illustration, Animation, Typography, and Brand. The
+deep dried-oxblood gallery lives on the Work page, where framed artwork hangs
+on the dark ground beneath a large-type contents table. The SongBook page holds
+the essay and the flipbook; About shares the quieter paper field.
 
 **Key Characteristics:**
 
@@ -313,7 +313,12 @@ rules carry the number, title, and count. The featured Typography chapter
 shows the SongBook cover as a single full-width plate linking to the case
 study, with a small corner cta. Animation plates hold muted looping clips that
 play in view (letterboxed, never cropped); a plate awaiting artwork shows the
-translucent Paper Wash membrane with a small "Forthcoming" label.
+translucent Paper Wash membrane with a small "Forthcoming" label. The Brand
+design chapter is laid out as a ruled sheet rather than a hang: a twelve-column
+grid whose hairlines are the grid's own gap, each cell a Timefire brand piece
+mounted on a mat with its label underneath (lockup, mark, app icon, share
+card), then the four how-it-works drawings looping four across, in Timefire's
+own night palette, with one line under them and a link to the press kit.
 
 ### SongBook — the essay
 

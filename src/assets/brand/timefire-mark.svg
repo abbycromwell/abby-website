@@ -1,0 +1,32 @@
+<!--
+  The Timefire mark, path data verbatim from timefire's site/brand/mark-day.svg
+  (the counterturn cast, PR #684): a sundial's gnomon and the shadow it casts.
+  The fills are deliberately absent: the pod paints both in this site's own
+  pigments, so the mark sits in the wash as ink rather than as a foreign
+  object in another brand's colours.
+
+  The filters are the Work page's blot grammar, scaled to this 64-unit box: a
+  restrained displacement takes the vector edge off, and a second, mottled copy
+  of each shape pools pale pigment the way a stamp dries unevenly on paper.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" class="mark" role="img" aria-labelledby="mark-title">
+  <title id="mark-title">Timefire mark: a sundial’s gnomon and the shadow it casts</title>
+  <defs>
+    <filter id="mark-grain" x="-15%" y="-15%" width="130%" height="130%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04 0.06" numOctaves="2" seed="7" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="0.7" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <filter id="mark-mottle">
+      <feTurbulence type="fractalNoise" baseFrequency="0.055" numOctaves="2" seed="10" result="grain"/>
+      <feColorMatrix in="grain" type="saturate" values="0" result="grey"/>
+      <feComponentTransfer in="grey" result="alpha"><feFuncA type="linear" slope="0.9" intercept="-0.35"/></feComponentTransfer>
+      <feComposite in="SourceGraphic" in2="alpha" operator="in"/>
+    </filter>
+  </defs>
+  <g filter="url(#mark-grain)">
+    <path class="mark__shape mark__gnomon" d="M27.9 4 C22.3 19.2 14.1 33 3 45.4 L30.6 55 Z"/>
+    <path class="mark__shape mark__shadow" d="M36.1 58 C42.01 48.74 50.5 40.28 61.85 32.59 L34.48 27.4 Z"/>
+    <path class="mark__pool" d="M27.9 4 C22.3 19.2 14.1 33 3 45.4 L30.6 55 Z" filter="url(#mark-mottle)"/>
+    <path class="mark__pool" d="M36.1 58 C42.01 48.74 50.5 40.28 61.85 32.59 L34.48 27.4 Z" filter="url(#mark-mottle)"/>
+  </g>
+</svg>

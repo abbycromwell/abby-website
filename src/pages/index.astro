@@ -36,8 +36,8 @@ const posters = new Map(
 <!--
   THESIS: Abby's work emerges from a translucent anatomical watercolor field, refusing a generic portfolio grid.
   OWN-WORLD: Warm paper, coral wash, wet red, dried oxblood, geometric type, and image-led transitions.
-  STORY: Visitors meet Abby, understand her disciplines, and enter her work through three living pods.
-  FIRST VIEWPORT: Minimal navigation floats above a monumental left-anchored name; three artwork pods hang in the right half.
+  STORY: Visitors meet Abby, understand her disciplines, and enter her work through four living pods.
+  FIRST VIEWPORT: Minimal navigation floats above a monumental left-anchored name; four pods hang in the right half, three of artwork and one of ink.
   FORM: The watercolor-greenhouse direction — "projects hang as living pods" — over the pinned "The Meninges" field.
 -->
 <Base immersive>
@@ -60,12 +60,14 @@ const posters = new Map(
     </div>
 
     <ul class="pods" aria-label="Work by category">
-      {pods.map(({ slug, title, href, src, alt, clip, sizes }, index) => (
+      {pods.map(({ slug, title, href, src, alt, clip, sizes, mark }, index) => (
         <li class={`pod pod--${slug}`}>
           <a class="pod__link" href={href}>
             <span class="pod__drag">
               <span class="pod__skin">
-                {clip ? (
+                {mark ? (
+                  <Fragment set:html={mark} />
+                ) : clip ? (
                   /*
                     preload="none", not "metadata". Metadata opened a request
                     against a 5MB file and held it for 439ms during the load, to
@@ -246,6 +248,74 @@ const posters = new Map(
     --pod-shape-drift: 68% 32% 30% 70% / 33% 72% 28% 67%;
   }
 
+  .pod--brand {
+    --pod-shape: 47% 53% 56% 44% / 58% 42% 54% 46%;
+    --pod-shape-held: 66% 34% 30% 70% / 34% 66% 32% 68%;
+    --pod-shape-drift: 32% 68% 62% 38% / 66% 32% 70% 30%;
+  }
+
+  /*
+    The ground is the wash itself, pinned to the viewport like the sampler
+    below so its pixels sit on the page's own, and multiplied: a patch of the
+    painting where the pigment pooled twice. A flat fill here, any flat fill,
+    turned the feather into a visible vignette, because a gradient over a flat
+    tone is just a gradient. Over the wash's own texture the edge is where the
+    pooling stops, which is what every other pod's artwork gives it for free.
+  */
+  .pod--brand .pod__skin {
+    background-image: var(--heroWash);
+    background-position: center;
+    background-size: cover;
+    background-attachment: fixed;
+  }
+
+  /*
+    The mark is line art, not a picture, so it does not cover the pod. It sits
+    inside the solid part of the feather (57% of the radius, roughly the middle
+    56% of the width), and the multiply below sinks it into the wash like every
+    other pod.
+  */
+  .pod--brand .pod__skin :global(.mark) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 22%;
+  }
+
+  /*
+    The mark is ink on that patch: the gnomon in Wet Red, its shadow in Name
+    Red, where the original wears turquoise and charcoal. At full strength it
+    printed like a sticker; at 0.65 the wash shows through it and it reads as
+    a stamp that took.
+  */
+  .pod--brand .pod__skin :global(.mark__shape) {
+    opacity: 0.65;
+  }
+
+  .pod--brand .pod__skin :global(.mark__gnomon) {
+    fill: var(--color-accent);
+  }
+
+  .pod--brand .pod__skin :global(.mark__shadow) {
+    fill: var(--color-hero-name);
+  }
+
+  /* the Work page's pale mottling, so the ink pools instead of printing flat */
+  .pod--brand .pod__skin :global(.mark__pool) {
+    fill: var(--color-border);
+    opacity: 0.3;
+  }
+
+  /*
+    The name sits under the mark, not over it: the other pods' artwork is a
+    picture the title can float on, this one is dark ink, and Name Red on it
+    read as a smudge. The mark's own bottom padding leaves the room.
+  */
+  .pod--brand .pod__title {
+    align-items: end;
+    padding-bottom: var(--space-sm);
+  }
+
   /*
     The radius is here as well as on the skin because border-radius clips hit
     testing. Without it the link is a square and ~21% of each pod's clickable
@@ -373,13 +443,17 @@ const posters = new Map(
     }
   }
 
-  /* they wake in sequence, so the eye is led across all three */
+  /* they wake in sequence, so the eye is led across all four */
   .pod--animation .pod__skin {
     animation-delay: 180ms;
   }
 
   .pod--typography .pod__skin {
     animation-delay: 360ms;
+  }
+
+  .pod--brand .pod__skin {
+    animation-delay: 540ms;
   }
 
   /*
@@ -592,7 +666,7 @@ const posters = new Map(
       pointer-events: auto;
     }
 
-    /* a clear 18 / 13.5 / 10 ladder — 18 and 17.5 read as the same size */
+    /* a clear 18 / 13.5 / 10 / 8 ladder — 18 and 17.5 read as the same size */
     .pod--illustration {
       --pod-k: 1;
       --pod-x: 0.92;
@@ -617,6 +691,16 @@ const posters = new Map(
       --pod-k: 0.6;
       --pod-x: 0.08;
       --pod-y: 0.48;
+    }
+
+    /*
+      The smallest rung, tucked against the field's right edge in the gap
+      between Illustration above it and Animation below. A seal is small.
+    */
+    .pod--brand {
+      --pod-k: 0.5;
+      --pod-x: 0.04;
+      --pod-y: 0.98;
     }
   }
 
@@ -778,10 +862,10 @@ const posters = new Map(
 
   /*
     The wake says the pods are objects and not part of the wash, and it runs
-    once. Firing all three at load spent that on paper nobody was looking at:
-    below 48rem they stack down a hero taller than the viewport, so two of the
-    three breathed off-screen. Above 48rem all three are already in frame, this
-    resolves on the first pass, and the 180/360ms ladder reads as it did.
+    once. Firing them all at load spent that on paper nobody was looking at:
+    below 48rem they stack down a hero taller than the viewport, so most of
+    them breathed off-screen. Above 48rem all four are already in frame, this
+    resolves on the first pass, and the 180/360/540ms ladder reads as it did.
   */
   const waker = new IntersectionObserver(
     (entries, observer) => {

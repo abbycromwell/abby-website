@@ -1,0 +1,351 @@
+---
+/*
+  Timefire's how-it-works drawings, ported. Abby made these with Vivian for
+  timefire.ai (PRs #486, #573, #661 there); the SVGs are copied verbatim into
+  src/assets/brand/motion/, and the motion grammar and the four page sheets
+  below are the same CSS with Timefire's tokens swapped for this component's
+  own `--tf-*` properties. The palette is Timefire's night edition, passed in
+  as content, so no client colour lives in a stylesheet here. The observer is
+  theirs too: a drawing plays when 55% of it has been on screen for a beat and
+  starts over when it comes back. One difference from Timefire, where a
+  drawing beside prose plays once: here they loop, because on a sheet of work
+  they are the work, and a still frame would hide most of it. `run` is how
+  long a story plays; the loop rests a beat after it before starting again.
+*/
+import seal from '../assets/brand/motion/seal.svg?raw';
+import calendar from '../assets/brand/motion/calendar.svg?raw';
+import book from '../assets/brand/motion/book.svg?raw';
+import prove from '../assets/brand/motion/prove.svg?raw';
+
+interface Props {
+  /* which drawing: seal, calendar, book, or prove */
+  art: 'seal' | 'calendar' | 'book' | 'prove';
+  /* how long the story plays, in ms, before the loop rests and starts over */
+  run: number;
+  /* Timefire's night palette: ink, muted, faint, rule, ruleStrong, panel, accent, accentText, verified, failed */
+  palette: Record<string, string>;
+}
+
+const { art, run, palette } = Astro.props;
+const svgs = { seal, calendar, book, prove };
+/* the page sheets keep Timefire's own class names for the four drawings */
+const sheets = { seal: 'sealart', calendar: 'calart', book: 'bookart', prove: 'proveart' };
+const vars = Object.entries(palette)
+  .map(([key, hex]) => `--tf-${key.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`)}: ${hex}`)
+  .join('; ');
+---
+
+<div class="tf-motion" style={vars} data-tf-motion>
+  <figure class:list={['stepart', sheets[art]]} data-run={run} aria-hidden="true" set:html={svgs[art]} />
+</div>
+
+<style is:global>
+  .tf-motion {
+    --tf-mono: ui-monospace, "SF Mono", Menlo, monospace;
+    --tf-figure: 2rem;
+    --tf-ease-draw: cubic-bezier(0.65, 0, 0.35, 1);
+  }
+
+  .tf-motion .stepart{ margin:auto; padding:var(--space-lg) 0; width:min(320px, 100%); }
+  .tf-motion .stepart svg{ width:100%; height:auto; display:block; }
+  .tf-motion .stepart-wide{ width:100%; margin:0; padding:0; }  /* the full title column, level with the paragraph it sits beside */
+  @media (prefers-reduced-motion: no-preference){
+    /* opacity too: a hidden dash still shows its round start cap as a dot */
+    .tf-motion.js .stepart [data-draw]{ stroke-dasharray:1; stroke-dashoffset:1; opacity:0; }
+    .tf-motion.js .stepart [data-pop], .tf-motion.js .stepart [data-fade]{ opacity:0; }
+    .tf-motion.js .stepart [data-scatter]{ transform:translate(var(--art-dx, 0px), var(--art-dy, 0px)); opacity:var(--art-from, .5); }
+    .tf-motion .stepart.on [data-draw]{ animation:artdraw .8s var(--ease-out) var(--art-delay, .4s) forwards; }
+    .tf-motion .stepart.on [data-pop]{ transform-box:fill-box; transform-origin:center;
+      animation:artpop .45s var(--ease-out) var(--art-delay, 0s) forwards; }
+    .tf-motion .stepart.on [data-fade]{ animation:artin var(--art-duration, .45s) var(--art-ease, var(--ease-out)) var(--art-delay, 0s) forwards; }
+    .tf-motion .stepart.on [data-fade="rise"]{ animation-name:artrise; }
+    /* outranks the scattered state above (a plain .on rule would lose to .tf-motion.js) */
+    .tf-motion.js .stepart.on [data-scatter]{ transform:none; opacity:1;
+      transition:transform var(--art-duration, .9s) var(--art-ease, var(--ease-out)) var(--art-delay, 0s),
+        opacity var(--art-duration, .9s) var(--art-ease, var(--ease-out)) var(--art-delay, 0s); }
+    .tf-motion.js .stepart [data-roll]{ opacity:0; }
+    .tf-motion .stepart.on [data-roll]{ animation:artroll var(--art-duration, 7s) linear var(--art-delay, 0s) forwards; }
+    .tf-motion .stepart.on [data-roll="hold"]{ animation-name:artrollin; }
+    .tf-motion .stepart.on [data-scroll]{ animation:artscroll var(--art-duration, 30s) linear var(--art-delay, 0s) infinite; }
+    .tf-motion .stepart.on [data-orbit]{ transform-box:view-box; transform-origin:var(--art-cx, 0px) var(--art-cy, 0px);
+      animation:artorbit var(--art-duration, 5s) var(--tf-ease-draw) var(--art-delay, 0s) forwards; }
+    /* a rect that starts at --art-x0/--art-y0/--art-w0/--art-h0 and grows into the geometry its attributes give it */
+    .tf-motion.js .stepart:not(.on) [data-grow]{ x:var(--art-x0, 0px); y:var(--art-y0, 0px); width:var(--art-w0, 0px); height:var(--art-h0, 0px); }
+    .tf-motion .stepart.on [data-grow]{ transition:x var(--art-grow, 1.2s) var(--art-ease, var(--tf-ease-draw)) var(--art-grow-delay, var(--art-delay, 0s)),
+      y var(--art-grow, 1.2s) var(--art-ease, var(--tf-ease-draw)) var(--art-grow-delay, var(--art-delay, 0s)),
+      width var(--art-grow, 1.2s) var(--art-ease, var(--tf-ease-draw)) var(--art-grow-delay, var(--art-delay, 0s)),
+      height var(--art-grow, 1.2s) var(--art-ease, var(--tf-ease-draw)) var(--art-grow-delay, var(--art-delay, 0s)); }
+    .tf-motion.js .stepart [data-dim]{ opacity:1; }
+    .tf-motion.js .stepart.on [data-dim]{ opacity:var(--art-dim, .3); transition:opacity .5s var(--ease-out) var(--art-delay, 0s); }
+    .tf-motion .stepart.on [data-in-out]{ animation:artin .7s var(--ease-out) var(--art-delay, 0s) forwards,
+      artfade .6s var(--tf-ease-draw) var(--art-leave, 6.5s) forwards; }
+    .tf-motion.js .stepart [data-fall]{ opacity:0; transform:translate(var(--art-dx, -80px), var(--art-dy, 0px)); }
+    .tf-motion .stepart.on [data-fall]{ animation:artfall var(--art-duration, 1.8s) var(--tf-ease-draw) var(--art-delay, 0s) both; }
+    .tf-motion .stepart.on [data-sweep]{ animation:artsweep var(--art-duration, 4.4s) var(--tf-ease-draw) var(--art-delay, 0s) forwards; }
+    .tf-motion .stepart.on [data-sweep="hour"]{ animation-name:arthour; }
+    .tf-motion .stepart.on [data-arc]{ animation:artarc var(--art-duration, 1.6s) var(--tf-ease-draw) var(--art-delay, 0s) forwards; }
+    .tf-motion.js .stepart [data-sail]{ transform:translate(var(--art-dx, 0px), var(--art-dy, 0px)); }
+    .tf-motion .stepart.on [data-sail]{ animation:artsail var(--art-duration, 1.6s) var(--tf-ease-draw) var(--art-delay, 0s) both; }
+    .tf-motion.js .stepart [data-walk]{ transform:translateX(var(--art-dx, -120px)); }
+    .tf-motion .stepart.on [data-walk]{ animation:artwalk var(--art-duration, 3s) linear var(--art-delay, 0s) both; }
+    .tf-motion .stepart.on [data-bob]{ animation:artbob var(--art-duration, .5s) ease-in-out var(--art-delay, 0s) var(--art-loops, 6); }
+    .tf-motion .stepart.on [data-drift]{ animation:artdrift var(--art-duration, 4s) ease-in-out var(--art-delay, 0s) var(--art-loops, 3) alternate both; }
+    .tf-motion.js .stepart [data-tint]{ fill:var(--tf-muted); }
+    .tf-motion.js .stepart.on [data-tint]{ fill:var(--tf-accent-text); transition:fill .4s var(--ease-out) var(--art-delay, 0s); }
+  }
+  @keyframes artdraw{ 0%{ opacity:1; } 100%{ stroke-dashoffset:0; opacity:1; } }
+  @keyframes artin{ to{ opacity:1; } }
+  @keyframes artrise{ from{ opacity:0; transform:translateY(4px); } to{ opacity:1; transform:none; } }
+  @keyframes artpop{ from{ opacity:0; transform:scale(.7); } to{ opacity:1; transform:none; } }
+  @keyframes artfade{ to{ opacity:0; } }
+  @keyframes artfall{
+    0%{ opacity:0; transform:translate(var(--art-dx, -80px), var(--art-dy, 0px)); }
+    8%{ opacity:1; }
+    72%{ opacity:1; transform:translate(0, var(--art-dy, 0px)); }
+    100%{ opacity:var(--art-end, 1); transform:none; } }
+  @keyframes artarc{
+    0%{ transform:none; }
+    55%{ transform:translateY(var(--art-jy, -20px)); }
+    100%{ transform:none; } }
+  @keyframes artsail{
+    0%{ transform:translate(var(--art-dx, 0px), var(--art-dy, 0px)); }
+    70%{ transform:none; }
+    100%{ transform:translateY(var(--art-settle, 0px)); } }
+  @keyframes artwalk{ from{ transform:translateX(var(--art-dx, -120px)); } to{ transform:none; } }
+  @keyframes artbob{ 50%{ transform:translateY(-2px); } }
+  @keyframes artdrift{ to{ transform:translateX(var(--art-dx, 12px)); } }
+  @keyframes artscroll{ to{ transform:translateX(var(--art-dx, -480px)); } }
+  @keyframes artorbit{ to{ transform:rotate(720deg); } }
+  @keyframes artroll{
+    0%{ opacity:0; transform:translateX(-18px); }
+    8%{ opacity:1; }
+    82%{ opacity:1; }
+    100%{ opacity:0; transform:translateX(26px); } }
+  @keyframes artrollin{
+    0%{ opacity:0; transform:translateX(-18px); }
+    8%{ opacity:1; }
+    100%{ opacity:1; transform:translateX(26px); } }
+  @keyframes artsweep{
+    0%{ opacity:0; transform:rotate(0deg); }
+    8%{ opacity:1; }
+    84%{ opacity:1; transform:rotate(720deg); }
+    100%{ opacity:1; transform:rotate(720deg); } }
+  @keyframes arthour{
+    0%{ opacity:0; transform:rotate(0deg); }
+    8%{ opacity:1; }
+    84%{ opacity:1; transform:rotate(120deg); }
+    100%{ opacity:1; transform:rotate(120deg); } }
+    /* step art (03 Grade): the book as a field of marks. Every one resolves in the
+       same sweep, because the section's claim is that nothing is dropped. The mix
+       is illustrative and asserts no rate: real hit rates live on data surfaces
+       with their denominators attached. */
+    .tf-motion .bookart .mk{ fill:var(--tf-rule-strong); transform-box:fill-box; transform-origin:center; }
+    .tf-motion .bookart .mk.hit{ fill:var(--tf-verified); }
+    .tf-motion .bookart .mk.miss{ fill:var(--tf-failed); }
+    .tf-motion .bookart .blab{ font-family:var(--tf-mono); font-size:var(--text-xs);
+      fill:var(--tf-muted); text-anchor:middle; letter-spacing:var(--tracking-label); }
+    @media (prefers-reduced-motion: no-preference){
+      /* the graded field is the resting state; it waits unresolved for its section */
+      .tf-motion.js .bookart .mk{ fill:var(--tf-rule-strong); }
+      .tf-motion.js .bookart .blab{ opacity:0; }
+      .tf-motion .bookart.on .mk.hit{ animation:mkhit .5s var(--ease-out) both; }
+      .tf-motion .bookart.on .mk.miss{ animation:mkmiss .5s var(--ease-out) both; }
+      /* the field holds ungraded long enough to be seen, then a wave crosses it */
+      .tf-motion .bookart.on .mk:nth-child(12n+1){ animation-delay:700ms }
+      .tf-motion .bookart.on .mk:nth-child(12n+2){ animation-delay:820ms }
+      .tf-motion .bookart.on .mk:nth-child(12n+3){ animation-delay:940ms }
+      .tf-motion .bookart.on .mk:nth-child(12n+4){ animation-delay:1060ms }
+      .tf-motion .bookart.on .mk:nth-child(12n+5){ animation-delay:1180ms }
+      .tf-motion .bookart.on .mk:nth-child(12n+6){ animation-delay:1300ms }
+      .tf-motion .bookart.on .mk:nth-child(12n+7){ animation-delay:1420ms }
+      .tf-motion .bookart.on .mk:nth-child(12n+8){ animation-delay:1540ms }
+      .tf-motion .bookart.on .mk:nth-child(12n+9){ animation-delay:1660ms }
+      .tf-motion .bookart.on .mk:nth-child(12n+10){ animation-delay:1780ms }
+      .tf-motion .bookart.on .mk:nth-child(12n+11){ animation-delay:1900ms }
+      .tf-motion .bookart.on .mk:nth-child(12n+12){ animation-delay:2020ms }
+      .tf-motion .bookart.on .blab{ animation:blabin .45s var(--ease-out) 2.7s forwards; }
+    }
+    @keyframes blabin{ from{ opacity:0; transform:translateY(3px); }
+      to{ opacity:1; transform:none; } }
+    @keyframes mkhit{ from{ fill:var(--tf-rule-strong); transform:scale(.7); }
+      to{ fill:var(--tf-verified); transform:none; } }
+    @keyframes mkmiss{ from{ fill:var(--tf-rule-strong); transform:scale(.7); }
+      to{ fill:var(--tf-failed); transform:none; } }
+    /* step art (04 Prove): the reader's own browser runs the four checks, and the
+       one party with an interest in the answer is outside the frame. Base state is
+       all four passed, so no JS and reduced motion show the finished result. */
+    .tf-motion .proveart .win{ fill:none; stroke:var(--tf-rule-strong); stroke-width:1.5; }
+    .tf-motion .proveart .winbar{ stroke:var(--tf-rule-strong); stroke-width:1.5; }
+    .tf-motion .proveart .dot{ fill:var(--tf-faint); }
+    .tf-motion .proveart .cklab{ font-family:var(--tf-mono); font-size:var(--text-xs);
+      fill:var(--tf-muted); letter-spacing:var(--tracking-label); }
+    .tf-motion .proveart .ckbar{ stroke:var(--tf-rule); stroke-width:5; stroke-linecap:round; }
+    .tf-motion .proveart .cktick{ fill:none; stroke:var(--tf-verified); stroke-width:2;
+      stroke-linecap:round; stroke-linejoin:round; }
+    @media (prefers-reduced-motion: no-preference){
+      .tf-motion.js .proveart .cktick{ opacity:0; }
+      .tf-motion.js .proveart .ckbar{ stroke:var(--tf-rule); }
+      .tf-motion.js .proveart .win{ stroke:var(--tf-rule-strong); }
+      /* each check runs, then passes; the frame goes brand once all four are in */
+      .tf-motion .proveart.on .ckbar{ animation:ckrun .55s var(--ease-out) both; }
+      .tf-motion .proveart.on .cktick{ animation:cktick .3s var(--ease-out) both; }
+      .tf-motion .proveart.on .c1 .ckbar{ animation-delay:.5s } .tf-motion .proveart.on .c1 .cktick{ animation-delay:1s }
+      .tf-motion .proveart.on .c2 .ckbar{ animation-delay:1.1s } .tf-motion .proveart.on .c2 .cktick{ animation-delay:1.6s }
+      .tf-motion .proveart.on .c3 .ckbar{ animation-delay:1.7s } .tf-motion .proveart.on .c3 .cktick{ animation-delay:2.2s }
+      .tf-motion .proveart.on .c4 .ckbar{ animation-delay:2.3s } .tf-motion .proveart.on .c4 .cktick{ animation-delay:2.8s }
+      .tf-motion .proveart.on .win{ animation:provewin .5s ease 3.1s forwards; }
+    }
+    @keyframes ckrun{ from{ stroke:var(--tf-rule); } to{ stroke:var(--tf-verified); } }
+    @keyframes cktick{ from{ opacity:0; transform:scale(.6); } to{ opacity:1; transform:none; } }
+    @keyframes provewin{ to{ stroke:var(--tf-accent); } }
+    /* step art (01 Commit): the tape trades while the clock runs to the 4:00
+       close, then the scene gives way to the record's fingerprint. Plays once
+       on arrival; the finished print stands still without JS or under reduced
+       motion. */
+    /* .steplead/.sealart and the draw/fade moves come from components.css;
+       the sealing drawing (01) is .sealart, like .calart/.bookart/.proveart */
+    .tf-motion .sealart .tape text{ font:var(--text-xs) var(--tf-mono); fill:var(--tf-muted);
+      letter-spacing:var(--tracking-label); opacity:0; }
+    .tf-motion .sealart .seal{ stroke:var(--tf-ink); stroke-width:1.5; fill:none; }
+    .tf-motion .sealart .ticks line{ stroke:var(--tf-muted); stroke-width:1.5; stroke-linecap:round; }
+    .tf-motion .sealart .pivot{ fill:var(--tf-ink); }
+    .tf-motion .sealart .clockg{ opacity:0; }
+    .tf-motion .sealart .fp{ stroke:var(--tf-accent); stroke-width:1.5; fill:none; stroke-linecap:round; }
+    .tf-motion .sealart .hand{ stroke:var(--tf-ink); stroke-width:2; stroke-linecap:round; }
+    .tf-motion .sealart .hh{ stroke-width:2.5; }
+    .tf-motion .sealart .handg{ opacity:0; transform-box:view-box; transform-origin:226px 52px; }
+    @media (prefers-reduced-motion: no-preference){
+      /* bottom left, the tape rolls slowly through the day, rows drifting in and out */
+      .tf-motion .sealart.on .tape .t1{ animation:artroll 7s linear forwards; }
+      .tf-motion .sealart.on .tape .t2{ animation:artroll 7s linear .2s forwards; }
+      .tf-motion .sealart.on .tape .t3{ animation:artroll 7s linear .4s forwards; }
+      /* top right, meanwhile: the clock eases in whole, the hand runs slowly
+         to the close, and the clock eases away once time is up */
+      .tf-motion .sealart.on .clockg{ animation:artin .7s var(--ease-out) .5s forwards,
+        artfade .6s var(--tf-ease-draw) 6.5s forwards; }
+      .tf-motion .sealart.on .handg{ animation:artsweep 4.4s var(--tf-ease-draw) 1.2s forwards; }
+      .tf-motion .sealart.on .hourg{ animation:arthour 4.4s var(--tf-ease-draw) 1.2s forwards; }
+      /* then the record: the print traced ridge by ridge, in the brand's color */
+      .tf-motion .sealart.on .fp{ animation-duration:.55s; animation-delay:7.0s }
+      .tf-motion .sealart.on .fp2{ animation-delay:7.2s }
+      .tf-motion .sealart.on .fp3{ animation-delay:7.4s }
+      .tf-motion .sealart.on .fp4{ animation-delay:7.6s }
+      .tf-motion .sealart.on .fp5{ animation-delay:7.8s }
+      .tf-motion .sealart.on .fp6{ animation-delay:8.0s }
+      .tf-motion .sealart.on .fp7{ animation-delay:8.2s }
+      .tf-motion .sealart.on .fp8{ animation-delay:8.4s }
+      .tf-motion .sealart.on .fp9{ animation-delay:8.6s }
+      .tf-motion .sealart.on .fp10{ animation-delay:8.8s }
+      .tf-motion .sealart.on .fp11{ animation-delay:9.0s }
+      .tf-motion .sealart.on .fp12{ animation-delay:9.3s }
+    }
+
+    /* step art (02 Outcome): a paper calendar flips ten trading days and stops,
+       the record resolving as it lands. Base state is the finished card, so no
+       JS and reduced motion both show day 10. */
+    .tf-motion .calart .cal{ fill:var(--tf-panel); stroke:var(--tf-accent); stroke-width:1.5; }
+    .tf-motion .calart .bar{ stroke:var(--tf-accent); stroke-width:1.5; fill:none; }
+    .tf-motion .calart .binder{ stroke:var(--tf-muted); stroke-width:1.5; fill:none; }
+    .tf-motion .calart .daylab{ font-family:var(--tf-mono); font-size:var(--text-xs);
+      fill:var(--tf-accent-text); text-anchor:middle; letter-spacing:var(--tracking-label); }
+    .tf-motion .calart .daynum{ font-family:var(--tf-mono); font-size:var(--tf-figure);
+      font-weight:var(--weight-semibold); fill:var(--tf-accent); text-anchor:middle;
+      font-variant-numeric:tabular-nums; }
+    .tf-motion .calart .days{ transform-box:view-box; transform:translateY(-540px); }
+    @media (prefers-reduced-motion: no-preference){
+      /* while it waits its turn the card sits on day 1 in ink — the finished blue
+         card is the base state only for no-JS and reduced motion */
+      .tf-motion.js .calart .days{ transform:translateY(0); }
+      .tf-motion.js .calart .cal, .tf-motion.js .calart .bar{ stroke:var(--tf-ink); }
+      .tf-motion.js .calart .daynum, .tf-motion.js .calart .daylab{ fill:var(--tf-ink); }
+      .tf-motion .calart.on .days{ animation:caldays 2.8s var(--ease-out) .4s both; }
+      .tf-motion .calart.on .cal, .tf-motion .calart.on .bar{ animation:calstroke 3.8s ease .4s both; }
+      .tf-motion .calart.on .daynum{ animation:calfill 3.8s ease .4s both; }
+      .tf-motion .calart.on .daylab{ animation:callab 3.8s ease .4s both; }
+    }
+    @keyframes caldays{
+      0.00%{ transform:translateY(-0px); }
+      5.00%{ transform:translateY(-60px); }
+      11.11%{ transform:translateY(-60px); }
+      11.11%{ transform:translateY(-60px); }
+      16.11%{ transform:translateY(-120px); }
+      22.22%{ transform:translateY(-120px); }
+      22.22%{ transform:translateY(-120px); }
+      27.22%{ transform:translateY(-180px); }
+      33.33%{ transform:translateY(-180px); }
+      33.33%{ transform:translateY(-180px); }
+      38.33%{ transform:translateY(-240px); }
+      44.44%{ transform:translateY(-240px); }
+      44.44%{ transform:translateY(-240px); }
+      49.44%{ transform:translateY(-300px); }
+      55.56%{ transform:translateY(-300px); }
+      55.56%{ transform:translateY(-300px); }
+      60.56%{ transform:translateY(-360px); }
+      66.67%{ transform:translateY(-360px); }
+      66.67%{ transform:translateY(-360px); }
+      71.67%{ transform:translateY(-420px); }
+      77.78%{ transform:translateY(-420px); }
+      77.78%{ transform:translateY(-420px); }
+      82.78%{ transform:translateY(-480px); }
+      88.89%{ transform:translateY(-480px); }
+      88.89%{ transform:translateY(-480px); }
+      93.89%{ transform:translateY(-540px); }
+      100%{ transform:translateY(-540px); } }
+    @keyframes calstroke{ 0%, 74%{ stroke:var(--tf-ink); } 100%{ stroke:var(--tf-accent); } }
+    @keyframes calfill{ 0%, 74%{ fill:var(--tf-ink); } 100%{ fill:var(--tf-accent); } }
+    @keyframes callab{ 0%, 74%{ fill:var(--tf-ink); } 100%{ fill:var(--tf-accent-text); } }
+</style>
+
+<script>
+  /*
+    A drawing plays when it scrolls into view and loops while it stays there:
+    its story, a beat of rest, then over again from the start. Fully off
+    screen it stops and resets, so coming back opens on the first frame. Under
+    reduced motion the finished frame stands still.
+  */
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const REST = 1200;
+  const BEAT = 350;
+
+  for (const root of document.querySelectorAll('[data-tf-motion]')) {
+    root.classList.add('js');
+    for (const el of root.querySelectorAll('.stepart')) {
+      const run = +el.dataset.run || 1600;
+      let loop = null;
+      let pending = null;
+      const off = () => {
+        clearTimeout(loop);
+        loop = null;
+        el.classList.remove('on');
+      };
+      const on = () => {
+        el.classList.add('on');
+        if (!still) loop = setTimeout(again, run + REST);
+      };
+      const again = () => {
+        off();
+        void el.offsetWidth;
+        on();
+      };
+      const cancel = () => {
+        clearTimeout(pending);
+        pending = null;
+      };
+
+      if (!('IntersectionObserver' in window)) { on(); continue; }
+      new IntersectionObserver((entries) => {
+        const r = entries[0];
+        if (r.isIntersecting && r.intersectionRatio >= 0.55) {
+          if (!el.classList.contains('on') && !pending) {
+            pending = setTimeout(() => { pending = null; on(); }, BEAT);
+          }
+        } else if (!r.isIntersecting) {
+          cancel();
+          off();
+        } else {
+          cancel();
+        }
+      }, { threshold: [0, 0.55] }).observe(el);
+    }
+  }
+</script>

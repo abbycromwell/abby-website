@@ -2,6 +2,8 @@
   Work-page content source — each chapter fills the Table of Plates.
   Image plates: { src: <imported image>, alt: '<description>', title?, medium? }
   Clip plates:  { clip: <imported mp4 url>, alt: '<description>', title?, medium? }
+  `title` + `note` hang a label under the frame; a chapter `note` opens the
+  chapter under its rule. Both are for work that needs a word of explanation.
   A null plate renders as a labeled membrane placeholder.
 */
 import squidBonnetCollage from '../assets/illustration/squid-bonnet-collage.webp';
@@ -19,6 +21,11 @@ import rollingClip from '../assets/animation/rolling-rolling-tumbling-along.mp4'
 import finalProjectClip from '../assets/animation/final-project-animation.mp4';
 import animationShortClip from '../assets/animation/animation-short.mp4';
 import songAnimationClip from '../assets/animation/a10.mp4';
+/* Timefire's own brand files, copied from its press kit at timefire.ai/brand */
+import timefireMark from '../assets/brand/timefire-mark-night.svg';
+import timefireLockup from '../assets/brand/timefire-lockup-night.svg';
+import timefireAppIcon from '../assets/brand/timefire-app-icon.svg';
+import timefireShareCard from '../assets/brand/timefire-share-card.png';
 
 export const chapters = [
   {
@@ -94,8 +101,79 @@ export const chapters = [
     premise: 'Typeface for the song.',
   },
   {
-    slug: 'sketch',
+    slug: 'brand',
     no: '04',
+    title: 'Brand design',
+    /* a ruled sheet, twelve columns; `span` is each cell's width on it */
+    layout: 'sheet',
+    /* the thinking behind the kit, in plain words; the full kit lives on the client's site */
+    note: 'Timefire publishes AI stock forecasts, locks them in before the market moves, and grades them in public. The mark is a sundial, redrawn: a turquoise gnomon and the shadow it casts, because a forecast is a shadow thrown ahead of the fact and checked against it later. Three colors, paper, ink and one turquoise, in a day and a night version.',
+    href: 'https://timefire.ai/brand/',
+    cta: 'The press kit, on timefire.ai',
+    /*
+      The four how-it-works drawings; TimefireMotion.astro carries them and
+      their motion. `run` is each story's length in ms, measured off its last
+      keyframe; the loop rests after it. `palette` is Timefire's night
+      edition, the colours the drawings are inked in, passed through as content.
+    */
+    motion: [
+      { art: 'seal', run: 9900 },
+      { art: 'calendar', run: 4200 },
+      { art: 'book', run: 3200 },
+      { art: 'prove', run: 3600 },
+    ],
+    motionNote: 'A set of illustrative animations explaining how Timefire verification works, built with Claude.',
+    palette: {
+      ink: '#EEEEF0',
+      muted: '#B3B5BE',
+      faint: '#70727D',
+      rule: '#333438',
+      ruleStrong: '#414248',
+      panel: '#252628',
+      accent: '#1CA3BF',
+      accentText: '#58CBE7',
+      verified: '#3DD68C',
+      failed: '#FF9592',
+    },
+    /* the lockup and the share card take eight columns each, the mark and the icon four */
+    plates: [
+      {
+        src: timefireLockup,
+        alt: 'Timefire lockup: the mark beside TIMEFIRE in heavy grotesk capitals',
+        title: 'Lockup',
+        span: 8,
+        note: 'The mark next to the name. Use this where people need to read the name, and the mark on its own where they already know it.',
+        ratio: '289 / 64',
+      },
+      {
+        src: timefireMark,
+        alt: 'Timefire mark: a turquoise gnomon and the paper-white shadow it casts, turning against each other',
+        title: 'Mark',
+        span: 4,
+        note: 'A sundial’s gnomon, the part that casts the shadow, and the shadow it throws.',
+        ratio: '1 / 1',
+      },
+      {
+        src: timefireAppIcon,
+        alt: 'Timefire app icon: the mark in white and charcoal on a turquoise tile',
+        title: 'App icon',
+        span: 4,
+        note: 'A turquoise tile that runs edge to edge. The phone rounds the corners itself.',
+        ratio: '1 / 1',
+      },
+      {
+        src: timefireShareCard,
+        alt: 'Timefire share card: the lockup above “AI forecasts, sealed and graded” on white, with a turquoise rule along the foot',
+        title: 'Share card',
+        span: 8,
+        note: 'The card that shows up when someone shares a Timefire link. Every page has its own.',
+        ratio: '1200 / 630',
+      },
+    ],
+  },
+  {
+    slug: 'sketch',
+    no: '05',
     title: 'Sketch',
     layout: 'dense',
     plates: [
