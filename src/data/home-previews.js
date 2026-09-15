@@ -1,7 +1,8 @@
 /*
-  Homepage pod source — the three category bubbles hanging in the hero.
+  Homepage pod source — the four bubbles hanging in the hero: three categories
+  of work and the Timefire brand.
 
-  All three are pinned, not shuffled. The composition was tuned against exactly
+  All four are pinned, not shuffled. The composition was tuned against exactly
   these pieces: pod sizes, positions, and the 0.8 multiply all read differently
   against a different crop, so rotating them would ship pictures nobody approved.
 
@@ -15,6 +16,8 @@ import rollingClip from '../assets/animation/rolling-rolling-tumbling-along.mp4'
    browser was preloading the file's metadata to show that frame itself */
 import rollingPoster from '../assets/animation/rolling-rolling-tumbling-along-poster.png';
 import songbookGlyphs from '../assets/case-study/spread-07.webp';
+/* inline, so the page can colour the gnomon and its shadow with the site's own tokens */
+import timefireMark from '../assets/brand/timefire-mark.svg?raw';
 
 function plateFor(slug, asset, key) {
   const plates = chapters.find((chapter) => chapter.slug === slug)?.plates ?? [];
@@ -54,5 +57,15 @@ export const pods = [
     src: songbookGlyphs,
     alt: 'SongBook page of monumental black Futura glyphs on a salmon ground',
     sizes: '(min-width: 48rem) 14rem, 78vw',
+  },
+  /*
+    Abby's brand work for Timefire, summer 2026: the mark, the seal, the share
+    card, the favicon. The SVG carries its own accessible title.
+  */
+  {
+    slug: 'brand',
+    title: 'Brand',
+    href: '/work/#brand',
+    mark: timefireMark,
   },
 ];

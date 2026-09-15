@@ -2,6 +2,7 @@
 import { Image } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
 import SongBook from '../../components/SongBook.astro';
+import TimefireMotion from '../../components/TimefireMotion.astro';
 import { chapters } from '../../data/work.js';
 import galleryField from '../../assets/home/gallery-field.png';
 
@@ -47,6 +48,15 @@ const blots = {
     ],
     specks: [{ cx: 89, cy: 54, r: 2.75 }, { cx: 96, cy: 60, r: 1.5 }, { cx: 91, cy: 83, r: 2.5 }],
   },
+  brand: {
+    d: 'M47 17 C 60 15, 73 21, 80 33 C 87 45, 86 60, 82 72 C 78 85, 68 98, 55 102 C 42 106, 29 99, 20 88 C 12 78, 11 63, 15 49 C 18 36, 26 25, 37 20 C 40 18, 44 17, 47 17 Z',
+    seed: 89,
+    traces: [
+      'M31 39 C 44 46, 56 58, 69 73',
+      'M25 71 C 38 63, 52 64, 66 79',
+    ],
+    specks: [{ cx: 88, cy: 58, r: 2.5 }, { cx: 95, cy: 63, r: 1.5 }, { cx: 90, cy: 86, r: 3 }],
+  },
 };
 ---
 
@@ -57,8 +67,8 @@ const blots = {
   OWN-WORLD: Deep brown-red ground with the hero wash pooled inside it, fine red
   vein filaments still crossing, framed plates on coral hairlines, compressed Jost
   uppercase, wet-red interaction points.
-  STORY: An employer reads four contents rows, descends into the gallery with the
-  vein tracking position, meets the book at full width, leaves toward About.
+  STORY: An employer reads five contents rows, descends into the gallery with the
+  vein tracking position, meets the book at full width and the brand sheet, leaves toward About.
   FIRST VIEWPORT: Compressed headline anchors left over paper; the contents table
   begins beneath, its first rule the invitation to scroll.
   FORM: The Capillary Rail over a washed-through ground — candidate 1 of 7 grounded
@@ -252,6 +262,7 @@ const blots = {
               <h2 id={`ch-${chapter.slug}`}>{chapter.title}</h2>
               <p>{empty ? `${chapter.plates.length} works · forthcoming` : `${chapter.plates.length} works`}</p>
             </header>
+            {chapter.note && <p class="chapter__note">{chapter.note}</p>}
             {/* Empty plate grids are decorative; aria-hidden lifts once artwork lands. */}
             <ul class={`chapter__grid chapter__grid--${chapter.layout}`} aria-hidden={empty ? 'true' : undefined}>
               {/*
@@ -261,7 +272,12 @@ const blots = {
                 height alone overshoots a tall, narrow window.
               */}
               {chapter.plates.map((plate) => (
-                <li style={plate?.ratio ? `--clip-ratio: ${plate.ratio}` : undefined}>
+                <li
+                  style={[
+                    plate?.ratio && `--clip-ratio: ${plate.ratio}`,
+                    plate?.span && `--span: ${plate.span}`,
+                  ].filter(Boolean).join('; ') || undefined}
+                >
                   {plate?.clip ? (
                     <figure class="plate plate--filled">
                       <button
@@ -305,9 +321,30 @@ const blots = {
                       <span class="plate__label">Forthcoming</span>
                     </div>
                   )}
+                  {plate?.note && (
+                    <p class="plate__caption">
+                      <span class="plate__caption-title">{plate.title}</span>
+                      {plate.note}
+                    </p>
+                  )}
                 </li>
               ))}
+              {chapter.motion?.map((drawing) => (
+                <li class="sheet__motion">
+                  <TimefireMotion art={drawing.art} run={drawing.run} palette={chapter.palette} />
+                </li>
+              ))}
+              {chapter.motionNote && (
+                <li class="sheet__note">
+                  <p class="plate__caption">{chapter.motionNote}</p>
+                </li>
+              )}
             </ul>
+            {chapter.href && (
+              <a class="chapter__cta text-link" href={chapter.href}>
+                {chapter.cta} <span aria-hidden="true">→</span>
+              </a>
+            )}
           </section>
         );
       })}
@@ -610,6 +647,71 @@ const blots = {
     height: auto;
   }
 
+  /* ─── the sheet ─── */
+
+  /*
+    The one chapter laid out as a sheet rather than a hang. A ruled grid,
+    twelve columns wide: the hairlines between cells are the grid's own gap
+    showing Watercolor Edge through, so every rule is one line and none of them
+    double up. Each cell is a frame with its label underneath, and every row is
+    full at every width, so the sheet reads as a table, not a scatter: the
+    lockup and the share card take eight columns, the mark and the icon four,
+    the four drawings three each with one line under them. Below 48rem each
+    piece takes the whole row and the drawings go two to a row.
+  */
+  .chapter__grid--sheet {
+    /* structural, like the pods' own size ladder: a frame height the whole sheet shares */
+    --sheet-plate: clamp(7rem, 13vw, 11rem);
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: var(--border-thin);
+    border: var(--border-thin) solid var(--color-border);
+    background: var(--color-border);
+  }
+
+  .chapter__grid--sheet li {
+    grid-column: 1 / -1;
+    padding: var(--space-md);
+    background: var(--color-bg-dark);
+  }
+
+  .chapter__grid--sheet .sheet__motion {
+    grid-column: span 6;
+  }
+
+  /* one line under the four drawings, in the caption's voice, spanning the row */
+  .chapter__grid--sheet .sheet__note .plate__caption {
+    margin-top: 0;
+  }
+
+  /* a drawing fills its cell's width; the shell's own 320px cap and padding were for a text column */
+  .chapter__grid--sheet .sheet__motion :global(.stepart) {
+    width: 100%;
+    padding: 0;
+  }
+
+  /* the cell is the frame; one shared height so a row's pieces sit level */
+  .chapter__grid--sheet .plate {
+    height: var(--sheet-plate);
+    aspect-ratio: auto;
+    border: 0;
+  }
+
+  /*
+    Mounted, not bled: the pieces are vector marks and a card, not pictures,
+    and run to the frame's edge the gnomon's tip touched the rule. The padding
+    is the mat; the image stays absolute and the reset's border-box keeps it
+    inside.
+  */
+  .chapter__grid--sheet .plate img {
+    padding: var(--space-lg);
+    object-fit: contain;
+  }
+
+  .chapter__grid--sheet .plate__caption {
+    margin-top: var(--space-md);
+    font-size: var(--text-base);
+  }
+
   .plate--filled img,
   .plate--filled .plate__clip {
     position: absolute;
@@ -692,6 +794,44 @@ const blots = {
 
   .book__cta {
     display: inline-block;
+  }
+
+  /*
+    The gallery's wall text. Paper, not Watercolor Edge, for the same reason as
+    the rule's count: the coral reads muddy against the pooled wash.
+  */
+  .chapter__note {
+    max-width: var(--max-width-prose);
+    margin: 0 0 var(--space-xl);
+    color: var(--color-text-on-dark);
+    font-size: var(--text-lg);
+    line-height: var(--leading-normal);
+  }
+
+  /* the label under a frame: what the piece is, then the press kit's line on it */
+  .plate__caption {
+    margin: var(--space-sm) 0 0;
+    color: var(--color-text-on-dark);
+    font-size: var(--text-sm);
+    line-height: var(--leading-normal);
+  }
+
+  .plate__caption-title {
+    display: block;
+    margin-bottom: var(--space-xs);
+    font-size: var(--text-sm);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+  }
+
+  /* the one chapter whose work continues off-site: a quiet line under the plates */
+  .chapter__cta {
+    display: inline-block;
+    margin-top: var(--space-lg);
+    color: var(--color-border);
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
   }
 
   /* ─── lightbox ─── */
@@ -1161,6 +1301,14 @@ const blots = {
 
     .chapter__grid--trio {
       grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .chapter__grid--sheet li {
+      grid-column: span var(--span, 12);
+    }
+
+    .chapter__grid--sheet .sheet__motion {
+      grid-column: span 3;
     }
 
     .chapter__grid--wide {

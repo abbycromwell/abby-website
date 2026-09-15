@@ -1,0 +1,36 @@
+<svg viewBox="0 0 300 190" role="presentation" focusable="false">
+          <!-- bottom left: the tape trades... -->
+          <g class="tape">
+            <text class="t1" x="-14" y="132">AAPL ▲&#160;&#160;MSFT ▼&#160;&#160;NVDA ▲&#160;&#160;AMZN ▲&#160;&#160;META ▼&#160;&#160;GOOG ▲</text>
+            <text class="t2" x="-34" y="150">TSLA ▼&#160;&#160;JPM ▲&#160;&#160;XOM ▼&#160;&#160;UNH ▲&#160;&#160;COST ▲&#160;&#160;BRK.B ▼</text>
+            <text class="t3" x="-22" y="168">LLY ▲&#160;&#160;AVGO ▲&#160;&#160;WMT ▼&#160;&#160;JNJ ▲&#160;&#160;HD ▼&#160;&#160;PG ▲</text>
+          </g>
+          <!-- ...top right: the clock runs to the 4:00 close... -->
+          <g class="clockg">
+            <circle class="seal" cx="226" cy="52" r="32"/>
+            <g class="ticks">
+              <line x1="226" y1="23" x2="226" y2="28"/>
+              <line x1="255" y1="52" x2="250" y2="52"/>
+              <line x1="226" y1="81" x2="226" y2="76"/>
+              <line x1="197" y1="52" x2="202" y2="52"/>
+            </g>
+            <g class="handg hourg"><line class="hand hh" x1="226" y1="54" x2="226" y2="40"/></g>
+            <g class="handg"><line class="hand" x1="226" y1="55" x2="226" y2="32"/></g>
+            <circle class="pivot" cx="226" cy="52" r="2.4"/>
+          </g>
+          <!-- ...then the record, fingerprinted: broken ridges, traced in sequence -->
+          <g>
+          <path class="fp"      d="M 122 115 C 118 103 118 87 128 76" pathLength="1" data-draw/>
+          <path class="fp fp2"  d="M 136 69 C 152 61 172 67 180 81" pathLength="1" data-draw/>
+          <path class="fp fp3"  d="M 182 95 C 184 111 176 123 166 129" pathLength="1" data-draw/>
+          <path class="fp fp4"  d="M 131 121 C 126 109 127 91 138 81" pathLength="1" data-draw/>
+          <path class="fp fp5"  d="M 146 75 C 160 70 171 79 174 91" pathLength="1" data-draw/>
+          <path class="fp fp6"  d="M 175 99 C 176 109 171 117 164 122" pathLength="1" data-draw/>
+          <path class="fp fp7"  d="M 140 125 C 136 115 135 99 143 89" pathLength="1" data-draw/>
+          <path class="fp fp8"  d="M 151 84 C 160 81 167 87 169 97" pathLength="1" data-draw/>
+          <path class="fp fp9"  d="M 168 107 C 166 115 161 120 155 123" pathLength="1" data-draw/>
+          <path class="fp fp10" d="M 148 119 C 144 112 143 100 151 94" pathLength="1" data-draw/>
+          <path class="fp fp11" d="M 157 92 C 162 95 164 101 162 107 C 161 112 157 115 153 116" pathLength="1" data-draw/>
+          <line class="fp fp12" x1="154" y1="105" x2="155" y2="106" pathLength="1" data-draw/>
+          </g>
+        </svg>

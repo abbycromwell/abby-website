@@ -1,0 +1,28 @@
+<svg viewBox="0 0 300 190" role="presentation" focusable="false">
+            <!-- the reader's own browser does the work -->
+            <rect class="win" x="56" y="34" width="188" height="126" rx="5"/>
+            <line class="winbar" x1="56" y1="54" x2="244" y2="54"/>
+            <circle class="dot" cx="68" cy="44" r="2.6"/>
+            <circle class="dot" cx="78" cy="44" r="2.6"/>
+            <circle class="dot" cx="88" cy="44" r="2.6"/>
+              <g class="c1">
+                <text class="cklab" x="68" y="81">FILE</text>
+                <line class="ckbar" x1="152" y1="78" x2="208" y2="78"/>
+                <path class="cktick" d="M 218 78 l 4 5 l 8 -11"/>
+              </g>
+              <g class="c2">
+                <text class="cklab" x="68" y="101">HASH</text>
+                <line class="ckbar" x1="152" y1="98" x2="208" y2="98"/>
+                <path class="cktick" d="M 218 98 l 4 5 l 8 -11"/>
+              </g>
+              <g class="c3">
+                <text class="cklab" x="68" y="121">SIGNATURE</text>
+                <line class="ckbar" x1="152" y1="118" x2="208" y2="118"/>
+                <path class="cktick" d="M 218 118 l 4 5 l 8 -11"/>
+              </g>
+              <g class="c4">
+                <text class="cklab" x="68" y="141">TIMESTAMP</text>
+                <line class="ckbar" x1="152" y1="138" x2="208" y2="138"/>
+                <path class="cktick" d="M 218 138 l 4 5 l 8 -11"/>
+              </g>
+          </svg>
